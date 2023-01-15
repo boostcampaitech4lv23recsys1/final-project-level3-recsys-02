@@ -4,14 +4,16 @@ A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Some steps to run a Flutter Project
 
-- 
-A few resources to get you started if this is your first Flutter project:
+- [Install Flutter](https://docs.flutter.dev/get-started/install)
+    - get flutter sdk
+    - update your path
+    - to check if you are ready run 'flutter doctor' to terminal
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- [Install Flutter to VS Code](https://docs.flutter.dev/get-started/editor?tab=vscode)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Then go to your flutter project folder and run 'flutter run'
+
+- Choose '[2] Chrome' to run this project
+
