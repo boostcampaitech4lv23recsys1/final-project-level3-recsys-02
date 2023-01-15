@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ui/constants.dart';
+import 'package:ui/pages/signin/prefer_input.dart';
 import 'package:ui/pages/start_page.dart';
 
 Widget signinHeader(context) {
@@ -17,16 +18,18 @@ Widget signinHeader(context) {
               child: Image.asset('../assets/logo.png', height: 50))),
       Spacer(),
       Container(
-          height: buttonHeight,
+          height: titleHeight,
+          width: buttonWidth,
           decoration: outerBorder,
           child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                backgroundColor: kLightGrey,
-                side: noBorder,
+            style: OutlinedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                side: whiteBorder,
                 padding: const EdgeInsets.all(16)),
-            child: Text('가입하기',
-                style: TextStyle(fontSize: defaultFontSize, color: kDarkGrey)),
+            child: Text('가입하기', style: subtitleTextStyle),
             onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => PrefernceInput()));
               debugPrint('가입하기');
             },
           ))
