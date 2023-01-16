@@ -30,8 +30,8 @@ class _SigninPageState extends State<SigninPage> {
                     'logo.png',
                   ),
                   Container(
-                      width: width * 0.5,
-                      height: height * 0.7,
+                      width: width * 0.7,
+                      height: height * 0.72,
                       decoration: outerBorder,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 45, vertical: 20),

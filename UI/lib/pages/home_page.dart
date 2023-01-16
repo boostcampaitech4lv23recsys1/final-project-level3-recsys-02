@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
                   titleBar(width * 0.6, '취향이 비슷한 친구 찾기'),
                   Container(
                       decoration: outerBorder,
-                      height: 260,
+                      height: boxHeight,
                       width: width * 0.6,
                       child: ListView.builder(
                         padding: defaultPadding,
@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> {
                   Container(
                       decoration: outerBorder,
                       width: width * 0.3,
-                      height: 260,
+                      height: boxHeight,
                       child: ListView.builder(
                         padding: defaultPadding,
                         scrollDirection: Axis.vertical,

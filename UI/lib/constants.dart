@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+double boxHeight = 280.0;
+
 BorderRadius kBorder = BorderRadius.circular(12);
 
 Color kLightGrey = const Color(0xFFE5E5E5);

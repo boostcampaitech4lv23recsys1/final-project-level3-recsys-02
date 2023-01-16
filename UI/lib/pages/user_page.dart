@@ -39,7 +39,7 @@ class _UserPageState extends State<UserPage> {
                       Container(
                           padding: const EdgeInsets.all(20),
                           decoration: outerBorder,
-                          height: 280,
+                          height: boxHeight,
                           width: width * 0.3,
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -50,7 +50,7 @@ class _UserPageState extends State<UserPage> {
                                   width: 200,
                                   child: const CircleAvatar(
                                     backgroundImage:
-                                        AssetImage('assets/image.jpg'),
+                                        AssetImage('assets/profile.png'),
                                   ),
                                 ),
                                 defaultSpacer,
@@ -114,7 +114,7 @@ class _UserPageState extends State<UserPage> {
                       Container(
                           decoration: outerBorder,
                           width: width * 0.3,
-                          height: 280,
+                          height: boxHeight,
                           child: ListView.builder(
                             padding: defaultPadding,
                             scrollDirection: Axis.horizontal,
