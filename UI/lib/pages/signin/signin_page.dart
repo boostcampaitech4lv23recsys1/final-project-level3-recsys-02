@@ -39,7 +39,7 @@ class _SigninPageState extends State<SigninPage> {
                         isStart
                             ? const UserInfoInput()
                             : const PrefernceInput(),
-                        const Spacer(),
+                        defaultSpacer,
                         isStart
                             ? Row(
                                 mainAxisAlignment: MainAxisAlignment.center,

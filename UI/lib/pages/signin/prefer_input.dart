@@ -15,45 +15,45 @@ class _PrefernceInputState extends State<PrefernceInput> {
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
-    return SizedBox(
-        height: 580,
-        width: MediaQuery.of(context).size.width,
+    return Expanded(
+        // height: 580,
+        // width: MediaQuery.of(context).size.width,
         // decoration: outerBorder,
         child: ListView(
-          children: [
-            Text('선호하시는 장르 5개를 선택해주세요', style: subtitleTextStyle),
-            Container(
-              margin: const EdgeInsets.only(top: 10, bottom: 20),
-              decoration: outerBorder,
-              height: 200,
-            ),
-            Text('선호하시는 아티스트 5명을 선택해주세요', style: subtitleTextStyle),
-            Container(
-                margin: const EdgeInsets.only(top: 10, bottom: 20),
-                decoration: outerBorder,
-                height: 210,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: 10,
-                  itemBuilder: (BuildContext context, int index) {
-                    return userCard(isArtist: true);
-                  },
-                )),
-            Text('선호하시는 노래 5개를  선택해주세요', style: subtitleTextStyle),
-            Container(
-                margin: const EdgeInsets.only(top: 10, bottom: 20),
-                decoration: outerBorder,
-                height: 230,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: 10,
-                  itemBuilder: (BuildContext context, int index) {
-                    return playlistCard();
-                  },
-                )),
-          ],
-        ));
+      children: [
+        Text('선호하시는 장르 5개를 선택해주세요', style: subtitleTextStyle),
+        Container(
+          margin: const EdgeInsets.only(top: 10, bottom: 20),
+          decoration: outerBorder,
+          height: 200,
+        ),
+        Text('선호하시는 아티스트 5명을 선택해주세요', style: subtitleTextStyle),
+        Container(
+            margin: const EdgeInsets.only(top: 10, bottom: 20),
+            decoration: outerBorder,
+            height: 210,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: 10,
+              itemBuilder: (BuildContext context, int index) {
+                return userCard(isArtist: true);
+              },
+            )),
+        Text('선호하시는 노래 5개를  선택해주세요', style: subtitleTextStyle),
+        Container(
+            margin: const EdgeInsets.only(top: 10, bottom: 20),
+            decoration: outerBorder,
+            height: 230,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: 10,
+              itemBuilder: (BuildContext context, int index) {
+                return playlistCard();
+              },
+            )),
+      ],
+    ));
   }
 }
