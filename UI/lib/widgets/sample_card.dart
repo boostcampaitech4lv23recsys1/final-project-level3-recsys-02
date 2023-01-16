@@ -13,18 +13,19 @@ Widget sampleCard() {
 }
 
 Widget userCard({bool isArtist = false}) {
-  String image = 'image.jpg';
+  String image = 'profile.png';
   String name = '홍길동';
-  int follower = 3333;
+  int follower = 300;
+  bool isFollowing = false;
 
   return Container(
     width: 180,
-    padding: kPadding,
+    padding: EdgeInsets.all(15),
     child: Column(
       children: [
         SizedBox(
-          height: 150,
-          width: 150,
+          height: 130,
+          width: 130,
           child: CircleAvatar(
             backgroundColor: Colors.transparent,
             backgroundImage: AssetImage(image),
@@ -36,15 +37,50 @@ Widget userCard({bool isArtist = false}) {
             ? Container()
             : Text('팔로워 $follower 명',
                 style: defaultTextStyle, textAlign: TextAlign.start),
+        isArtist
+            ? Container()
+            : isFollowing
+                ? Column(
+                    children: [
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      OutlinedButton(
+                          onPressed: () {},
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            side: whiteBorder,
+                          ),
+                          child: Text('팔로잉',
+                              style: defaultTextStyle,
+                              textAlign: TextAlign.center))
+                    ],
+                  )
+                : Column(
+                    children: [
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      OutlinedButton(
+                          onPressed: () {},
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            side: whiteBorder,
+                          ),
+                          child: Text('팔로우',
+                              style: defaultTextStyle,
+                              textAlign: TextAlign.center))
+                    ],
+                  ),
       ],
     ),
   );
 }
 
 Widget playlistCard() {
-  String albumimage = 'album.jpg';
-  String trackname = 'OMG';
-  String artistname = 'New Jeans';
+  String albumimage = 'album.png';
+  String trackname = 'Track Name';
+  String artistname = 'Artist Name';
 
   return Container(
     //decoration: outerBorder,
@@ -72,9 +108,9 @@ Widget playlistCard() {
 }
 
 Widget chartCard(int rank) {
-  String albumimage = 'album.jpg';
-  String trackname = 'OMG';
-  String artistname = 'New Jeans';
+  String albumimage = 'album.png';
+  String trackname = 'Track Name';
+  String artistname = 'Artist Name';
 
   return Container(
     // decoration: outerBorder,
