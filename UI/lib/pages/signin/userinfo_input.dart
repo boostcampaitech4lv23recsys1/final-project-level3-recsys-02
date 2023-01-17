@@ -49,7 +49,7 @@ class _UserInfoInputState extends State<UserInfoInput> {
         inputTemplate('이메일을 확인하세요.', '이메일을 다시 입력하세요.'),
         inputTemplate('비밀번호를 만드세요.', '비밀번호를 만드세요.'),
         inputTemplate('어떤 사용자 이름을 사용하시겠어요?', '프로필 이름을 입력하세요.'),
-        inputTemplate('생년월일이 어떻게 되시나요?', '(예시) 199910108'),
+        inputTemplate('나이가 어떻게 되시나요?', '나이를 입력해주세요.'),
         inputTemplate('성별이 무엇인가요? (1: 남성,  2: 여성, 3: 기타, 4: 답변거부)', '(예시) 2'),
       ],
     ));

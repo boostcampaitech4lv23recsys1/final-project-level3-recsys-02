@@ -22,7 +22,7 @@ class _SigninPageState extends State<SigninPage> {
 
     return Scaffold(
         body: Padding(
-            padding: const EdgeInsets.all(60),
+            padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 60),
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -31,7 +31,7 @@ class _SigninPageState extends State<SigninPage> {
                   ),
                   Container(
                       width: width * 0.7,
-                      height: height * 0.72,
+                      height: height * 0.75,
                       decoration: outerBorder,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 45, vertical: 20),
