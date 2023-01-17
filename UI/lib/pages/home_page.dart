@@ -24,11 +24,11 @@ class _HomePageState extends State<HomePage> {
               Row(mainAxisAlignment: MainAxisAlignment.start, children: [
                 // 빠른 선곡
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  titleBar(width * 0.6, '빠른 선곡'),
+                  titleBar(width * 0.5, '빠른 선곡'),
                   Container(
                       decoration: outerBorder,
-                      height: 260,
-                      width: width * 0.6,
+                      height: boxHeight,
+                      width: width * 0.5,
                       child: ListView.builder(
                         padding: defaultPadding,
                         scrollDirection: Axis.horizontal,
@@ -41,13 +41,13 @@ class _HomePageState extends State<HomePage> {
                       )),
                 ]),
                 const Spacer(),
-                // 최신차트
+                // 인기곡
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  titleBar(width * 0.3, '최신차트', withArrow: false),
+                  titleBar(width * 0.4, '인기곡', withReset: false),
                   Container(
                       decoration: outerBorder,
-                      width: width * 0.3,
-                      height: 260,
+                      width: width * 0.4,
+                      height: boxHeight,
                       child: ListView.builder(
                         padding: defaultPadding,
                         scrollDirection: Axis.vertical,
@@ -64,12 +64,34 @@ class _HomePageState extends State<HomePage> {
               ]),
               defaultSpacer,
               Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                // 최신앨범
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  titleBar(width * 0.6, '취향이 비슷한 친구 찾기'),
+                  titleBar(width * 0.5, '최신 음악', withReset: false),
+                  Container(
+                      decoration: outerBorder,
+                      width: width * 0.5,
+                      height: boxHeight,
+                      child: ListView.builder(
+                        padding: defaultPadding,
+                        scrollDirection: Axis.horizontal,
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: 10,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Center(
+                            child: playlistCard(),
+                          );
+                        },
+                      ))
+                ]),
+                const Spacer(),
+                // 비슷한 유저 추천
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  titleBar(width * 0.4, '취향이 비슷한 친구 찾기'),
                   Container(
                       decoration: outerBorder,
                       height: boxHeight,
-                      width: width * 0.6,
+                      width: width * 0.4,
                       child: ListView.builder(
                         padding: defaultPadding,
                         scrollDirection: Axis.horizontal,
@@ -80,27 +102,6 @@ class _HomePageState extends State<HomePage> {
                           return userCard();
                         },
                       )),
-                ]),
-                const Spacer(),
-                // 기본차트
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  titleBar(width * 0.3, '기본차트', withArrow: false),
-                  Container(
-                      decoration: outerBorder,
-                      width: width * 0.3,
-                      height: boxHeight,
-                      child: ListView.builder(
-                        padding: defaultPadding,
-                        scrollDirection: Axis.vertical,
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: 10,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Center(
-                            child: chartCard(index + 1),
-                          );
-                        },
-                      ))
                 ]),
               ]),
               const Spacer(),

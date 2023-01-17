@@ -56,7 +56,7 @@ Widget userCard() {
   bool isFollowing = false;
 
   return Container(
-    width: 180,
+    width: 160,
     padding: const EdgeInsets.all(15),
     child: Column(
       children: [
@@ -116,7 +116,7 @@ Widget playlistCard() {
 
   return Container(
     //decoration: outerBorder,
-    width: 180,
+    width: 170,
     padding: kPadding,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,15 +164,22 @@ Widget chartCard(int rank) {
           child: Image.asset(albumimage),
         ),
         defaultSpacer,
-        // track name
-        Text(
-          trackname,
-          style: contentsTextStyle,
-          textAlign: TextAlign.start,
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // track name
+            Text(
+              trackname,
+              style: contentsTextStyle,
+              textAlign: TextAlign.start,
+            ),
+            Text(artistname,
+                style: defaultTextStyle, textAlign: TextAlign.start),
+          ],
         ),
         const Spacer(),
         // artist name
-        Text(artistname, style: defaultTextStyle, textAlign: TextAlign.start),
+        Text('3:44', style: defaultTextStyle, textAlign: TextAlign.start),
       ],
     ),
   );
