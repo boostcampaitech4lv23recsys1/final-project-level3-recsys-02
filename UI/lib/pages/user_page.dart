@@ -34,7 +34,7 @@ class _UserPageState extends State<UserPage> {
 
     return Scaffold(
         body: Padding(
-            padding: const EdgeInsets.all(60),
+            padding: outerPadding,
             child: Column(children: [
               customHeader(context, '메인페이지'),
               defaultSpacer,

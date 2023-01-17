@@ -17,7 +17,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
         body: Padding(
-            padding: const EdgeInsets.all(60),
+            padding: outerPadding,
             child: Column(children: [
               customHeader(context, '마이페이지'),
               defaultSpacer,

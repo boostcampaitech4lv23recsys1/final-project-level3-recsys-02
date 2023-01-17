@@ -46,3 +46,4 @@ BoxDecoration outerBorder = BoxDecoration(
     border: Border.all(color: Colors.white, width: 1.5),
     shape: BoxShape.rectangle,
     borderRadius: const BorderRadius.all(Radius.circular(8)));
+EdgeInsets outerPadding = EdgeInsets.symmetric(horizontal: 60, vertical: 80);

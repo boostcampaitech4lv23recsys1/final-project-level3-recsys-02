@@ -17,7 +17,7 @@ class _StartPageState extends State<StartPage> {
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
         body: Padding(
-            padding: const EdgeInsets.all(60),
+            padding: outerPadding,
             child: Column(
               children: [
                 startHeader(context),
