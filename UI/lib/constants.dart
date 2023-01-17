@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-double boxHeight = 280.0;
+double boxHeight = 270.0;
 
 BorderRadius kBorder = BorderRadius.circular(12);
 

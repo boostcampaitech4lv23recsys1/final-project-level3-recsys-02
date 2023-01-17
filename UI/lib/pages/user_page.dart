@@ -17,10 +17,18 @@ class _UserPageState extends State<UserPage> {
   get following => 5;
   get match => 98;
   var name = '고비';
+
+  bool isOpen = true;
   bool isMyPage = true;
 
+  TextStyle visibleBuutonTextStyle =
+      TextStyle(color: kLightGrey, fontSize: 12.0);
   @override
   Widget build(BuildContext context) {
+    String isopen = '공개';
+    if (isOpen) {
+      isopen = '비공개';
+    }
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
 
@@ -35,7 +43,7 @@ class _UserPageState extends State<UserPage> {
                 children: [
                   Column(
                     children: [
-                      titleBar(width * 0.3, '내 정보', withArrow: false),
+                      titleBar(width * 0.3, '내 정보', withReset: false),
                       Container(
                           padding: const EdgeInsets.all(20),
                           decoration: outerBorder,
@@ -70,7 +78,17 @@ class _UserPageState extends State<UserPage> {
                                           children: [
                                             Text('$name 님',
                                                 style: titleTextStyle),
-                                            const Text(''),
+                                            isOpen
+                                                ? Text(
+                                                    '[ 공개계정 ]',
+                                                    style: contentsTextStyle,
+                                                    textAlign: TextAlign.end,
+                                                  )
+                                                : Text(
+                                                    '[ 비공개계정 ] ',
+                                                    style: contentsTextStyle,
+                                                    textAlign: TextAlign.end,
+                                                  ),
                                             Text('♥ 팔로잉',
                                                 style: contentsTextStyle),
                                             Text(
@@ -94,23 +112,47 @@ class _UserPageState extends State<UserPage> {
                                             ),
                                           ]),
                                     ),
-                                    Container(
-                                        height: titleHeight * 0.8,
-                                        width: buttonWidth * 2,
-                                        child: ElevatedButton(
-                                          style: OutlinedButton.styleFrom(
-                                            backgroundColor: Colors.transparent,
-                                            side: whiteBorder,
-                                          ),
-                                          child: Text('팔로우',
-                                              style: contentsTextStyle),
-                                          onPressed: () {},
-                                        )),
+                                    isMyPage
+                                        ? Container(
+                                            height: titleHeight,
+                                            width: buttonWidth * 2,
+                                            child: ElevatedButton(
+                                              style: OutlinedButton.styleFrom(
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                side: whiteBorder,
+                                              ),
+                                              child: Text('$isopen로 전환하기',
+                                                  style: subtitleTextStyle),
+                                              onPressed: () {
+                                                if (isOpen) {
+                                                  isOpen = false;
+                                                  isopen = '공개';
+                                                } else {
+                                                  isOpen = true;
+                                                  isopen = '비공개';
+                                                }
+                                                setState(() {});
+                                              },
+                                            ))
+                                        : Container(
+                                            height: titleHeight * 0.8,
+                                            width: buttonWidth * 2,
+                                            child: ElevatedButton(
+                                              style: OutlinedButton.styleFrom(
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                side: whiteBorder,
+                                              ),
+                                              child: Text('팔로우',
+                                                  style: subtitleTextStyle),
+                                              onPressed: () {},
+                                            )),
                                   ],
                                 ),
                               ])),
                       defaultSpacer,
-                      titleBar(width * 0.3, '나의 재생목록'),
+                      titleBar(width * 0.3, '나의 재생목록', withReset: false),
                       Container(
                           decoration: outerBorder,
                           width: width * 0.3,
@@ -132,7 +174,7 @@ class _UserPageState extends State<UserPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         titleBar(width * 0.6, '$name님의 취향분석 결과',
-                            withArrow: false),
+                            withReset: false),
                         Container(
                             decoration: outerBorder,
                             width: width * 0.6,
