@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ui/constants.dart';
+import 'package:ui/models/item.dart';
 
 Widget sampleCard() {
   return Card(
@@ -49,11 +50,10 @@ Widget artistCard() {
       ]));
 }
 
-Widget userCard() {
+Widget userCard(image, name, follower) {
   String image = 'profile.png';
   String name = '홍길동';
   int follower = 300;
-  bool isFollowing = false;
 
   return Container(
     width: 160,
@@ -72,48 +72,38 @@ Widget userCard() {
         Text(name, style: contentsTextStyle, textAlign: TextAlign.start),
         Text('팔로워 $follower 명',
             style: defaultTextStyle, textAlign: TextAlign.start),
-        isFollowing
-            ? Column(
-                children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  OutlinedButton(
-                      onPressed: () {},
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        side: whiteBorder,
-                      ),
-                      child: Text('팔로잉',
-                          style: defaultTextStyle, textAlign: TextAlign.center))
-                ],
-              )
-            : Column(
-                children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  OutlinedButton(
-                      onPressed: () {},
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        side: whiteBorder,
-                      ),
-                      child: Text('팔로우',
-                          style: defaultTextStyle, textAlign: TextAlign.center))
-                ],
-              ),
       ],
     ),
   );
 }
 
-Widget playlistCard() {
-  String albumimage = 'album.png';
-  String trackname = 'Track Name';
-  String artistname = 'Artist Name';
-  String release = '2022.01.17';
+Widget playlistCard(Item item) {
+  return Container(
+      //decoration: outerBorder,
+      width: 170,
+      padding: kPadding,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // image
+          ClipRRect(
+            borderRadius: kBorder,
+            child: Image.asset(
+              item.image,
+              fit: BoxFit.cover,
+            ),
+          ),
+          defaultSpacer,
+          // track name
+          Text(item.name, style: subtitleTextStyle, textAlign: TextAlign.start),
+          // artist name
+          Text(item.artistName,
+              style: contentsTextStyle, textAlign: TextAlign.start),
+        ],
+      ));
+}
 
+Widget albumCard(Item item) {
   return Container(
     //decoration: outerBorder,
     width: 170,
@@ -125,17 +115,19 @@ Widget playlistCard() {
         ClipRRect(
           borderRadius: kBorder,
           child: Image.asset(
-            albumimage,
+            item.image,
             fit: BoxFit.cover,
           ),
         ),
         defaultSpacer,
         // track name
-        Text(trackname, style: subtitleTextStyle, textAlign: TextAlign.start),
+        Text(item.name, style: subtitleTextStyle, textAlign: TextAlign.start),
         // artist name
-        Text(artistname, style: contentsTextStyle, textAlign: TextAlign.start),
+        Text(item.artistName,
+            style: contentsTextStyle, textAlign: TextAlign.start),
         // 발매일
-        Text(release, style: contentsTextStyle, textAlign: TextAlign.start),
+        Text(item.release,
+            style: contentsTextStyle, textAlign: TextAlign.start),
       ],
     ),
   );
@@ -177,12 +169,11 @@ Widget chartCard(int rank) {
                 style: defaultTextStyle, textAlign: TextAlign.start),
           ],
         ),
-        defaultSpacer,
+        const Spacer(),
+
         // 재생시간e
         Text('3:44', style: defaultTextStyle, textAlign: TextAlign.start),
-        const Spacer(),
-        TextButton(
-            onPressed: () {}, child: Icon(Icons.favorite_outline_rounded))
+        defaultSpacer
       ],
     ),
   );
