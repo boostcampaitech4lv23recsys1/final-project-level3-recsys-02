@@ -1,10 +1,9 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:ui/constants.dart';
+import 'package:ui/models/item.dart';
 import 'package:ui/widgets/footer.dart';
 import 'package:ui/widgets/custom_header.dart';
-import 'package:ui/widgets/sample_card.dart';
+import 'package:ui/widgets/custom_card.dart';
 import 'package:ui/widgets/titlebar.dart';
 
 class UserPage extends StatefulWidget {
@@ -21,16 +20,35 @@ class _UserPageState extends State<UserPage> {
   get match => 98;
   var name = '고비';
 
+  String isopen = '공개';
   bool isOpen = true;
 
   TextStyle visibleBuutonTextStyle =
       TextStyle(color: kLightGrey, fontSize: 12.0);
+
+  late List<Item> mypageMusicList = [];
+
+  void getMyMusics() {
+    for (int i = 0; i < 10; i++) {
+      mypageMusicList.add(Item(
+        image: 'album.png',
+        name: 'Track Name $i',
+        artistName: 'Artist Name $i',
+      ));
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
-    String isopen = '공개';
+  void initState() {
     if (isOpen) {
       isopen = '비공개';
     }
+    getMyMusics();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
 
@@ -158,21 +176,42 @@ class _UserPageState extends State<UserPage> {
                       Container(
                           decoration: outerBorder,
                           width: width * 0.3,
-                          height: boxHeight,
+                          height: boxHeight - 20,
                           child: ListView.builder(
                             padding: defaultPadding,
                             scrollDirection: Axis.horizontal,
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
-                            itemCount: 10,
-                            itemBuilder: (BuildContext context, int index) {
-                              return playlistCard();
+                            itemCount: mypageMusicList.length,
+                            itemBuilder: (BuildContext context, int idx) {
+                              return Stack(
+                                  alignment: Alignment.topRight,
+                                  children: [
+                                    playlistCard(mypageMusicList[idx]),
+                                    Positioned(
+                                        top: 3,
+                                        right: 3,
+                                        child: widget.isMyPage
+                                            ? IconButton(
+                                                onPressed: () {
+                                                  mypageMusicList.removeAt(idx);
+                                                  setState(() {});
+                                                },
+                                                icon: Icon(Icons.delete,
+                                                    color: kBlack))
+                                            : IconButton(
+                                                onPressed: () {},
+                                                icon: Icon(
+                                                    Icons.favorite_rounded,
+                                                    color: kBlack)))
+                                  ]);
                             },
                           )),
                     ],
                   ),
                   const Spacer(),
                   Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         titleBar(width * 0.6, '$name님의 취향분석 결과',
@@ -180,7 +219,7 @@ class _UserPageState extends State<UserPage> {
                         Container(
                             decoration: outerBorder,
                             width: width * 0.6,
-                            height: 625,
+                            height: 600,
                             child: Center(
                                 child: Text(
                               '취향분석 결과',
