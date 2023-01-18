@@ -8,6 +8,9 @@ import 'package:ui/widgets/sample_card.dart';
 import 'package:ui/widgets/titlebar.dart';
 
 class UserPage extends StatefulWidget {
+  const UserPage({super.key, this.isMyPage = true});
+
+  final isMyPage;
   @override
   _UserPageState createState() => _UserPageState();
 }
@@ -19,7 +22,6 @@ class _UserPageState extends State<UserPage> {
   var name = '고비';
 
   bool isOpen = true;
-  bool isMyPage = true;
 
   TextStyle visibleBuutonTextStyle =
       TextStyle(color: kLightGrey, fontSize: 12.0);
@@ -36,7 +38,7 @@ class _UserPageState extends State<UserPage> {
         body: Padding(
             padding: outerPadding,
             child: Column(children: [
-              customHeader(context, '메인페이지'),
+              customHeader(context, false),
               defaultSpacer,
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,7 +114,7 @@ class _UserPageState extends State<UserPage> {
                                             ),
                                           ]),
                                     ),
-                                    isMyPage
+                                    widget.isMyPage
                                         ? Container(
                                             height: titleHeight,
                                             width: buttonWidth * 2,

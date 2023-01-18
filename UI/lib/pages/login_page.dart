@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ui/constants.dart';
-import 'package:ui/pages/signin/prefer_input.dart';
+import 'package:ui/pages/signin_page.dart';
 import 'package:ui/widgets/footer.dart';
 
 class LoginPage extends StatefulWidget {
@@ -125,13 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                                       color: kWhite,
                                       fontSize: 14.0,
                                     )),
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const PrefernceInput()));
-                                },
+                                onPressed: () {},
                               ),
                               defaultSpacer,
                             ],

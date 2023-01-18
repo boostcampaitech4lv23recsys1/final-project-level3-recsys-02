@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:ui/constants.dart';
+import 'package:ui/models/user.dart';
 import 'package:ui/pages/home_page.dart';
 import 'package:ui/pages/login_page.dart';
-import 'package:ui/pages/signin/signin_page.dart';
+import 'package:ui/pages/signin_page.dart';
 import 'package:ui/pages/start_page.dart';
 import 'package:ui/pages/user_page.dart';
 
+int userid = 1;
+
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +24,17 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: kBlack, // 앱 배경색
       ),
       title: 'Final Project',
-      home: TestPage(),
+      initialRoute: '/home',
+      routes: {
+        "/home": (context) => const StartPage(),
+        "/signin": (context) => const SigninPage(),
+        "/login": (context) => const LoginPage(),
+        "/main": (context) => HomePage(),
+        "/mypage": (context) => const UserPage(),
+        "/mypage/$userid": (context) => const UserPage(
+              isMyPage: false,
+            ),
+      },
       debugShowCheckedModeBanner: false,
     );
   }
@@ -55,8 +68,7 @@ class TestPage extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       )),
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => HomePage()));
+                    Navigator.pushNamed(context, '/main');
                   },
                 ),
                 defaultSpacer,
@@ -72,8 +84,7 @@ class TestPage extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       )),
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => LoginPage()));
+                    Navigator.pushNamed(context, '/lgoin');
                   },
                 ),
                 defaultSpacer,
@@ -89,8 +100,7 @@ class TestPage extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       )),
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => SigninPage()));
+                    Navigator.pushNamed(context, '/signin');
                   },
                 ),
                 defaultSpacer,
@@ -106,8 +116,7 @@ class TestPage extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       )),
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => StartPage()));
+                    Navigator.pushNamed(context, '/home');
                   },
                 ),
                 defaultSpacer,
@@ -123,8 +132,7 @@ class TestPage extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       )),
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => UserPage()));
+                    Navigator.pushNamed(context, '/mypage?id=$userid');
                   },
                 ),
               ],

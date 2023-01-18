@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
         body: Padding(
             padding: outerPadding,
             child: Column(children: [
-              customHeader(context, '마이페이지'),
+              customHeader(context, true),
               defaultSpacer,
               Row(mainAxisAlignment: MainAxisAlignment.start, children: [
                 // 빠른 선곡
@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
               Row(mainAxisAlignment: MainAxisAlignment.start, children: [
                 // 최신앨범
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  titleBar(width * 0.5, '최신 음악', withReset: false),
+                  titleBar(width * 0.5, '최신앨범', withReset: false),
                   Container(
                       decoration: outerBorder,
                       width: width * 0.5,
