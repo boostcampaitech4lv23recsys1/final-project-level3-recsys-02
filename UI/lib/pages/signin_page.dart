@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ui/constants.dart';
 import 'package:ui/models/user.dart';
-import 'package:ui/pages/home_page.dart';
+import 'package:ui/pages/main_page.dart';
 import 'package:ui/utils/dio_client.dart';
 import 'package:ui/widgets/footer.dart';
-import 'package:ui/widgets/sample_card.dart';
+import 'package:ui/widgets/custom_card.dart';
 
 class SigninPage extends StatefulWidget {
   const SigninPage({super.key});
@@ -390,7 +390,7 @@ class _SigninPageState extends State<SigninPage> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      HomePage()));
+                                                      MainPage()));
                                         },
                                       )),
                                 ],
