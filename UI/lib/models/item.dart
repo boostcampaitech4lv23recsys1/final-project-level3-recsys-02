@@ -1,10 +1,10 @@
 class Item {
-  final String trackName, artistName;
-  final int track, artist;
+  final String image, name, artistName;
+  var release;
 
   Item(
-      {required this.track,
-      required this.trackName,
-      required this.artist,
-      required this.artistName});
+      {required this.image,
+      required this.name,
+      required this.artistName,
+      this.release});
 }
