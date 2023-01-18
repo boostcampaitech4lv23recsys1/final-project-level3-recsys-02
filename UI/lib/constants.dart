@@ -14,6 +14,7 @@ EdgeInsets outerMargin = const EdgeInsets.all(20);
 EdgeInsets defaultPadding = const EdgeInsets.all(8);
 const kPadding = EdgeInsets.only(top: 8, bottom: 12, left: 8, right: 8);
 
+final hintTextStyle = TextStyle(color: kDarkGrey);
 final defaultTextStyle = TextStyle(color: kWhite, fontSize: 12.0);
 final contentsTextStyle = TextStyle(color: kWhite, fontSize: 14.0);
 final subtitleTextStyle = TextStyle(

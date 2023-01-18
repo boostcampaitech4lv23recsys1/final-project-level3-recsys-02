@@ -177,9 +177,12 @@ Widget chartCard(int rank) {
                 style: defaultTextStyle, textAlign: TextAlign.start),
           ],
         ),
-        const Spacer(),
-        // artist name
+        defaultSpacer,
+        // 재생시간e
         Text('3:44', style: defaultTextStyle, textAlign: TextAlign.start),
+        const Spacer(),
+        TextButton(
+            onPressed: () {}, child: Icon(Icons.favorite_outline_rounded))
       ],
     ),
   );
