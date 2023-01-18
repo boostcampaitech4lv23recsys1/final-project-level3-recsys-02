@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ui/constants.dart';
-import 'package:ui/pages/home_page.dart';
 import 'package:ui/widgets/custom_header.dart';
 import 'package:ui/widgets/footer.dart';
 

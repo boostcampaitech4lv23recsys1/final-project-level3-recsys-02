@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ui/constants.dart';
-import 'package:ui/models/user.dart';
-import 'package:ui/pages/home_page.dart';
+import 'package:ui/pages/main_page.dart';
 import 'package:ui/pages/login_page.dart';
 import 'package:ui/pages/signin_page.dart';
 import 'package:ui/pages/start_page.dart';
@@ -29,7 +28,7 @@ class MyApp extends StatelessWidget {
         "/home": (context) => const StartPage(),
         "/signin": (context) => const SigninPage(),
         "/login": (context) => const LoginPage(),
-        "/main": (context) => HomePage(),
+        "/main": (context) => MainPage(),
         "/mypage": (context) => const UserPage(),
         "/mypage/$userid": (context) => const UserPage(
               isMyPage: false,
