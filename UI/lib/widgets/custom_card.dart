@@ -17,15 +17,16 @@ Widget sampleCard() {
 Widget genreCard(idx) {
   return Card(
     elevation: 0,
-    color: kDarkGrey,
-    child: SizedBox(
-      height: 30,
-      width: 80,
-      child: Center(
-          child: Text(
-        '$idx',
-        textAlign: TextAlign.center,
-      )),
+    child: Container(
+      color: Colors.transparent,
+      height: titleHeight,
+      width: 100,
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      alignment: Alignment.centerLeft,
+      child: Text(
+        '${idx[0]}',
+        style: contentsTextStyle,
+      ),
     ),
   );
 }
@@ -34,12 +35,12 @@ Widget artistCard() {
   String image = 'profile.png';
   String name = '아티스트명';
   return Container(
-      width: 180,
+      width: 150,
       padding: EdgeInsets.all(15),
       child: Column(children: [
         SizedBox(
-          height: 130,
-          width: 130,
+          height: 100,
+          width: 100,
           child: CircleAvatar(
             backgroundColor: Colors.transparent,
             backgroundImage: AssetImage(image),
@@ -52,8 +53,6 @@ Widget artistCard() {
 
 Widget userCard(image, name, follower) {
   String image = 'profile.png';
-  String name = '홍길동';
-  int follower = 300;
 
   return Container(
     width: 160,
