@@ -32,6 +32,8 @@ dependencies:
   dio: ^4.0.6
   flutter:
     sdk: flutter
+  json_annotation: ^4.7.0
+  toast: ^0.3.0
 
 dev_dependencies:
   flutter_test:
