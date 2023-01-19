@@ -14,26 +14,21 @@ Widget sampleCard() {
   );
 }
 
-Widget genreCard(idx) {
-  return Card(
-    elevation: 0,
-    child: Container(
-      color: Colors.transparent,
-      height: titleHeight,
-      width: 100,
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      alignment: Alignment.centerLeft,
-      child: Text(
-        '${idx[0]}',
-        style: contentsTextStyle,
-      ),
+Widget genreCard(item) {
+  return Container(
+    color: Colors.transparent,
+    height: titleHeight,
+    width: 100,
+    padding: EdgeInsets.symmetric(horizontal: 10),
+    alignment: Alignment.centerLeft,
+    child: Text(
+      '${item[0]}',
+      style: contentsTextStyle,
     ),
   );
 }
 
-Widget artistCard() {
-  String image = 'profile.png';
-  String name = '아티스트명';
+Widget artistCard(item) {
   return Container(
       width: 150,
       padding: EdgeInsets.all(15),
@@ -43,11 +38,11 @@ Widget artistCard() {
           width: 100,
           child: CircleAvatar(
             backgroundColor: Colors.transparent,
-            backgroundImage: AssetImage(image),
+            backgroundImage: AssetImage(item[1]),
           ),
         ),
         defaultSpacer,
-        Text(name, style: contentsTextStyle, textAlign: TextAlign.start),
+        Text(item[0], style: contentsTextStyle, textAlign: TextAlign.start),
       ]));
 }
 

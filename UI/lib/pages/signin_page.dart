@@ -26,7 +26,7 @@ class _SigninPageState extends State<SigninPage> {
   final DioClient dioClient = DioClient();
 
   final List genreLists = [];
-  final List artistLists = [];
+  final List artistList = [];
 
   @override
   void initState() {
@@ -55,13 +55,13 @@ class _SigninPageState extends State<SigninPage> {
 
   void getMusicGenres() {
     for (int i = 0; i < 20; i++) {
-      genreLists.add(['장르 $i', false]);
+      genreLists.add(['장르 $i', kWhite]);
     }
   }
 
   void getArtists() {
-    for (int i = 0; i < 20; i++) {
-      artistLists.add(['아티스트 $i', 'profile.png', false]);
+    for (int i = 0; i < 10; i++) {
+      artistList.add(['아티스트 $i', 'profile.png', false]);
     }
   }
 
@@ -240,7 +240,7 @@ class _SigninPageState extends State<SigninPage> {
                 crossAxisCount: 5,
                 mainAxisSpacing: 10,
                 crossAxisSpacing: 10,
-                childAspectRatio: 1 / 0.4,
+                childAspectRatio: 1 / 0.3,
               ),
               itemCount: genreLists.length,
               itemBuilder: (BuildContext context, int index) {
@@ -248,10 +248,18 @@ class _SigninPageState extends State<SigninPage> {
                     decoration: outerBorder,
                     child: Row(
                       children: [
-                        Checkbox(
-                            value: genreLists[index][1],
-                            onChanged: (val) {
-                              genreLists[index][1] = val;
+                        GestureDetector(
+                            child: Container(
+                                width: 25,
+                                decoration: BoxDecoration(
+                                  color: genreLists[index][1],
+                                  borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(8.0),
+                                      bottomLeft: Radius.circular(8.0)),
+                                )),
+                            onTap: () {
+                              genreLists[index][1] = Colors.blueAccent;
+                              setState(() {});
                             }),
                         genreCard(genreLists[index]),
                       ],
@@ -271,23 +279,37 @@ class _SigninPageState extends State<SigninPage> {
         Container(
             margin: const EdgeInsets.only(top: 10, bottom: 20),
             decoration: outerBorder,
-            height: 210,
+            height: 190,
+            alignment: Alignment.center,
             child: RawScrollbar(
                 controller: artistController,
                 child: ListView.builder(
                   controller: artistController,
                   scrollDirection: Axis.horizontal,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: 10,
+                  itemCount: artistList.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Stack(
                       children: [
-                        artistCard(),
-                        Checkbox(
-                            value: false,
-                            onChanged: (val) {
-                              val = true;
-                            })
+                        artistCard(artistList[index]),
+                        Positioned(
+                          top: 3,
+                          left: 3,
+                          child: IconButton(
+                              onPressed: () {
+                                artistList[index][2] = true;
+                                setState(() {});
+                              },
+                              icon: artistList[index][2]
+                                  ? Icon(
+                                      Icons.bookmark_rounded,
+                                      color: Colors.blueAccent,
+                                    )
+                                  : Icon(
+                                      Icons.bookmark_rounded,
+                                      color: kWhite,
+                                    )),
+                        )
                       ],
                     );
                   },
