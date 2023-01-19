@@ -51,7 +51,7 @@ class _UserPageState extends State<UserPage> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-
+    var mymusicController = ScrollController();
     return Scaffold(
         body: Padding(
             padding: outerPadding,
@@ -63,12 +63,12 @@ class _UserPageState extends State<UserPage> {
                 children: [
                   Column(
                     children: [
-                      titleBar(width * 0.3, '내 정보', withReset: false),
+                      titleBar(600, '내 정보'),
                       Container(
                           padding: const EdgeInsets.all(20),
                           decoration: outerBorder,
                           height: boxHeight,
-                          width: width * 0.3,
+                          width: 600,
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -88,7 +88,7 @@ class _UserPageState extends State<UserPage> {
                                   children: [
                                     SizedBox(
                                       // decoration: outerBorder,
-                                      width: width * 0.12,
+                                      width: 250,
                                       height: 180,
                                       child: GridView.count(
                                           crossAxisCount:
@@ -172,41 +172,45 @@ class _UserPageState extends State<UserPage> {
                                 ),
                               ])),
                       defaultSpacer,
-                      titleBar(width * 0.3, '나의 재생목록', withReset: false),
+                      titleBar(600, '나의 재생목록'),
                       Container(
                           decoration: outerBorder,
-                          width: width * 0.3,
+                          width: 600,
                           height: boxHeight - 20,
-                          child: ListView.builder(
-                            padding: defaultPadding,
-                            scrollDirection: Axis.horizontal,
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: mypageMusicList.length,
-                            itemBuilder: (BuildContext context, int idx) {
-                              return Stack(
-                                  alignment: Alignment.topRight,
-                                  children: [
-                                    playlistCard(mypageMusicList[idx]),
-                                    Positioned(
-                                        top: 3,
-                                        right: 3,
-                                        child: widget.isMyPage
-                                            ? IconButton(
-                                                onPressed: () {
-                                                  mypageMusicList.removeAt(idx);
-                                                  setState(() {});
-                                                },
-                                                icon: Icon(Icons.delete,
-                                                    color: kBlack))
-                                            : IconButton(
-                                                onPressed: () {},
-                                                icon: Icon(
-                                                    Icons.favorite_rounded,
-                                                    color: kBlack)))
-                                  ]);
-                            },
-                          )),
+                          child: RawScrollbar(
+                              controller: mymusicController,
+                              child: ListView.builder(
+                                padding: defaultPadding,
+                                controller: mymusicController,
+                                scrollDirection: Axis.horizontal,
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: mypageMusicList.length,
+                                itemBuilder: (BuildContext context, int idx) {
+                                  return Stack(
+                                      alignment: Alignment.topRight,
+                                      children: [
+                                        playlistCard(mypageMusicList[idx]),
+                                        Positioned(
+                                            top: 3,
+                                            right: 3,
+                                            child: widget.isMyPage
+                                                ? IconButton(
+                                                    onPressed: () {
+                                                      mypageMusicList
+                                                          .removeAt(idx);
+                                                      setState(() {});
+                                                    },
+                                                    icon: Icon(Icons.delete,
+                                                        color: kBlack))
+                                                : IconButton(
+                                                    onPressed: () {},
+                                                    icon: Icon(
+                                                        Icons.favorite_rounded,
+                                                        color: kBlack)))
+                                      ]);
+                                },
+                              ))),
                     ],
                   ),
                   const Spacer(),
@@ -214,12 +218,14 @@ class _UserPageState extends State<UserPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        titleBar(width * 0.6, '$name님의 취향분석 결과',
-                            withReset: false),
+                        titleBar(
+                          width * 0.6,
+                          '$name님의 취향분석 결과',
+                        ),
                         Container(
                             decoration: outerBorder,
                             width: width * 0.6,
-                            height: 600,
+                            height: 590,
                             child: Center(
                                 child: Text(
                               '취향분석 결과',

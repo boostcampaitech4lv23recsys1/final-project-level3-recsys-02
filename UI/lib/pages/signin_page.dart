@@ -14,7 +14,7 @@ class SigninPage extends StatefulWidget {
 }
 
 class _SigninPageState extends State<SigninPage> {
-  bool isStart = true;
+  bool isStart = false;
 
   late TextEditingController _emailController;
   late TextEditingController _emailCheckController;
@@ -25,6 +25,9 @@ class _SigninPageState extends State<SigninPage> {
 
   final DioClient dioClient = DioClient();
 
+  final List genreLists = [];
+  final List artistLists = [];
+
   @override
   void initState() {
     _emailController = TextEditingController();
@@ -33,7 +36,8 @@ class _SigninPageState extends State<SigninPage> {
     _nameController = TextEditingController();
     _ageController = TextEditingController();
     _genderController = TextEditingController();
-
+    getMusicGenres();
+    getArtists();
     super.initState();
   }
 
@@ -47,6 +51,18 @@ class _SigninPageState extends State<SigninPage> {
     _genderController.dispose();
 
     super.dispose();
+  }
+
+  void getMusicGenres() {
+    for (int i = 0; i < 20; i++) {
+      genreLists.add(['장르 $i', false]);
+    }
+  }
+
+  void getArtists() {
+    for (int i = 0; i < 20; i++) {
+      artistLists.add(['아티스트 $i', 'profile.png', false]);
+    }
   }
 
   Widget userInfoInput() {
@@ -204,6 +220,7 @@ class _SigninPageState extends State<SigninPage> {
   }
 
   Widget prefernceInput() {
+    var artistController = ScrollController();
     return Expanded(
         // height: 580,
         // width: MediaQuery.of(context).size.width,
@@ -212,60 +229,69 @@ class _SigninPageState extends State<SigninPage> {
       children: [
         Text('선호하시는 분위기 및 장르 5개를 선택해주세요', style: subtitleTextStyle),
         Container(
+            alignment: Alignment.center,
             margin: const EdgeInsets.only(top: 10, bottom: 20),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: outerBorder,
-            height: boxHeight - 20,
-            child: GridView.count(
+            height: boxHeight,
+            child: GridView.builder(
               scrollDirection: Axis.vertical,
-              crossAxisCount: 5,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              childAspectRatio: 1 / 0.2,
-              children: [
-                genreCard(0),
-                genreCard(0),
-                genreCard(0),
-                genreCard(0),
-                genreCard(0),
-                genreCard(0),
-                genreCard(0),
-                genreCard(0),
-                genreCard(0),
-                genreCard(0),
-                genreCard(0),
-                genreCard(0),
-                genreCard(0),
-                genreCard(0),
-                genreCard(0),
-                genreCard(0),
-                genreCard(0),
-                genreCard(0),
-                genreCard(0),
-                genreCard(0),
-              ],
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 5,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                childAspectRatio: 1 / 0.4,
+              ),
+              itemCount: genreLists.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                    decoration: outerBorder,
+                    child: Row(
+                      children: [
+                        Checkbox(
+                            value: genreLists[index][1],
+                            onChanged: (val) {
+                              genreLists[index][1] = val;
+                            }),
+                        genreCard(genreLists[index]),
+                      ],
+                    ));
+              },
             )),
         defaultSpacer,
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text('선호하시는 아티스트 5명을 선택해주세요', style: subtitleTextStyle),
             IconButton(
-                onPressed: () {}, icon: Icon(Icons.search, color: kWhite))
+                onPressed: () {},
+                icon: Icon(Icons.refresh_rounded, color: kWhite))
           ],
         ),
         Container(
             margin: const EdgeInsets.only(top: 10, bottom: 20),
             decoration: outerBorder,
             height: 210,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: 10,
-              itemBuilder: (BuildContext context, int index) {
-                return artistCard();
-              },
-            )),
+            child: RawScrollbar(
+                controller: artistController,
+                child: ListView.builder(
+                  controller: artistController,
+                  scrollDirection: Axis.horizontal,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: 10,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Stack(
+                      children: [
+                        artistCard(),
+                        Checkbox(
+                            value: false,
+                            onChanged: (val) {
+                              val = true;
+                            })
+                      ],
+                    );
+                  },
+                ))),
       ],
     ));
   }

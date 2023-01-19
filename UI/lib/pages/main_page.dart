@@ -42,9 +42,9 @@ class _MainPageState extends State<MainPage> {
   }
 
   void getUserRec() {
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 5; i++) {
       userList.add(OtherUser(
-        name: 'Name $i',
+        name: 'user $i',
         followerNum: i,
         isFollowing: false,
       ));
@@ -75,6 +75,11 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     ToastContext().init(context);
     var width = MediaQuery.of(context).size.width;
+
+    final musicController = ScrollController();
+    final albumController = ScrollController();
+    final userController = ScrollController();
+    final charController = ScrollController();
     return Scaffold(
         body: Padding(
             padding: outerPadding,
@@ -95,145 +100,165 @@ class _MainPageState extends State<MainPage> {
                               decoration: outerBorder,
                               height: boxHeight - 25,
                               width: width * 0.5,
-                              child: ListView.builder(
-                                padding: defaultPadding,
-                                scrollDirection: Axis.horizontal,
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: musicList.length,
-                                itemBuilder: (BuildContext context, int idx) {
-                                  return Stack(
-                                    alignment: Alignment.topRight,
-                                    children: [
-                                      playlistCard(musicList[idx]),
-                                      Positioned(
-                                          top: 3,
-                                          right: 3,
-                                          child: IconButton(
-                                              onPressed: () {
-                                                Toast.show(
-                                                  "'나의 재생목록'에 추가되었습니다.",
-                                                  gravity: Toast.top,
-                                                  webTexColor: kBlack,
-                                                );
-                                              },
-                                              icon: Icon(Icons.favorite_rounded,
-                                                  color: kBlack)))
-                                    ],
-                                  );
-                                },
-                              )),
+                              child: RawScrollbar(
+                                  controller: musicController,
+                                  child: ListView.builder(
+                                    padding: defaultPadding,
+                                    scrollDirection: Axis.horizontal,
+                                    controller: musicController,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemCount: musicList.length,
+                                    itemBuilder:
+                                        (BuildContext context, int idx) {
+                                      return Stack(
+                                        alignment: Alignment.topRight,
+                                        children: [
+                                          playlistCard(musicList[idx]),
+                                          Positioned(
+                                              top: 3,
+                                              right: 3,
+                                              child: IconButton(
+                                                  onPressed: () {
+                                                    Toast.show(
+                                                      "'나의 재생목록'에 추가되었습니다.",
+                                                      gravity: Toast.top,
+                                                      webTexColor: kBlack,
+                                                    );
+                                                  },
+                                                  icon: Icon(
+                                                      Icons.favorite_rounded,
+                                                      color: kBlack)))
+                                        ],
+                                      );
+                                    },
+                                  ))),
                         ]),
                     const Spacer(),
                     // 인기곡
                     Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          titleBar(width * 0.4, '인기곡', withReset: false),
+                          titleBar(width * 0.4, '인기곡'),
                           Container(
                               decoration: outerBorder,
                               width: width * 0.4,
                               height: boxHeight - 25,
-                              child: ListView.builder(
-                                padding: defaultPadding,
-                                scrollDirection: Axis.vertical,
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: 10,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Center(
-                                    child: chartCard(index + 1),
-                                  );
-                                },
-                              ))
+                              child: RawScrollbar(
+                                  controller: charController,
+                                  child: ListView.builder(
+                                    controller: charController,
+                                    padding: defaultPadding,
+                                    scrollDirection: Axis.vertical,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemCount: 10,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Center(
+                                        child: chartCard(index + 1),
+                                      );
+                                    },
+                                  )))
                         ]),
                   ]),
               defaultSpacer,
               Row(mainAxisAlignment: MainAxisAlignment.start, children: [
                 // 최신앨범
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  titleBar(width * 0.5, '최신앨범', withReset: false),
+                  titleBar(width * 0.5, '최신앨범'),
                   Container(
                       decoration: outerBorder,
                       width: width * 0.5,
                       height: boxHeight,
-                      child: ListView.builder(
-                        padding: defaultPadding,
-                        scrollDirection: Axis.horizontal,
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: 10,
-                        itemBuilder: (BuildContext context, int idx) {
-                          return GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  PageRouteBuilder(
-                                    opaque: false, // set to false
-                                    pageBuilder: (_, __, ___) =>
-                                        DetailPage(item: albumList[idx]),
-                                  ),
-                                );
-                              },
-                              child: albumCard(albumList[idx]));
-                        },
-                      ))
+                      child: RawScrollbar(
+                          controller: albumController,
+                          child: ListView.builder(
+                            controller: albumController,
+                            padding: defaultPadding,
+                            scrollDirection: Axis.horizontal,
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: 10,
+                            itemBuilder: (BuildContext context, int idx) {
+                              return GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      PageRouteBuilder(
+                                        opaque: false, // set to false
+                                        pageBuilder: (_, __, ___) =>
+                                            DetailPage(item: albumList[idx]),
+                                      ),
+                                    );
+                                  },
+                                  child: albumCard(albumList[idx]));
+                            },
+                          )))
                 ]),
                 const Spacer(),
                 // 비슷한 유저 추천
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  titleBar(width * 0.4, '친구 추천'),
+                  titleBar(width * 0.4, '친구 추천', isReset: true),
                   Container(
                       decoration: outerBorder,
                       height: boxHeight,
                       width: width * 0.4,
-                      child: ListView.builder(
-                        padding: defaultPadding,
-                        scrollDirection: Axis.horizontal,
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: userList.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Stack(
-                              alignment: Alignment.bottomCenter,
-                              children: [
-                                // Widget userCard(image, name, follower) {
-                                userCard(
-                                    userList[index].image,
-                                    userList[index].name,
-                                    userList[index].followerNum),
-                                Positioned(
-                                  bottom: 15,
-                                  child: userList[index].isFollowing
-                                      ? OutlinedButton(
-                                          onPressed: () {
-                                            userList[index].isFollowing = false;
-                                            setState(() {});
-                                          },
-                                          style: OutlinedButton.styleFrom(
-                                            backgroundColor: kWhite,
-                                            side: whiteBorder,
-                                          ),
-                                          child: Text('팔로잉',
-                                              style: TextStyle(
-                                                  color: kBlack,
-                                                  fontSize: 12.0),
-                                              textAlign: TextAlign.center))
-                                      : OutlinedButton(
-                                          onPressed: () {
-                                            userList[index].isFollowing = true;
-                                            setState(() {});
-                                          },
-                                          style: OutlinedButton.styleFrom(
-                                            backgroundColor: Colors.transparent,
-                                            side: whiteBorder,
-                                          ),
-                                          child: Text('팔로우',
-                                              style: defaultTextStyle,
-                                              textAlign: TextAlign.center)),
-                                )
-                              ]);
-                        },
-                      )),
+                      child: RawScrollbar(
+                          controller: userController,
+                          child: ListView.builder(
+                            padding: defaultPadding,
+                            controller: userController,
+                            scrollDirection: Axis.horizontal,
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: userList.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Stack(
+                                  alignment: Alignment.bottomCenter,
+                                  children: [
+                                    // Widget userCard(image, name, follower) {
+                                    userCard(
+                                        userList[index].image,
+                                        userList[index].name,
+                                        userList[index].followerNum),
+                                    Positioned(
+                                      bottom: 15,
+                                      child: userList[index].isFollowing
+                                          ? OutlinedButton(
+                                              onPressed: () {
+                                                userList[index].isFollowing =
+                                                    false;
+                                                setState(() {});
+                                              },
+                                              style: OutlinedButton.styleFrom(
+                                                backgroundColor: kWhite,
+                                                side: whiteBorder,
+                                              ),
+                                              child: Text('팔로잉',
+                                                  style: TextStyle(
+                                                      color: kBlack,
+                                                      fontSize: 12.0),
+                                                  textAlign: TextAlign.center))
+                                          : OutlinedButton(
+                                              onPressed: () {
+                                                userList[index].isFollowing =
+                                                    true;
+                                                setState(() {});
+                                              },
+                                              style: OutlinedButton.styleFrom(
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                side: whiteBorder,
+                                              ),
+                                              child: Text('팔로우',
+                                                  style: defaultTextStyle,
+                                                  textAlign: TextAlign.center)),
+                                    )
+                                  ]);
+                            },
+                          ))),
                 ]),
               ]),
               const Spacer(),
