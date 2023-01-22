@@ -14,7 +14,7 @@ class SigninPage extends StatefulWidget {
 }
 
 class _SigninPageState extends State<SigninPage> {
-  bool isStart = false;
+  bool isStart = true;
 
   late TextEditingController _emailController;
   late TextEditingController _emailCheckController;
