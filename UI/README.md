@@ -19,4 +19,10 @@ Some steps to run a Flutter Project
 
 - 'UI/screenshots' (last update 22/01/19)
 
-
+- 페이지 목록
+    - home
+    - login
+    - signin
+    - main
+    - mypage/0 : 본인인 경우
+    - mypage/1 : 다른 사람의 페이지인 경우
