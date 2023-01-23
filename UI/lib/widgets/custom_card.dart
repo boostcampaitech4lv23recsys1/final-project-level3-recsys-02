@@ -47,7 +47,7 @@ Widget artistCard(item) {
 }
 
 Widget userCard(image, name, follower) {
-  String image = 'profile.png';
+  String image = 'assets/profile.png';
 
   return Container(
     width: 160,
@@ -71,36 +71,10 @@ Widget userCard(image, name, follower) {
   );
 }
 
-Widget playlistCard(Item item) {
-  return Container(
-      //decoration: outerBorder,
-      width: 170,
-      padding: kPadding,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // image
-          ClipRRect(
-            borderRadius: kBorder,
-            child: Image.asset(
-              item.image,
-              fit: BoxFit.cover,
-            ),
-          ),
-          defaultSpacer,
-          // track name
-          Text(item.name, style: subtitleTextStyle, textAlign: TextAlign.start),
-          // artist name
-          Text(item.artistName,
-              style: contentsTextStyle, textAlign: TextAlign.start),
-        ],
-      ));
-}
-
-Widget albumCard(Item item) {
+Widget trackCoverCard(Item item) {
   return Container(
     //decoration: outerBorder,
-    width: 170,
+    width: 150,
     padding: kPadding,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,19 +93,12 @@ Widget albumCard(Item item) {
         // artist name
         Text(item.artistName,
             style: contentsTextStyle, textAlign: TextAlign.start),
-        // 발매일
-        Text(item.release,
-            style: contentsTextStyle, textAlign: TextAlign.start),
       ],
     ),
   );
 }
 
-Widget chartCard(int rank) {
-  String albumimage = 'album.png';
-  String trackname = 'Track Name';
-  String artistname = 'Artist Name';
-
+Widget trackCard(Item item, {bool isRank = false, int index = 1}) {
   return Container(
     // decoration: outerBorder,
     height: titleHeight * (1.5),
@@ -140,34 +107,93 @@ Widget chartCard(int rank) {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
-          '$rank',
-          style: subtitleTextStyle,
-        ),
-        defaultSpacer,
         // image
         ClipRect(
-          child: Image.asset(albumimage),
+          child: Image.asset(
+            item.image,
+          ),
         ),
+        defaultSpacer,
+        isRank
+            ? Text(
+                '$index',
+                style: subtitleTextStyle,
+              )
+            : Text(''),
         defaultSpacer,
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // track name
             Text(
-              trackname,
+              item.name,
               style: contentsTextStyle,
               textAlign: TextAlign.start,
             ),
-            Text(artistname,
+            Text(item.artistName,
                 style: defaultTextStyle, textAlign: TextAlign.start),
           ],
         ),
         const Spacer(),
 
         // 재생시간e
-        Text('3:44', style: defaultTextStyle, textAlign: TextAlign.start),
+        Text(duration2String(item.duration),
+            style: defaultTextStyle, textAlign: TextAlign.start),
         defaultSpacer
+      ],
+    ),
+  );
+}
+
+Widget playlistCard(Item item) {
+  bool isLike = true;
+  return Container(
+    // decoration: outerBorder,
+    height: titleHeight * (1.5),
+    padding: kPadding,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // image
+        ClipRect(
+          child: Image.asset(
+            item.image,
+          ),
+        ),
+        defaultSpacer,
+        Text(
+          item.name,
+          style: contentsTextStyle,
+          textAlign: TextAlign.start,
+        ),
+
+        const Spacer(),
+
+        // 재생시간e
+        Text(duration2String(item.duration),
+            style: defaultTextStyle, textAlign: TextAlign.start),
+        defaultSpacer,
+
+        // 좋아요
+        IconButton(
+            onPressed: () {
+              if (isLike) {
+                isLike = false;
+              } else {
+                isLike = true;
+              }
+            },
+            icon: isLike
+                ? Icon(
+                    Icons.favorite,
+                    color: kWhite,
+                  )
+                : Icon(
+                    Icons.favorite_outline_rounded,
+                    color: kWhite,
+                  )),
+        defaultSpacer,
       ],
     ),
   );

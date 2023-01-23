@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:ui/constants.dart';
 import 'package:ui/models/user.dart';
 import 'package:ui/pages/main_page.dart';
@@ -60,7 +61,7 @@ class _SigninPageState extends State<SigninPage> {
   }
 
   void getArtists() {
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 16; i++) {
       artistList.add(['아티스트 $i', 'profile.png', false]);
     }
   }
@@ -77,7 +78,7 @@ class _SigninPageState extends State<SigninPage> {
           children: [
             // 이메일 입력
             Text(
-              '이메일이 어떻게 되시나요?',
+              '아이디',
               style: subtitleTextStyle,
               textAlign: TextAlign.start,
             ),
@@ -98,32 +99,9 @@ class _SigninPageState extends State<SigninPage> {
               ),
             ),
             defaultSpacer,
-            // 이메일 다시 입력
-            Text(
-              '이메일이 어떻게 되시나요?',
-              style: subtitleTextStyle,
-              textAlign: TextAlign.start,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Container(
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.all(10),
-              width: MediaQuery.of(context).size.width,
-              height: titleHeight,
-              decoration: outerBorder,
-              child: TextField(
-                decoration: InputDecoration(
-                    hintStyle: hintTextStyle, hintText: '이메일을 입력하세요.'),
-                controller: _emailCheckController,
-                style: TextStyle(color: kDarkGrey),
-              ),
-            ),
-            defaultSpacer,
             // 비밀번호 입력
             Text(
-              '비밀번호를 만드세요.',
+              '비밀번호',
               style: subtitleTextStyle,
               textAlign: TextAlign.start,
             ),
@@ -138,7 +116,7 @@ class _SigninPageState extends State<SigninPage> {
               decoration: outerBorder,
               child: TextField(
                 decoration: InputDecoration(
-                    hintStyle: hintTextStyle, hintText: '비밀번호를 만드세요.'),
+                    hintStyle: hintTextStyle, hintText: '비밀번호를 입력하세요.'),
                 controller: _pwdController,
                 style: TextStyle(color: kDarkGrey),
               ),
@@ -146,7 +124,7 @@ class _SigninPageState extends State<SigninPage> {
             defaultSpacer,
             // 사용자 이름 입력
             Text(
-              '어떤 사용자 이름을 사용하시겠어요?.',
+              '프로필 이름',
               style: subtitleTextStyle,
               textAlign: TextAlign.start,
             ),
@@ -169,7 +147,7 @@ class _SigninPageState extends State<SigninPage> {
             defaultSpacer,
             // 나이 입력
             Text(
-              '나이가 어떻게 되사나요?',
+              '나이',
               style: subtitleTextStyle,
               textAlign: TextAlign.start,
             ),
@@ -184,7 +162,7 @@ class _SigninPageState extends State<SigninPage> {
               decoration: outerBorder,
               child: TextField(
                 decoration: InputDecoration(
-                    hintStyle: hintTextStyle, hintText: '나이를 입력하세요.'),
+                    hintStyle: hintTextStyle, hintText: '(예시) 24'),
                 controller: _ageController,
                 style: TextStyle(color: kDarkGrey),
               ),
@@ -192,7 +170,7 @@ class _SigninPageState extends State<SigninPage> {
             defaultSpacer,
             // 성별 입력
             Text(
-              '성별이 무엇인가요? (1: 남성, 2: 여성, 3: 기타, 4: 답변거부) 확인하세요.',
+              '성별 (1: 남성, 2: 여성, 3: 기타)',
               style: subtitleTextStyle,
               textAlign: TextAlign.start,
             ),
@@ -212,7 +190,23 @@ class _SigninPageState extends State<SigninPage> {
                 style: TextStyle(color: kDarkGrey),
               ),
             ),
-            defaultSpacer
+            defaultSpacer,
+            // 성별 입력
+            Text(
+              '거주국가',
+              style: subtitleTextStyle,
+              textAlign: TextAlign.start,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              width: MediaQuery.of(context).size.width,
+              height: titleHeight,
+              decoration: outerBorder,
+            ),
           ],
         )
       ],
@@ -222,100 +216,92 @@ class _SigninPageState extends State<SigninPage> {
   Widget prefernceInput() {
     var artistController = ScrollController();
     return Expanded(
-        // height: 580,
-        // width: MediaQuery.of(context).size.width,
-        // decoration: outerBorder,
-        child: ListView(
-      children: [
-        Text('선호하시는 분위기 및 장르 5개를 선택해주세요', style: subtitleTextStyle),
-        Container(
-            alignment: Alignment.center,
-            margin: const EdgeInsets.only(top: 10, bottom: 20),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: outerBorder,
-            height: boxHeight,
-            child: GridView.builder(
-              scrollDirection: Axis.vertical,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 5,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-                childAspectRatio: 1 / 0.3,
-              ),
-              itemCount: genreLists.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                    decoration: outerBorder,
-                    child: Row(
-                      children: [
-                        GestureDetector(
-                            child: Container(
-                                width: 25,
-                                decoration: BoxDecoration(
-                                  color: genreLists[index][1],
-                                  borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(8.0),
-                                      bottomLeft: Radius.circular(8.0)),
-                                )),
-                            onTap: () {
-                              genreLists[index][1] = Colors.blueAccent;
-                              setState(() {});
-                            }),
-                        genreCard(genreLists[index]),
-                      ],
-                    ));
-              },
-            )),
-        defaultSpacer,
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Text('선호하시는 아티스트 5명을 선택해주세요', style: subtitleTextStyle),
-            IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.refresh_rounded, color: kWhite))
-          ],
-        ),
-        Container(
-            margin: const EdgeInsets.only(top: 10, bottom: 20),
-            decoration: outerBorder,
-            height: 190,
-            alignment: Alignment.center,
-            child: RawScrollbar(
-                controller: artistController,
-                child: ListView.builder(
-                  controller: artistController,
-                  scrollDirection: Axis.horizontal,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: artistList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Stack(
-                      children: [
-                        artistCard(artistList[index]),
-                        Positioned(
-                          top: 3,
-                          left: 3,
-                          child: IconButton(
-                              onPressed: () {
-                                artistList[index][2] = true;
-                                setState(() {});
-                              },
-                              icon: artistList[index][2]
-                                  ? Icon(
-                                      Icons.bookmark_rounded,
-                                      color: Colors.blueAccent,
-                                    )
-                                  : Icon(
-                                      Icons.bookmark_rounded,
-                                      color: kWhite,
-                                    )),
-                        )
-                      ],
-                    );
-                  },
-                ))),
-      ],
-    ));
+        child: ListView(children: [
+      Text('선호하시는 분위기 및 장르 최소 3개를 선택해주세요', style: subtitleTextStyle),
+      Container(
+          height: boxHeight,
+          alignment: Alignment.center,
+          margin: const EdgeInsets.all(10),
+          // decoration: outerBorder,
+          child: GridView.builder(
+            scrollDirection: Axis.vertical,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 5,
+              mainAxisSpacing: 15,
+              crossAxisSpacing: 15,
+              childAspectRatio: 1 / 0.2,
+            ),
+            itemCount: genreLists.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                  decoration: outerBorder,
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                          child: Container(
+                              width: 25,
+                              decoration: BoxDecoration(
+                                color: genreLists[index][1],
+                                borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(6.0),
+                                    bottomLeft: Radius.circular(6.0)),
+                              )),
+                          onTap: () {
+                            genreLists[index][1] =
+                                Color.fromARGB(255, 255, 146, 127);
+                            setState(() {});
+                          }),
+                      genreCard(genreLists[index]),
+                    ],
+                  ));
+            },
+          )),
+      defaultSpacer,
+      Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text('선호하시는 아티스트 최소 3명을 선택해주세요', style: subtitleTextStyle),
+          IconButton(
+              onPressed: () {},
+              icon: Icon(Icons.refresh_rounded, color: kWhite))
+        ],
+      ),
+      Container(
+          margin: const EdgeInsets.all(10),
+          decoration: outerBorder,
+          height: 350,
+          alignment: Alignment.center,
+          child: AlignedGridView.count(
+            controller: artistController,
+            crossAxisCount: 8,
+            mainAxisSpacing: 4,
+            crossAxisSpacing: 4,
+            itemCount: artistList.length,
+            itemBuilder: (context, index) {
+              return Stack(
+                children: [
+                  artistCard(artistList[index]),
+                  Positioned(
+                    top: 3,
+                    left: 3,
+                    child: IconButton(
+                        onPressed: () {
+                          artistList[index][2] = true;
+                          setState(() {});
+                        },
+                        icon: artistList[index][2]
+                            ? Icon(Icons.bookmark_rounded,
+                                color: Color.fromARGB(255, 255, 146, 127))
+                            : Icon(
+                                Icons.bookmark_rounded,
+                                color: kWhite,
+                              )),
+                  )
+                ],
+              );
+            },
+          )),
+    ]));
   }
 
   @override
@@ -325,7 +311,7 @@ class _SigninPageState extends State<SigninPage> {
 
     return Scaffold(
         body: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 60),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 60),
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -334,7 +320,7 @@ class _SigninPageState extends State<SigninPage> {
                   ),
                   Container(
                       width: width * 0.7,
-                      height: height * 0.75,
+                      height: height * 0.8,
                       decoration: outerBorder,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 45, vertical: 20),
@@ -380,18 +366,18 @@ class _SigninPageState extends State<SigninPage> {
                                           isStart = false;
                                           setState(() {});
 
-                                          User userInfo = User(
-                                            email: _emailController.text,
-                                            name: _nameController.text,
-                                            pwd: _pwdController.text,
-                                            age: int.parse(_ageController.text),
-                                            gender: int.parse(
-                                                _genderController.text),
-                                            profileImage: 'assets/profile.png',
-                                          );
-                                          User? retrievedUser = await dioClient
-                                              .createUser(user: userInfo);
-                                          debugPrint(retrievedUser.toString());
+                                          // User userInfo = User(
+                                          //   email: _emailController.text,
+                                          //   name: _nameController.text,
+                                          //   pwd: _pwdController.text,
+                                          //   age: int.parse(_ageController.text),
+                                          //   gender: int.parse(
+                                          //       _genderController.text),
+                                          //   profileImage: 'assets/profile.png',
+                                          // );
+                                          // User? retrievedUser = await dioClient
+                                          //     .createUser(user: userInfo);
+                                          // debugPrint(retrievedUser.toString());
                                         },
                                       )),
                                 ],

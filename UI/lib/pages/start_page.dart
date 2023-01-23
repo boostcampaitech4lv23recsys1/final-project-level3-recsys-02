@@ -143,6 +143,7 @@ class _StartPageState extends State<StartPage> {
                 ),
                 const Spacer(),
                 footer(),
+                defaultSpacer,
               ],
             )));
   }
