@@ -17,6 +17,6 @@ Some steps to run a Flutter Project
 
 ## Screenshots
 
-- 'UI/screenshots' (last update 22/01/19)
+- 'UI/screenshots' (last update 22/01/24)
 
 
