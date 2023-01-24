@@ -38,7 +38,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   void getRecList() {
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 9; i++) {
       recList.add(Item(
           image: 'assets/album.png',
           name: 'Track Name $i',
@@ -57,13 +57,15 @@ class _MainPageState extends State<MainPage> {
 
   Widget musicRank() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      titleBar('인기곡'),
+      titleBar(
+        '인기곡',
+      ),
       SizedBox(
           height: boxHeight,
-          width: width,
+          width: width * 0.8,
           child: AlignedGridView.count(
             controller: charController,
-            crossAxisCount: 4,
+            crossAxisCount: 3,
             mainAxisSpacing: 4,
             crossAxisSpacing: 4,
             itemCount: musicList.length,
@@ -91,10 +93,10 @@ class _MainPageState extends State<MainPage> {
       titleBar('빠른 선곡', isReset: true),
       SizedBox(
           height: boxHeight,
-          width: width,
+          width: width * 0.8,
           child: AlignedGridView.count(
             controller: fastSelectionController,
-            crossAxisCount: 4,
+            crossAxisCount: 3,
             mainAxisSpacing: 4,
             crossAxisSpacing: 4,
             itemCount: musicList.length,
@@ -117,14 +119,16 @@ class _MainPageState extends State<MainPage> {
 
   Widget recommendation(String title) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      titleBar(title),
+      titleBar(
+        title,
+      ),
       Container(
           decoration: outerBorder,
-          width: width,
+          width: width * 0.8,
           height: boxHeight,
           child: AlignedGridView.count(
             crossAxisCount: 1,
-            mainAxisSpacing: 15,
+            mainAxisSpacing: 20,
             controller: recController,
             padding: defaultPadding,
             scrollDirection: Axis.horizontal,
@@ -153,43 +157,38 @@ class _MainPageState extends State<MainPage> {
     ToastContext().init(context);
     width = MediaQuery.of(context).size.width;
     return Scaffold(
+        appBar: mainAppBar(context),
         body: Container(
             padding: outerPadding,
-            child: Column(
-              children: [
-                customHeader(context, true),
-                defaultSpacer,
-                Expanded(
-                    child: WebSmoothScroll(
-                  controller: _mainScrollCotroller,
-                  scrollOffset: 100,
-                  animationDuration: 600,
-                  curve: Curves.easeInOutCirc,
-                  child: SingleChildScrollView(
-                    physics: const NeverScrollableScrollPhysics(),
-                    controller: _mainScrollCotroller,
-                    child: ListView(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      children: [
-                        fastSelection(),
-                        defaultSpacer,
-                        musicRank(),
-                        defaultSpacer,
-                        recommendation('00 장르를 좋아한다면'),
-                        defaultSpacer,
-                        recommendation('00 아티스트를 좋아한다면'),
-                        defaultSpacer,
-                        recommendation('00 노래를 좋아한다면'),
-                        defaultSpacer,
-                        footer(),
-                        defaultSpacer,
-                        defaultSpacer,
-                      ],
-                    ),
-                  ),
-                ))
-              ],
+            alignment: Alignment.topCenter,
+            child: WebSmoothScroll(
+              controller: _mainScrollCotroller,
+              scrollOffset: 100,
+              animationDuration: 600,
+              curve: Curves.easeInOutCirc,
+              child: SingleChildScrollView(
+                physics: const NeverScrollableScrollPhysics(),
+                controller: _mainScrollCotroller,
+                child: ListView(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  children: [
+                    fastSelection(),
+                    defaultSpacer,
+                    musicRank(),
+                    defaultSpacer,
+                    recommendation('00 장르를 좋아한다면'),
+                    defaultSpacer,
+                    recommendation('00 아티스트를 좋아한다면'),
+                    defaultSpacer,
+                    recommendation('00 노래를 좋아한다면'),
+                    defaultSpacer,
+                    footer(),
+                    defaultSpacer,
+                    defaultSpacer,
+                  ],
+                ),
+              ),
             )));
   }
 }

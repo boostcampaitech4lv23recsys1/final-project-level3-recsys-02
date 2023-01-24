@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 bool isLogin = false;
-double boxHeight = 250.0;
+double boxHeight = 240.0;
 
 BorderRadius kBorder = BorderRadius.circular(12);
 
@@ -35,7 +35,7 @@ const buttonWidth = 120.0;
 
 const Widget defaultSpacer = SizedBox(
   width: 20,
-  height: 20,
+  height: 30,
 );
 BorderSide whiteBorder =
     BorderSide(color: kWhite, strokeAlign: StrokeAlign.outside);
@@ -49,7 +49,7 @@ BoxDecoration outerBorder = BoxDecoration(
     border: Border.all(color: Colors.white, width: 1.5),
     shape: BoxShape.rectangle,
     borderRadius: const BorderRadius.all(Radius.circular(8)));
-EdgeInsets outerPadding = const EdgeInsets.only(top: 40, left: 80, right: 80);
+EdgeInsets outerPadding = const EdgeInsets.only(top: 40, left: 200, right: 200);
 
 void getSession() async {
   final pref = await SharedPreferences.getInstance();

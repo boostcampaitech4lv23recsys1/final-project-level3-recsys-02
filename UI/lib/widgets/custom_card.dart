@@ -62,7 +62,9 @@ Widget userCard(image, name, follower) {
             backgroundImage: AssetImage(image),
           ),
         ),
-        defaultSpacer,
+        SizedBox(
+          height: 10,
+        ),
         Text(name, style: contentsTextStyle, textAlign: TextAlign.start),
         Text('팔로워 $follower 명',
             style: defaultTextStyle, textAlign: TextAlign.start),
@@ -87,9 +89,14 @@ Widget trackCoverCard(Item item) {
             fit: BoxFit.cover,
           ),
         ),
-        defaultSpacer,
+        SizedBox(
+          height: 20,
+        ),
         // track name
         Text(item.name, style: subtitleTextStyle, textAlign: TextAlign.start),
+        SizedBox(
+          height: 10,
+        ),
         // artist name
         Text(item.artistName,
             style: contentsTextStyle, textAlign: TextAlign.start),

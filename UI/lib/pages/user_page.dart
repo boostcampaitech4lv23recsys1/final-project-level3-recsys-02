@@ -182,7 +182,7 @@ class _UserPageState extends State<UserPage> {
       Container(
           width: width,
           decoration: outerBorder,
-          height: boxHeight,
+          height: boxHeight + 15,
           child: AlignedGridView.count(
             crossAxisCount: 1,
             mainAxisSpacing: 15,
@@ -238,11 +238,10 @@ class _UserPageState extends State<UserPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          titleBar(
-            '$name님의 취향분석 결과',
-          ),
+          titleBar('$name님의 취향분석 결과'),
           Container(
               decoration: outerBorder,
+              width: width,
               height: 590,
               child: Center(
                   child: Text(
@@ -257,55 +256,50 @@ class _UserPageState extends State<UserPage> {
     width = MediaQuery.of(context).size.width;
 
     return Scaffold(
+        appBar: mypagenAppBar(context),
         body: Container(
             // width: width,
             // height: 400,
             padding: outerPadding,
-            child: Column(
-              children: [
-                customHeader(context, false),
-                defaultSpacer,
-                Expanded(
-                    child: WebSmoothScroll(
-                  controller: _mainScrollCotroller,
-                  scrollOffset: 100,
-                  animationDuration: 600,
-                  curve: Curves.easeInOutCirc,
-                  child: SingleChildScrollView(
-                    physics: const NeverScrollableScrollPhysics(),
-                    controller: _mainScrollCotroller,
-                    child: ListView(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
+            child: Container(
+                child: WebSmoothScroll(
+              controller: _mainScrollCotroller,
+              scrollOffset: 100,
+              animationDuration: 600,
+              curve: Curves.easeInOutCirc,
+              child: SingleChildScrollView(
+                physics: const NeverScrollableScrollPhysics(),
+                controller: _mainScrollCotroller,
+                child: ListView(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  children: [
+                    Container(
+                        child: Row(
                       children: [
-                        Container(
-                            child: Row(
-                          children: [
-                            //내정보
-                            profile(),
-                            defaultSpacer,
-                            defaultSpacer,
-                            // 내 플레이리스트
-                            Expanded(
-                              child: userPlaylist(),
-                            )
-                          ],
-                        )),
-                        defaultSpacer,
-                        // 나와 비슷한 유저 추천
-                        userRecommendation(),
-                        defaultSpacer,
-                        // 취향분석
-                        userAnalyze(),
-                        defaultSpacer,
-                        footer(),
+                        //내정보
+                        profile(),
                         defaultSpacer,
                         defaultSpacer,
+                        // 내 플레이리스트
+                        Expanded(
+                          child: userPlaylist(),
+                        )
                       ],
-                    ),
-                  ),
-                ))
-              ],
-            )));
+                    )),
+                    defaultSpacer,
+                    // 나와 비슷한 유저 추천
+                    userRecommendation(),
+                    defaultSpacer,
+                    // 취향분석
+                    userAnalyze(),
+                    defaultSpacer,
+                    footer(),
+                    defaultSpacer,
+                    defaultSpacer,
+                  ],
+                ),
+              ),
+            ))));
   }
 }
