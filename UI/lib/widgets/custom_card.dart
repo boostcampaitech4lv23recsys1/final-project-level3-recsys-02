@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ui/constants.dart';
 import 'package:ui/models/item.dart';
+import 'package:ui/models/user.dart';
 
 Widget sampleCard() {
   return Card(
@@ -46,7 +47,7 @@ Widget artistCard(item) {
       ]));
 }
 
-Widget userCard(image, name, follower) {
+Widget userCoverCard(image, name, follower) {
   String image = 'assets/profile.png';
 
   return Container(
@@ -68,6 +69,48 @@ Widget userCard(image, name, follower) {
         Text(name, style: contentsTextStyle, textAlign: TextAlign.start),
         Text('팔로워 $follower 명',
             style: defaultTextStyle, textAlign: TextAlign.start),
+      ],
+    ),
+  );
+}
+
+Widget userCard(OtherUser otherUser) {
+  String image = 'assets/profile.png';
+
+  return Container(
+    // decoration: outerBorder,
+    height: titleHeight * (1.5),
+    padding: kPadding,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // image
+        ClipRect(
+          child: Image.asset(image),
+        ),
+        defaultSpacer,
+        defaultSpacer,
+        Text(
+          otherUser.name,
+          style: contentsTextStyle,
+          textAlign: TextAlign.start,
+        ),
+        Spacer(),
+        TextButton(
+          onPressed: () {},
+          child: otherUser.isFollowing
+              ? Text(
+                  '팔로잉',
+                  style: contentsTextStyle,
+                  textAlign: TextAlign.start,
+                )
+              : Text(
+                  '팔로우',
+                  style: contentsTextStyle,
+                  textAlign: TextAlign.start,
+                ),
+        )
       ],
     ),
   );
