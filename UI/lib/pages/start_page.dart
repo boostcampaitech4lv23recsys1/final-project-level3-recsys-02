@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ui/constants.dart';
 import 'package:ui/pages/login_page.dart';
-import 'package:ui/widgets/custom_header.dart';
 import 'package:ui/widgets/footer.dart';
 
 class StartPage extends StatefulWidget {
@@ -35,17 +33,11 @@ class _StartPageState extends State<StartPage> {
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          MaterialButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/main');
-              },
-              child: Container(
-                  width: 180,
-                  height: titleHeight,
-                  color: kWhite,
-                  child: Image.asset(
-                    'assets/logo2.png',
-                  ))),
+          SizedBox(
+              height: titleHeight * 2,
+              child: Image.asset(
+                'assets/logo.png',
+              )),
           const Spacer(),
           isLogin
               ? Row(children: [
@@ -130,17 +122,11 @@ class _StartPageState extends State<StartPage> {
               children: [
                 startHeader(), defaultSpacer,
                 // 서비스 개요
-                Stack(
-                  alignment: Alignment.bottomRight,
-                  children: [
-                    Container(
-                        decoration: outerBorder,
-                        height: 600,
-                        width: width,
-                        child: Center(
-                            child: Text('서비스개요', style: titleTextStyle))),
-                  ],
-                ),
+                Container(
+                    decoration: outerBorder,
+                    height: 600,
+                    width: width,
+                    child: Center(child: Text('서비스개요', style: titleTextStyle))),
                 const Spacer(),
                 footer(),
                 defaultSpacer,

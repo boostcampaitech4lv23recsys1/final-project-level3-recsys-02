@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:ui/constants.dart';
 import 'package:ui/models/item.dart';
-import 'package:ui/widgets/custom_card.dart';
 
 class DetailPage extends StatefulWidget {
   const DetailPage({super.key, required this.item});

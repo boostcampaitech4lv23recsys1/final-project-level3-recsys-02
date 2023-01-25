@@ -315,8 +315,11 @@ class _SigninPageState extends State<SigninPage> {
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    'logo.png',
+                  SizedBox(
+                    height: 100,
+                    child: Image.asset(
+                      'logo.png',
+                    ),
                   ),
                   Container(
                       width: width * 0.7,
