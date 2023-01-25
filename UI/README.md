@@ -11,12 +11,10 @@ Some steps to run a Flutter Project
 
 - [Install Flutter to VS Code](https://docs.flutter.dev/get-started/editor?tab=vscode)
 
-- Then go to your flutter project folder and run 'flutter run'
-
-- Choose '[2] Chrome' to run this project
+- 'cd ui' then 'flutter run -d chrome'
 
 ## Screenshots
 
-- 'UI/screenshots' (last update 22/01/24)
+- 'UI/screenshots' (last update 22/01/25)
 
 
