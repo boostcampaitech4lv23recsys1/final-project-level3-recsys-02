@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ui/constants.dart';
 import 'package:ui/models/item.dart';
 import 'package:ui/models/user.dart';
+import 'package:ui/widgets/follow_list.dart';
 import 'package:ui/widgets/footer.dart';
 import 'package:ui/widgets/custom_header.dart';
 import 'package:ui/widgets/custom_card.dart';
@@ -85,15 +86,15 @@ class _UserPageState extends State<UserPage> {
         Container(
           width: width * 0.25,
           height: boxHeight,
-          padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
           decoration: outerBorder,
           child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Container(
+            SizedBox(
               width: 160,
               height: 160,
               child: CircleAvatar(
                 backgroundColor: kBlack,
-                backgroundImage: AssetImage('assets/profile.png'),
+                backgroundImage: const AssetImage('assets/profile.png'),
               ),
             ),
             defaultSpacer,
@@ -104,7 +105,17 @@ class _UserPageState extends State<UserPage> {
               children: [
                 Text('$name 님', style: titleTextStyle),
                 ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        PageRouteBuilder(
+                          opaque: false, // set to false
+                          pageBuilder: (_, __, ___) => FollowListPage(
+                            itemList: ['a', 'b', 'c'], // following,
+                            isFollowing: true,
+                          ),
+                        ),
+                      );
+                    },
                     style: OutlinedButton.styleFrom(
                         backgroundColor: Colors.transparent,
                         elevation: 0,
@@ -112,7 +123,17 @@ class _UserPageState extends State<UserPage> {
                     child: Text('♥  팔로잉         $followingNum 명',
                         style: contentsTextStyle)),
                 ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        PageRouteBuilder(
+                          opaque: false, // set to false
+                          pageBuilder: (_, __, ___) => FollowListPage(
+                            itemList: ['a', 'b', 'c'], // follower,
+                            isFollowing: false,
+                          ),
+                        ),
+                      );
+                    },
                     style: OutlinedButton.styleFrom(
                         backgroundColor: Colors.transparent,
                         elevation: 0,
@@ -195,7 +216,7 @@ class _UserPageState extends State<UserPage> {
             itemBuilder: (BuildContext context, int index) {
               return Stack(alignment: Alignment.bottomCenter, children: [
                 // Widget userCard(image, name, follower) {
-                userCard(userList[index].image, userList[index].name,
+                userCoverCard(userList[index].image, userList[index].name,
                     userList[index].followerNum),
                 Positioned(
                   bottom: 10,
