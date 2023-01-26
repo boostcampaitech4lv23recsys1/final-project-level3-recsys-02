@@ -53,7 +53,9 @@ class userInfo(BaseModel):
 @app.get('/user')
 def get_user_table():
     query = f"SELECT * FROM user_info;"
-    return pd.read_sql(query, db_connect)
+    test = pd.read_sql(query, db_connect)
+    print(test)
+    return test.to_string()
 
 @app.get('/track')
 def get_track_table():
