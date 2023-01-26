@@ -139,11 +139,17 @@ async def get_profiles(user_id: str):
         values = cur.fetchall()[0]
 
     info = userInfo()
-    info.name = values[0]
+    info.user_name = values[0]
+    info.password = values[1]
     info.realname = values[2]
-    info.following = values[10]
-    info.follower = values[11]
-    info.open = values[-1]
+    info.image = values[3]
+    info.country = values[4]
+    info.age = values[5]
+    info.gender = values[6]
+    info.playcount = values[7]
+    info.following = values[8]
+    info.follower = values[9]
+    info.result = values[10]
 
     return info
 
