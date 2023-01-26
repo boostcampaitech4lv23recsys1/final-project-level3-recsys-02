@@ -45,8 +45,8 @@ class userInfo(BaseModel):
     age: int
     gender: int
     playcount: int
-    following: list[str]
-    follower: list[str]
+    following: list
+    follower: list
     result: str
 
 
@@ -73,7 +73,7 @@ def login_user(user: User) -> userInfo:
 
 
 @app.post('/signin', description='회원가입')
-def signin_user(userInfo: userInfo, tags: list[str], artists: list[str]):
+def signin_user(userInfo: userInfo, tags: list, artists: list):
     # insert user personal information
     user_query = f"INSERT INTO user_info (user_name, realname, password, age, gender, country, playcount, follower, following) \
             VALUES ('{userInfo.name}', '{userInfo.realname}', '{userInfo.password}', \
@@ -184,7 +184,7 @@ def add_interaction(input_1: userInfo, input_2: trackInfo, option: ops):
 if __name__ == "__main__":
     db_connect = psycopg2.connect(
         user="myuser",
-        password="0000",
+        password="mypassword",
         host="localhost",
         port=5432,
         database="mydatabase",
