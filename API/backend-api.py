@@ -37,7 +37,7 @@ class User(BaseModel):
 
 
 class userInfo(BaseModel):
-    name: str  # id
+    user_name: str  # id
     password: str
     realname: str
     image: str
@@ -69,7 +69,7 @@ def login_user(user: User) -> userInfo:
 
     if user.pwd == user_df['password']: 
         return userInfo(
-            name=user_df['name'],
+            user_name=user_df['user_name'],
             password=user_df['password'],
             realname =user_df['realname'],
             image =user_df['image'],
@@ -88,7 +88,7 @@ def login_user(user: User) -> userInfo:
 def signin_user(userInfo: userInfo, tags: list, artists: list):
     # insert user personal information
     user_query = f"INSERT INTO user_info (user_name, realname, password, age, gender, country, playcount, follower, following) \
-            VALUES ('{userInfo.name}', '{userInfo.realname}', '{userInfo.password}', \
+            VALUES ('{userInfo.user_name}', '{userInfo.realname}', '{userInfo.password}', \
                 {userInfo.age}, {userInfo.gender}, '{userInfo.country}', \
                 {userInfo.playcount}, {userInfo.follower},{userInfo.following}) \
             RETURNING success;"
@@ -121,7 +121,7 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
     user_tracks = artist_tracks
     for ut in user_tracks:
         inter_query = f"INSERT INTO user_info (user_name, track_name, album_name, artist_name, timestamp_uts, loved) \
-                VALUES ('{userInfo.name}', '{ut['track_name']}', '{ut['album_name']}', '{ut['artist_name']}', {timestamp}, 0)\
+                VALUES ('{userInfo.user_name}', '{ut['track_name']}', '{ut['album_name']}', '{ut['artist_name']}', {timestamp}, 0)\
                 RETURNING success;"
     response2 = pd.read_sql(inter_query, db_connect)
     
@@ -177,7 +177,7 @@ async def get_likes(user_id: str):
 
 @app.post("/users/{user_id}/profiles", description='내 정보, 프로필, 공개 여부,..')
 def get_user_info(input: userInfo):
-    user_name = input.name
+    user_name = input.user_name
     query = f"SELECT * FROM user_info WHERE user_name=\'{user_name}\'"
     df = pd.read_sql(query, db_connect)
     if df.shape[0] == 0:
@@ -193,7 +193,7 @@ def add_interaction(input_1: userInfo, input_2: trackInfo, option: ops):
         return AuthError()
     else:
         query = f"INSERT INTO inter (track_name, loved, username, album_name, date_uts, artist_name)\
-                 VALUES ('{change_str(input_2.track_name)}', {option.option}, '{input_1.name}', '{change_str(input_2.album_name)}', {timestamp}, '{input_2.artist_name}');"
+                 VALUES ('{change_str(input_2.track_name)}', {option.option}, '{input_1.user_name}', '{change_str(input_2.album_name)}', {timestamp}, '{input_2.artist_name}');"
         with db_connect.cursor() as cur:
             cur.execute(query)
             return "Success"

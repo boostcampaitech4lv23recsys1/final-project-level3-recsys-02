@@ -1,14 +1,14 @@
 class UserInfo {
 // final String country;
-  String id, pwd, name, country;
-  int image, age, gender;
+  String name, pwd, realname, image, country;
+  int age, gender;
   List<String> followers;
   List<String> following;
 
   UserInfo({
-    required this.id,
-    required this.pwd,
     required this.name,
+    required this.pwd,
+    required this.realname,
     required this.country,
     required this.image,
     required this.age,
@@ -23,11 +23,11 @@ class UserInfo {
 
 UserInfo _$UserFromJson(Map<String, dynamic> json) {
   return UserInfo(
-    id: json['id'] as String,
+    name: json['id'] as String,
     pwd: json['pwd'] as String,
     name: json['name'] as String,
     country: json['country'] as String,
-    image: json['image'] as int,
+    image: json['image'] as String,
     age: json['age'] as int,
     gender: json['gender'] as int,
     following: json['following'] as List<String>,
@@ -36,11 +36,11 @@ UserInfo _$UserFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$UserToJson(UserInfo instance) => <String, dynamic>{
-      'id': instance.id,
+      'name': instance.id,
       'pwd': instance.pwd,
-      'name': instance.name,
-      'country': instance.country,
+      'realname': instance.name,
       'image': instance.image,
+      'country': instance.country,
       'age': instance.age,
       'gender': instance.gender,
       'following': instance.following,
