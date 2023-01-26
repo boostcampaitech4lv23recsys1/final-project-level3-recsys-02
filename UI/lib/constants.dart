@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-double boxHeight = 270.0;
+bool isLogin = false;
+double boxHeight = 240.0;
 
 BorderRadius kBorder = BorderRadius.circular(12);
 
@@ -14,7 +16,7 @@ EdgeInsets outerMargin = const EdgeInsets.all(20);
 EdgeInsets defaultPadding = const EdgeInsets.all(8);
 const kPadding = EdgeInsets.only(top: 8, bottom: 12, left: 8, right: 8);
 
-final hintTextStyle = TextStyle(color: kDarkGrey);
+final hintTextStyle = TextStyle(color: kDarkGrey, fontSize: 13.0);
 final defaultTextStyle = TextStyle(color: kWhite, fontSize: 12.0);
 final contentsTextStyle = TextStyle(color: kWhite, fontSize: 14.0);
 final subtitleTextStyle = TextStyle(
@@ -33,7 +35,7 @@ const buttonWidth = 120.0;
 
 const Widget defaultSpacer = SizedBox(
   width: 20,
-  height: 20,
+  height: 30,
 );
 BorderSide whiteBorder =
     BorderSide(color: kWhite, strokeAlign: StrokeAlign.outside);
@@ -47,4 +49,17 @@ BoxDecoration outerBorder = BoxDecoration(
     border: Border.all(color: Colors.white, width: 1.5),
     shape: BoxShape.rectangle,
     borderRadius: const BorderRadius.all(Radius.circular(8)));
-EdgeInsets outerPadding = EdgeInsets.symmetric(horizontal: 60, vertical: 80);
+EdgeInsets outerPadding = const EdgeInsets.only(top: 40, left: 200, right: 200);
+
+void getSession() async {
+  final pref = await SharedPreferences.getInstance();
+  isLogin = pref.getBool('isLogin')!;
+  debugPrint("session == $isLogin");
+}
+
+void setSession(val) async {
+  final pref = await SharedPreferences.getInstance();
+  pref.setBool('isLogin', val);
+  isLogin = val;
+  debugPrint("session == $isLogin");
+}
