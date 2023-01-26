@@ -124,7 +124,7 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
                 VALUES ('{userInfo.name}', '{ut['track_name']}', '{ut['album_name']}', '{ut['artist_name']}', {timestamp}, 0)\
                 RETURNING success;"
     response2 = pd.read_sql(inter_query, db_connect)
-
+    
     return response1 and response2
 
 
@@ -172,7 +172,7 @@ async def get_likes(user_id: str):
 @app.post("/users/{user_id}/profiles", description='내 정보, 프로필, 공개 여부,..')
 def get_user_info(input: userInfo):
     user_name = input.name
-    query = f"SELECT * FROM user_info WHERE name=\'{user_name}\'"
+    query = f"SELECT * FROM user_info WHERE user_name=\'{user_name}\'"
     df = pd.read_sql(query, db_connect)
     if df.shape[0] == 0:
         return NAME_NOT_FOUND
