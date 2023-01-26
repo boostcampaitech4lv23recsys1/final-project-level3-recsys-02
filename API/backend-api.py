@@ -47,6 +47,7 @@ class userInfo(BaseModel):
     playcount: int
     following: list[str]
     follower: list[str]
+    result: str
 
 
 @app.post('/login', description='로그인')
@@ -54,10 +55,21 @@ def login_user(user: User) -> userInfo:
     query = f"SELECT password FROM user_info WHERE user_name ='{user.id}';"
     user_df = pd.read_sql(query, db_connect)
 
-    if user.pwd == user_df['password']:
-        return userInfo()
+    if user.pwd == user_df['password']: 
+        return userInfo(
+            name=user_df['name'],
+            password=user_df['password'],
+            realname =user_df['realname'],
+            image =user_df['image'],
+            country =user_df['country'],
+            age =user_df['age'],
+            gender =user_df['gender'],
+            playcount =user_df['playcount'],
+            following =user_df['following'],
+            follower =user_df['follower'],
+            result='success')
     else:
-        return '아이디 비밀번호 불일치'
+        return userInfo(result='fail')
 
 
 @app.post('/signin', description='회원가입')
