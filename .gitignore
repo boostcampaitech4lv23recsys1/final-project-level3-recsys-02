@@ -1,5 +1,0 @@
-.venv
-/LFM-dataset
-*.pkl
-*.csv
-/fpga
