@@ -1,2 +1,3 @@
 *.ipynb
 crawling/
+.DS_store
