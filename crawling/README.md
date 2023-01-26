@@ -5,7 +5,7 @@
   - tqdm
 
 2. run
-  1. "crawling.py" 위치로 이동
+  1. "crawling.py" 위치로 이동 후,
 `python crawling.py --tags genre1,genre2`
 
 
