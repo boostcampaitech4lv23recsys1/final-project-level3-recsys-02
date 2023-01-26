@@ -53,12 +53,12 @@ class userInfo(BaseModel):
 @app.get('/user')
 def get_user_table():
     query = f"SELECT * FROM user_info;"
-    pd.read_sql(query, db_connect)
+    return pd.read_sql(query, db_connect)
 
 @app.get('/track')
 def get_track_table():
     query = f"SELECT * FROM track_info;"
-    pd.read_sql(query, db_connect)
+    return pd.read_sql(query, db_connect)
 
 @app.post('/login', description='로그인')
 def login_user(user: User) -> userInfo:
