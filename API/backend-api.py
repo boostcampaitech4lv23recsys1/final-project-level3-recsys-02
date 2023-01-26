@@ -131,7 +131,7 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
 @app.get("/users/{user_id}/profiles", description="사용자 정보")
 async def get_profiles(user_id: str):
     get_sample = f"""
-        select * from user_info where name = '{user_id}'
+        select * from user_info where user_name = '{user_id}'
     ;"""
 
     with db_connect.cursor() as cur:
@@ -151,7 +151,7 @@ async def get_profiles(user_id: str):
 @app.get("/users/{user_id}/likes", description="좋아요 리스트")
 async def get_likes(user_id: str):
     get_sample = f"""
-        select track_name from inter where (user_id = '{user_id}' and loved = 1)
+        select track_name from inter where (user_name = '{user_id}' and loved = 1)
     ;"""
 
     with db_connect.cursor() as cur:
@@ -159,7 +159,7 @@ async def get_likes(user_id: str):
         likes = cur.fetchall()
 
     get_sample = f"""
-        select track_name from inter where (user_id = '{user_id}' and loved = 2)
+        select track_name from inter where (user_name = '{user_id}' and loved = 2)
     ;"""
 
     with db_connect.cursor() as cur:
