@@ -1,25 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:toast/toast.dart';
 import 'package:ui/constants.dart';
 import 'package:ui/models/item.dart';
-import 'package:ui/widgets/album_detail.dart';
+import 'package:ui/widgets/track_detail.dart';
 import 'package:ui/widgets/footer.dart';
 import 'package:ui/widgets/custom_header.dart';
 import 'package:ui/widgets/custom_card.dart';
 import 'package:ui/widgets/titlebar.dart';
-
-class OtherUser {
-  var image;
-  String name;
-  int followerNum;
-  bool isFollowing;
-
-  OtherUser(
-      {this.image = 'profile.png',
-      required this.name,
-      required this.followerNum,
-      required this.isFollowing});
-}
+import 'package:web_smooth_scroll/web_smooth_scroll.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -27,242 +16,179 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  var width;
+
+  final _mainScrollCotroller = ScrollController();
+  final fastSelectionController = ScrollController();
+  final charController = ScrollController();
+  final recController = ScrollController();
+
   List<Item> musicList = [];
-  List<Item> albumList = [];
-  List<OtherUser> userList = [];
+  List<Item> recList = [];
 
-  void getMusicRec() {
-    for (int i = 0; i < 10; i++) {
+  void getMusicList() {
+    for (int i = 0; i < 20; i++) {
       musicList.add(Item(
-        image: 'album.png',
-        name: 'Track Name $i',
-        artistName: 'Artist Name $i',
-      ));
+          image: 'assets/album.png',
+          name: 'Track Name $i',
+          albumName: 'Album Name $i',
+          artistName: 'Artist Name $i',
+          duration: 24000));
     }
   }
 
-  void getUserRec() {
-    for (int i = 0; i < 5; i++) {
-      userList.add(OtherUser(
-        name: 'user $i',
-        followerNum: i,
-        isFollowing: false,
-      ));
-    }
-  }
-
-  void getNewAlbums() {
-    for (int i = 0; i < 10; i++) {
-      albumList.add(Item(
-        image: 'album.png',
-        name: 'Album Name $i',
-        artistName: 'Artist Name $i',
-        release: '2022.01.17',
-      ));
+  void getRecList() {
+    for (int i = 0; i < 9; i++) {
+      recList.add(Item(
+          image: 'assets/album.png',
+          name: 'Track Name $i',
+          albumName: 'Album Name $i',
+          artistName: 'Artist Name $i',
+          duration: 24000));
     }
   }
 
   @override
   void initState() {
-    getMusicRec();
-    getNewAlbums();
-    getUserRec();
-
+    getMusicList();
+    getRecList();
     super.initState();
+  }
+
+  Widget musicRank() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      titleBar(
+        '인기곡',
+      ),
+      SizedBox(
+          height: boxHeight,
+          width: width * 0.8,
+          child: AlignedGridView.count(
+            controller: charController,
+            crossAxisCount: 3,
+            mainAxisSpacing: 4,
+            crossAxisSpacing: 4,
+            itemCount: musicList.length,
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        opaque: false, // set to false
+                        pageBuilder: (_, __, ___) =>
+                            DetailPage(item: musicList[index]),
+                      ),
+                    );
+                  },
+                  child: trackCard(musicList[index],
+                      isRank: true, index: index + 1));
+            },
+          )),
+    ]);
+  }
+
+  // 빠른 선곡
+  Widget fastSelection() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      titleBar('빠른 선곡', isReset: true),
+      SizedBox(
+          height: boxHeight,
+          width: width * 0.8,
+          child: AlignedGridView.count(
+            controller: fastSelectionController,
+            crossAxisCount: 3,
+            mainAxisSpacing: 4,
+            crossAxisSpacing: 4,
+            itemCount: musicList.length,
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        opaque: false, // set to false
+                        pageBuilder: (_, __, ___) =>
+                            DetailPage(item: musicList[index]),
+                      ),
+                    );
+                  },
+                  child: trackCard(musicList[index]));
+            },
+          )),
+    ]);
+  }
+
+  Widget recommendation(String title) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      titleBar(
+        title,
+      ),
+      Container(
+          decoration: outerBorder,
+          width: width * 0.8,
+          height: boxHeight,
+          child: AlignedGridView.count(
+            crossAxisCount: 1,
+            mainAxisSpacing: 20,
+            controller: recController,
+            padding: defaultPadding,
+            scrollDirection: Axis.horizontal,
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: recList.length,
+            itemBuilder: (BuildContext context, int idx) {
+              return GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        opaque: false, // set to false
+                        pageBuilder: (_, __, ___) =>
+                            DetailPage(item: recList[idx]),
+                      ),
+                    );
+                  },
+                  child: trackCoverCard(recList[idx]));
+            },
+          ))
+    ]);
   }
 
   @override
   Widget build(BuildContext context) {
     ToastContext().init(context);
-    var width = MediaQuery.of(context).size.width;
-
-    final musicController = ScrollController();
-    final albumController = ScrollController();
-    final userController = ScrollController();
-    final charController = ScrollController();
+    width = MediaQuery.of(context).size.width;
     return Scaffold(
-        body: Padding(
+        appBar: mainAppBar(context),
+        body: Container(
             padding: outerPadding,
-            child: Column(children: [
-              customHeader(context, true),
-              defaultSpacer,
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            alignment: Alignment.topCenter,
+            child: WebSmoothScroll(
+              controller: _mainScrollCotroller,
+              scrollOffset: 100,
+              animationDuration: 600,
+              curve: Curves.easeInOutCirc,
+              child: SingleChildScrollView(
+                physics: const NeverScrollableScrollPhysics(),
+                controller: _mainScrollCotroller,
+                child: ListView(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
                   children: [
-                    // 빠른 선곡
-                    Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          titleBar(width * 0.5, '빠른 선곡'),
-                          Container(
-                              decoration: outerBorder,
-                              height: boxHeight - 25,
-                              width: width * 0.5,
-                              child: RawScrollbar(
-                                  controller: musicController,
-                                  child: ListView.builder(
-                                    padding: defaultPadding,
-                                    scrollDirection: Axis.horizontal,
-                                    controller: musicController,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: musicList.length,
-                                    itemBuilder:
-                                        (BuildContext context, int idx) {
-                                      return Stack(
-                                        alignment: Alignment.topRight,
-                                        children: [
-                                          playlistCard(musicList[idx]),
-                                          Positioned(
-                                              top: 3,
-                                              right: 3,
-                                              child: IconButton(
-                                                  onPressed: () {
-                                                    Toast.show(
-                                                      "'나의 재생목록'에 추가되었습니다.",
-                                                      gravity: Toast.top,
-                                                      webTexColor: kBlack,
-                                                    );
-                                                  },
-                                                  icon: Icon(
-                                                      Icons.favorite_rounded,
-                                                      color: kBlack)))
-                                        ],
-                                      );
-                                    },
-                                  ))),
-                        ]),
-                    const Spacer(),
-                    // 인기곡
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          titleBar(width * 0.4, '인기곡'),
-                          Container(
-                              decoration: outerBorder,
-                              width: width * 0.4,
-                              height: boxHeight - 25,
-                              child: RawScrollbar(
-                                  controller: charController,
-                                  child: ListView.builder(
-                                    controller: charController,
-                                    padding: defaultPadding,
-                                    scrollDirection: Axis.vertical,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: 10,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return Center(
-                                        child: chartCard(index + 1),
-                                      );
-                                    },
-                                  )))
-                        ]),
-                  ]),
-              defaultSpacer,
-              Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                // 최신앨범
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  titleBar(width * 0.5, '최신앨범'),
-                  Container(
-                      decoration: outerBorder,
-                      width: width * 0.5,
-                      height: boxHeight,
-                      child: RawScrollbar(
-                          controller: albumController,
-                          child: ListView.builder(
-                            controller: albumController,
-                            padding: defaultPadding,
-                            scrollDirection: Axis.horizontal,
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: 10,
-                            itemBuilder: (BuildContext context, int idx) {
-                              return GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      PageRouteBuilder(
-                                        opaque: false, // set to false
-                                        pageBuilder: (_, __, ___) =>
-                                            DetailPage(item: albumList[idx]),
-                                      ),
-                                    );
-                                  },
-                                  child: albumCard(albumList[idx]));
-                            },
-                          )))
-                ]),
-                const Spacer(),
-                // 비슷한 유저 추천
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  titleBar(width * 0.4, '친구 추천', isReset: true),
-                  Container(
-                      decoration: outerBorder,
-                      height: boxHeight,
-                      width: width * 0.4,
-                      child: RawScrollbar(
-                          controller: userController,
-                          child: ListView.builder(
-                            padding: defaultPadding,
-                            controller: userController,
-                            scrollDirection: Axis.horizontal,
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: userList.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Stack(
-                                  alignment: Alignment.bottomCenter,
-                                  children: [
-                                    // Widget userCard(image, name, follower) {
-                                    userCard(
-                                        userList[index].image,
-                                        userList[index].name,
-                                        userList[index].followerNum),
-                                    Positioned(
-                                      bottom: 15,
-                                      child: userList[index].isFollowing
-                                          ? OutlinedButton(
-                                              onPressed: () {
-                                                userList[index].isFollowing =
-                                                    false;
-                                                setState(() {});
-                                              },
-                                              style: OutlinedButton.styleFrom(
-                                                backgroundColor: kWhite,
-                                                side: whiteBorder,
-                                              ),
-                                              child: Text('팔로잉',
-                                                  style: TextStyle(
-                                                      color: kBlack,
-                                                      fontSize: 12.0),
-                                                  textAlign: TextAlign.center))
-                                          : OutlinedButton(
-                                              onPressed: () {
-                                                userList[index].isFollowing =
-                                                    true;
-                                                setState(() {});
-                                              },
-                                              style: OutlinedButton.styleFrom(
-                                                backgroundColor:
-                                                    Colors.transparent,
-                                                side: whiteBorder,
-                                              ),
-                                              child: Text('팔로우',
-                                                  style: defaultTextStyle,
-                                                  textAlign: TextAlign.center)),
-                                    )
-                                  ]);
-                            },
-                          ))),
-                ]),
-              ]),
-              const Spacer(),
-              footer()
-            ])));
+                    fastSelection(),
+                    defaultSpacer,
+                    musicRank(),
+                    defaultSpacer,
+                    recommendation('00 장르를 좋아한다면'),
+                    defaultSpacer,
+                    recommendation('00 아티스트를 좋아한다면'),
+                    defaultSpacer,
+                    recommendation('00 노래를 좋아한다면'),
+                    defaultSpacer,
+                    footer(),
+                    defaultSpacer,
+                    defaultSpacer,
+                  ],
+                ),
+              ),
+            )));
   }
 }

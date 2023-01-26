@@ -23,11 +23,11 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: kBlack, // 앱 배경색
       ),
       title: 'Final Project',
+      home: TestPage(),
       initialRoute: '/home',
       routes: {
         "/home": (context) => const StartPage(),
         "/signin": (context) => const SigninPage(),
-        "/login": (context) => const LoginPage(),
         "/main": (context) => MainPage(),
         "/mypage": (context) => const UserPage(),
         "/mypage/$userid": (context) => const UserPage(
@@ -60,7 +60,7 @@ class TestPage extends StatelessWidget {
                       backgroundColor: kWhite,
                       side: whiteBorder,
                       padding: const EdgeInsets.all(16)),
-                  child: Text('홈페이지',
+                  child: Text('메인페이지',
                       style: TextStyle(
                         color: kBlack,
                         fontSize: 16.0,
@@ -68,22 +68,6 @@ class TestPage extends StatelessWidget {
                       )),
                   onPressed: () {
                     Navigator.pushNamed(context, '/main');
-                  },
-                ),
-                defaultSpacer,
-                ElevatedButton(
-                  style: OutlinedButton.styleFrom(
-                      backgroundColor: kWhite,
-                      side: whiteBorder,
-                      padding: const EdgeInsets.all(16)),
-                  child: Text('로그인페이지',
-                      style: TextStyle(
-                        color: kBlack,
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
-                      )),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/lgoin');
                   },
                 ),
                 defaultSpacer,
