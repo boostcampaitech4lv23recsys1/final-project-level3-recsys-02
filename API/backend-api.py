@@ -50,6 +50,16 @@ class userInfo(BaseModel):
     result: str
 
 
+@app.get('/user')
+def get_user_table():
+    query = f"SELECT * FROM user_info;"
+    pd.read_sql(query, db_connect)
+
+@app.get('/track')
+def get_track_table():
+    query = f"SELECT * FROM track_info;"
+    pd.read_sql(query, db_connect)
+
 @app.post('/login', description='로그인')
 def login_user(user: User) -> userInfo:
     query = f"SELECT password FROM user_info WHERE user_name ='{user.id}';"
