@@ -37,13 +37,6 @@ def run_bs() :
         with open(f"./artifacts/tag_list.pkl", "wb") as f: 
             pickle.dump(tags, f)
 
-    # mm = datetime.datetime.now().month
-    # dd = datetime.datetime.now().day
-    # hh = datetime.datetime.now().hour
-
-    # with open(f"./tag_list_{mm}-{dd}:{hh}.pkl", "wb") as f: 
-    #     pickle.dump(tags, f)
-
     ############################## artists ##############################
 
     if os.path.isfile("./artifacts/tag_artist_dict.pkl") : 
@@ -54,12 +47,10 @@ def run_bs() :
         tag_artist_dict = {}
         for tag in tqdm(tags) : 
             page = requests.get(f"https://www.last.fm/tag/{tag.lower()}/artists")
-            # page = requests.get(f"https://www.last.fm/tag/Electronic/artists")
             soup = bs(page.text, "html.parser")
             len_pages = soup.find_all('li', {"class":"pagination-page"})[-1].text.strip()
             artist_lst = []
 
-            # for page in range(int(len_pages)) : 
             for page in range(1, 101) : 
                 page = requests.get(f"https://www.last.fm/tag/{tag.lower()}/artists?page={page}")
                 soup = bs(page.text, "html.parser")
@@ -86,64 +77,63 @@ def next_page(driver) :
         return False
 
 def crawl(tag) : 
-    tag_artist_dict = run_bs()
-    # print(tag_artist_dict)
-    print("making user list file...")
-    driver = webdriver.Chrome('./chromedriver')
-    time.sleep(0.5)
-    print("chromedriver running...")
+    try : 
+        tag_artist_dict = run_bs()
+        print("making user list file...")
+        driver = webdriver.Chrome('./chromedriver')
+        time.sleep(0.5)
+        print("chromedriver running...")
 
-    # url
-    driver.get("https://www.last.fm")
+        # url
+        driver.get("https://www.last.fm")
 
-    login_page = driver.find_elements(By.CLASS_NAME, "site-auth-control")[0]
-    login_page.click()
-    time.sleep(0.5)
+        login_page = driver.find_elements(By.CLASS_NAME, "site-auth-control")[0]
+        login_page.click()
+        time.sleep(0.5)
 
-    id_box = driver.find_element(By.CSS_SELECTOR, "#id_username_or_email")
-    pw_box = driver.find_element(By.CSS_SELECTOR, "#id_password")
+        id_box = driver.find_element(By.CSS_SELECTOR, "#id_username_or_email")
+        pw_box = driver.find_element(By.CSS_SELECTOR, "#id_password")
 
-    # login
-    id_box.send_keys("sdsf1225@gmail.com")
-    # id_box.send_keys("your id")
-    time.sleep(0.5)
-    pw_box.send_keys("qhrrl9651!")
-    # pw_box.send_keys("your password")
-    submit = driver.find_element(By.CSS_SELECTOR, "#login > div:nth-child(5) > div > button")
-    submit.click()
-    time.sleep(1)
-    
-    
-    artists = tag_artist_dict[tag]
-    listener_lst = []
-    for artist in tqdm(artists) : 
-        # go to artist page
-
-        driver.get(f"https://www.last.fm/music/{artist}/+listeners")
+        # login
+        id_box.send_keys("your id")
+        time.sleep(0.5)
+        pw_box.send_keys("your password")
+        submit = driver.find_element(By.CSS_SELECTOR, "#login > div:nth-child(5) > div > button")
+        submit.click()
         time.sleep(1)
+        
+        
+        artists = tag_artist_dict[tag]
+        listener_lst = []
+        for artist in tqdm(artists) : 
+            # go to artist page
 
-        is_page = True
-
-        # get listeners' name
-        while is_page : 
+            driver.get(f"https://www.last.fm/music/{artist}/+listeners")
             time.sleep(1)
-            driver.execute_script("window.scrollTo(0, 10)")
-            listeners_elem = driver.find_elements(By.CLASS_NAME, 'top-listeners-item-name')
-            listeners = list(map(lambda x: x.find_element(By.CLASS_NAME, 'link-block-target').text, listeners_elem))
-            listener_lst.extend(listeners)
-            is_page = next_page(driver)
-            
-        # save listener list
-    driver.close()
-    driver.quit()
-    
-    with open(f"./artifacts/lastfm_listeners_{tag}.pkl", "wb") as f : 
-        pickle.dump(listener_lst, f)
 
-    # return print(len(listener_lst))
+            is_page = True
+
+            # get listeners' name
+            while is_page : 
+                time.sleep(1)
+                driver.execute_script("window.scrollTo(0, 10)")
+                listeners_elem = driver.find_elements(By.CLASS_NAME, 'top-listeners-item-name')
+                listeners = list(map(lambda x: x.find_element(By.CLASS_NAME, 'link-block-target').text, listeners_elem))
+                listener_lst.extend(listeners)
+                is_page = next_page(driver)
+                
+            # save listener list
+        driver.close()
+        driver.quit()
+        
+        with open(f"./artifacts/lastfm_listeners_{tag}.pkl", "wb") as f : 
+            pickle.dump(listener_lst, f)
+    except : 
+        with open(f"./artifacts/lastfm_listeners_{tag}_interrupted.pkl", "wb") as f : 
+            pickle.dump(listener_lst, f)
+
 
 def get_listeners(tag) : 
-    # tags = list(tag_artist_dict.keys())
     
     if tag == "jazz" : 
         crawl("jazz")
@@ -195,12 +185,9 @@ if __name__ == '__main__' :
     
     parser = argparse.ArgumentParser()
     tp = lambda x:x.split(',')
-    parser.add_argument("-t", "--tags", type=tp, help='add tags to crawl')         # extra value 
-    # parser.add_argument("-f", "--fast", dest="fast", action="store_true")           # existence/nonexistence
+    # print("tags : [jazz, rnb, reggae, rock, Electronic, acoustic, dance, Metal, rap, metal, country, hip-hop, alternative, indie, hardcore, blues, classical, punk]")
+    parser.add_argument("-t", "--tags", type=tp, help='add tags to crawl') 
     args = parser.parse_args()
-    print(args.tags)
-    
-    # tags = list(tag_artist_dict.keys())
     print(f"start crawling...")
     print("tags to crawl : ", args.tags)
     main(args.tags)
