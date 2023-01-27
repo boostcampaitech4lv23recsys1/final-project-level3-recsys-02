@@ -136,7 +136,8 @@ Widget trackCoverCard(Item item) {
           height: 20,
         ),
         // track name
-        Text(item.name, style: subtitleTextStyle, textAlign: TextAlign.start),
+        Text(item.trackName,
+            style: subtitleTextStyle, textAlign: TextAlign.start),
         SizedBox(
           height: 10,
         ),
@@ -176,7 +177,7 @@ Widget trackCard(Item item, {bool isRank = false, int index = 1}) {
           children: [
             // track name
             Text(
-              item.name,
+              item.trackName,
               style: contentsTextStyle,
               textAlign: TextAlign.start,
             ),
@@ -213,7 +214,7 @@ Widget playlistCard(Item item) {
         ),
         defaultSpacer,
         Text(
-          item.name,
+          item.trackName,
           style: contentsTextStyle,
           textAlign: TextAlign.start,
         ),

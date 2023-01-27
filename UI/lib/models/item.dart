@@ -1,10 +1,10 @@
 class Item {
-  final String image, name, albumName, artistName;
+  final String image, trackName, albumName, artistName;
   int duration;
 
   Item({
     required this.image,
-    required this.name,
+    required this.trackName,
     required this.albumName,
     required this.artistName,
     required this.duration,

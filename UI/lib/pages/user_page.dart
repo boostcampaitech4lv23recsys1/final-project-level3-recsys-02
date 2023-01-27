@@ -63,7 +63,7 @@ class _UserPageState extends State<UserPage> {
     for (int i = 0; i < 10; i++) {
       myPlaylist.add(Item(
           image: 'assets/album.png',
-          name: 'Track Name $i',
+          trackName: 'Track Name $i',
           albumName: 'Album Name $i',
           artistName: 'Artist Name $i',
           duration: 24000));

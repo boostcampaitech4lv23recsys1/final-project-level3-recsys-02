@@ -30,7 +30,7 @@ class _MainPageState extends State<MainPage> {
     for (int i = 0; i < 20; i++) {
       musicList.add(Item(
           image: 'assets/album.png',
-          name: 'Track Name $i',
+          trackName: 'Track Name $i',
           albumName: 'Album Name $i',
           artistName: 'Artist Name $i',
           duration: 24000));
@@ -41,7 +41,7 @@ class _MainPageState extends State<MainPage> {
     for (int i = 0; i < 9; i++) {
       recList.add(Item(
           image: 'assets/album.png',
-          name: 'Track Name $i',
+          trackName: 'Track Name $i',
           albumName: 'Album Name $i',
           artistName: 'Artist Name $i',
           duration: 24000));

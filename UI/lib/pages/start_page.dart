@@ -11,18 +11,9 @@ class StartPage extends StatefulWidget {
 }
 
 class _StartPageState extends State<StartPage> {
-  var name;
-
-  void navigationPage() {
-    name == ''
-        ? {Navigator.pushNamed(context, '/main')}
-        : Navigator.pushNamed(context, '/main');
-  }
-
   @override
   void initState() {
     super.initState();
-    getSession();
   }
 
   @override
@@ -66,7 +57,7 @@ class _StartPageState extends State<StartPage> {
                             padding: const EdgeInsets.all(16)),
                         child: Text('로그아웃', style: subtitleTextStyle),
                         onPressed: () {
-                          setSession(false);
+                          exitSession(false);
                           setState(() {});
                           Navigator.popUntil(
                               context, ModalRoute.withName('/home'));
