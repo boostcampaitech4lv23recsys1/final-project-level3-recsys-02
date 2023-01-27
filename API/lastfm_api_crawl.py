@@ -9,6 +9,7 @@ from multiprocessing import Pool
 import itertools
 import os
 from time import sleep
+import json
 
 os.chdir('/opt/ml/final/API')
 
@@ -132,18 +133,25 @@ def interaction(users):
         params_inter["limit"] = 1
         text = requests.get(url, params_inter).text
         text = json.loads(text)
-        text = text['recenttracks']
-        attr = text['@attr']
+        try:
+            text = text['recenttracks']
+            attr = text['@attr']
+        except:
+            sleep(10)
+            text = requests.get(url, params_inter).text
+            text = json.loads(text)
+            text = text['recenttracks']
+            attr = text['@attr']
         params_inter["limit"] = 200
         for page in range(int(attr['totalPages'])):
             params_inter["page"] = page + 1
             text = requests.get(url, params_inter).text
             texts = json.loads(text)['recenttracks']['track']
             texts = pd.DataFrame(texts)
-            texts['user_name'] = user_id[0]
+            texts['username'] = user_id[0]
             # texts['user_total'] = attr['total']
             texts['album_name'] = texts['album'].apply(lambda x: x['#text'])
-            texts['timestamp_uts'] = texts['date'].apply(lambda x: -1 if isinstance(x, float) else x['uts'])
+            texts['date_uts'] = texts['date'].apply(lambda x: -1 if isinstance(x, float) else x['uts'])
             # texts['date_string'] = texts['date'].apply(lambda x: float('nan') if isinstance(x, float) else x['#text'])
             texts['artist_name'] = texts['artist'].apply(lambda x: x['name'])
             texts['track_name'] = texts['name']
@@ -181,7 +189,9 @@ def trackinfo(tracks):
         try:
             track = json.loads(track)['track']
         except:
-            continue # 오류뜸.. track 이 없다고 뜸;
+            sleep(10)
+            track = requests.get(url, params_track).text
+            track = json.loads(track)['track']
 
         track['artist_name'] = track['artist']['name']
         # if 'mbid' in list(track['artist'].keys()):
@@ -191,20 +201,21 @@ def trackinfo(tracks):
         track['artist_url'] = track['artist']['url']
 
         # track['tag'] = track['toptags'].apply(lambda x: x['tag']) # 태그가 다 없음
-        track['tags'] = list(pd.DataFrame(track['toptags']['tag']).apply(lambda x: (x['name']), axis=1))
+        tmp = list(pd.DataFrame(track['toptags']['tag']).apply(lambda x: (x['name']), axis=1))
+        track['tags'] = json.dumps({i: tmp[i] for i in range(0, len(tmp))})
         # print(track['tag'])
-        push_tag2id(track['tags'])
+        push_tag2id(tmp)
 
         # track['toptags'].apply(lambda x: push_tag2id(x['tag']), axis=1)
         # track['tag'] = track['toptags'].apply(lambda x: x['tag'] if x != list([]) else np.nan)
         
         if 'album' in list(track.keys()):
-            track['album_name'] = track['album']['title']
+            track['album_title'] = track['album']['title']
         #     track['album_url'] = track['album'].apply(lambda x: x['image'][-1]['#text'])
         #     track['album_artist'] = track['album'].apply(lambda x: x['artist'])
         #     track.drop(columns=['album'], inplace=True)
         else:
-            track['album_name'] = np.nan
+            track['album_title'] = np.nan
         #     track['album_url'] = np.nan
         #     track['album_artist'] = np.nan
 
@@ -219,11 +230,11 @@ def trackinfo(tracks):
             track.drop(columns=['mbid'], inplace=True)
         track['streamable_text'] = track['streamable'].apply(lambda x: x['#text'])
         track['streamable_fulltrack'] = track['streamable'].apply(lambda x: x['fulltrack'])
-        track.drop(columns=['artist', 'streamable', 'toptags'], inplace=True)
+        track.drop(columns=['artist', 'streamable', 'toptags', 'url'], inplace=True)
         function_dataframe_list_tmp.append(track)
 
-        if i % 5 == 0:
-            sleep(1)
+        # if i % 5 == 0:
+        #     sleep(1)
     return {'dataframe_list':function_dataframe_list_tmp, 'tag2id':tmp_tag2id}
 
 def albuminfo(artist2album):
@@ -237,14 +248,15 @@ def albuminfo(artist2album):
         try:
             album = json.loads(album)['album']
         except:
-            print(album_)
-            print(artist, album, album_, params_album)
-            
+            sleep(10)
+            album = requests.get(url, params_album).text
+            album = json.loads(album)['album']
         
-        album['tag'] = album['tags']
+        # album['tag'] = album['tags']
         # print(album['image'][-1])
-        album['image_url'] = album['image'][-1]['#text']
+        album['image'] = album['image'][-1]['#text']
         # print(album['wiki'])
+        # print(album.keys())
 
         try:
             album['published'] = album['wiki']['published']
@@ -271,17 +283,18 @@ def albuminfo(artist2album):
         #     album['track'] = np.nan # album 을 조회했는데 tracks 가 없는 경우..?
         
         try:
-            album['tag'] = [list(pd.DataFrame(album['tags'].item()['tag']).apply(lambda x: (x['name']), axis=1))]
+            tmp = list(pd.DataFrame(album['tags'].item()['tag']).apply(lambda x: (x['name']), axis=1))
+            album['tag'] = json.dumps({i: tmp[i] for i in range(0, len(tmp))})
         except:
             album['tag'] = np.nan
 
         if 'tracks' in list(album.keys()):
             album.drop(columns=['tracks'], inplace=True)
 
-        album.drop(columns=['tags', 'mbid', 'image'], inplace=True)
+        album.drop(columns=['tags', 'mbid'], inplace=True)
         function_dataframe_list_tmp.append(album)
-        if i % 5 == 0:
-            sleep(1)
+        # if i % 5 == 0:
+        #     sleep(1)
     return {'dataframe_list':function_dataframe_list_tmp}
 
 def userinfo(user2id):
@@ -291,16 +304,22 @@ def userinfo(user2id):
     for i, (user, id) in enumerate(tqdm(user2id)):
         params_user['user'] = user
         user = requests.get(url, params_user).text
-        user = json.loads(user)['user']
-        user['image_url'] = user['image'][-1]['#text']
-        user['registered_uts'] = user['registered']['unixtime']
+        try:
+            user = json.loads(user)['user']
+        except:
+            sleep(10)
+            user = requests.get(url, params_user).text
+            user = json.loads(user)['user']
+            
+        user['image'] = user['image'][-1]['#text']
+        user['registered'] = user['registered']['unixtime']
         # print(user['gender'])
         user['gender'] = gender_dict[user['gender']]
         user = pd.DataFrame([user])
         user['follower'] = np.nan
         user['following'] = np.nan
 
-        user.drop(columns=['playlists', 'image', 'type', 'artist_count', 'track_count', 'album_count', 'image', 'registered'], inplace=True)
+        user.drop(columns=['playlists', 'type', 'artist_count', 'track_count', 'album_count'], inplace=True)
         function_dataframe_list_tmp.append(user)
         if i % 10 == 0:
             sleep(1)
@@ -311,7 +330,12 @@ def taginfo(tag2id):
     for i, (tag, id) in enumerate(tqdm(tag2id)):
         params_tag['tag'] = tag
         tag = requests.get(url, params_tag).text
-        tag = json.loads(tag)['tag']
+        try:
+            tag = json.loads(tag)['tag']
+        except:
+            sleep(10)
+            tag = requests.get(url, params_tag).text
+            tag = json.loads(tag)['tag']
         # print(tag.keys())
         # tag['summary'] = tag['wiki']['summary']
         # tag['content'] = tag['wiki']['content']
@@ -319,8 +343,8 @@ def taginfo(tag2id):
         tag.drop(columns=['wiki'], inplace=True)
         
         function_dataframe_list_tmp.append(tag)
-        if i % 5 == 0:
-            sleep(1)
+        # if i % 5 == 0:
+        #     sleep(1)
     return {'dataframe_list':function_dataframe_list_tmp}
 
 
@@ -371,9 +395,9 @@ def multiprocessing_interaction():
     data_csv = data_csv.astype({
         'track_name':'string',
         'loved':'int8',
-        'user_name':'string',
+        'username':'string',
         'album_name':'string',
-        'timestamp_uts':'int64',
+        'date_uts':'int64',
         'artist_name':'string',
     })
     print(data_csv.dtypes)
@@ -405,7 +429,7 @@ def multiprocessing_trackinfo():
         'playcount':'int32',
         'artist_name':'string',
         'artist_url':'string',
-        'track_tag_list':'object',
+        # 'track_tag_list':'object',
         'artist_url':'string',
         'streamable_text':'int8',
         'streamable_fulltrack':'int8'
@@ -429,11 +453,10 @@ def multiprocessing_albuminfo():
     albumInfo_csv = albumInfo_csv.astype({
         'artist_name':'string',
         'album_name':'string',
-        'image_url':'string',
+        'image':'string',
         'listeners':'int32',
         'playcount':'int32',
         'url':'string',
-        'tag':'object',
         'published':'string',
     })
     albumInfo_csv.to_csv("albumInfo_50.csv", index=False)
@@ -451,16 +474,17 @@ def multiprocessing_userinfo():
     userInfo_csv = pd.concat(dataframe_list, ignore_index=True)
     userInfo_csv.replace('None', np.NaN, inplace=True)
     userInfo_csv.replace('', np.NaN, inplace=True)
+    userInfo_csv.rename(columns={'name':'user_name'}, inplace=True)
     userInfo_csv = userInfo_csv.astype({
-        'name':'string',
+        'user_name':'string',
         'age':'int',
         'subscriber':'int',
         'realname':'string',
         'bootstrap':'int',
         'playcount':'int',
-        'image_url':'string',
+        'image':'string',
         'realname':'string',
-        'registered_uts':'string', # ?
+        'registered':'string', # ?
         'country':'string',
         'gender':'int8',
         'url':'string',
@@ -488,11 +512,7 @@ def multiprocessing_taginfo():
     print(tagInfo_csv.dtypes)
 
 multiprocessing_interaction()
-sleep(2)
 multiprocessing_trackinfo()
-sleep(2)
 multiprocessing_albuminfo()
-sleep(2)
 multiprocessing_userinfo()
-sleep(2)
 multiprocessing_taginfo()
