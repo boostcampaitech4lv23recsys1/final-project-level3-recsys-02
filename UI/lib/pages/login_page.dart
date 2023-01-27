@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ui/constants.dart';
 import 'package:ui/utils/dio_client.dart';
-import 'package:ui/widgets/footer.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -97,10 +96,10 @@ class _LoginPageState extends State<LoginPage> {
                             )),
                         onPressed: () async {
                           var code = await dioClient.loginUser(
-                              email: idTextController.text,
+                              name: idTextController.text,
                               pwd: pwdTextController.text);
-                          if (code == 200) {
-                            isLogin = true;
+                          if (code == 'success') {
+                            enterSession();
                             Navigator.pushReplacementNamed(context, '/main');
                           } else {
                             errorMsg = '아이디 혹은 비밀번호가 존재하지 않습니다';

@@ -23,9 +23,9 @@ class UserInfo {
 
 UserInfo _$UserFromJson(Map<String, dynamic> json) {
   return UserInfo(
-    name: json['id'] as String,
-    pwd: json['pwd'] as String,
     name: json['name'] as String,
+    pwd: json['pwd'] as String,
+    realname: json['realname'] as String,
     country: json['country'] as String,
     image: json['image'] as String,
     age: json['age'] as int,
@@ -36,9 +36,9 @@ UserInfo _$UserFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$UserToJson(UserInfo instance) => <String, dynamic>{
-      'name': instance.id,
+      'name': instance.name,
       'pwd': instance.pwd,
-      'realname': instance.name,
+      'realname': instance.realname,
       'image': instance.image,
       'country': instance.country,
       'age': instance.age,

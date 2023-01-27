@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:toast/toast.dart';
 import 'package:ui/constants.dart';
 import 'package:ui/models/user.dart';
 import 'package:ui/pages/main_page.dart';
@@ -17,47 +18,64 @@ class SigninPage extends StatefulWidget {
 class _SigninPageState extends State<SigninPage> {
   bool isStart = true;
 
-  late TextEditingController _emailController;
+  late TextEditingController _nameController;
   late TextEditingController _emailCheckController;
   late TextEditingController _pwdController;
-  late TextEditingController _nameController;
+  late TextEditingController _realnameController;
   late TextEditingController _ageController;
   late TextEditingController _genderController;
 
   final DioClient dioClient = DioClient();
 
-  final List genreLists = [];
+  final List genreLists = [
+    ['electronic', false],
+    ['metal', false],
+    ['rock', false],
+    ['hip-hop', false],
+    ['indie', false],
+    ['jazz', false],
+    ['reggae', false],
+    ['british', false],
+    ['punk', false],
+    ['80s', false],
+    ['dance', false],
+    ['acoustic', false],
+    ['rnb', false],
+    ['hardcore', false],
+    ['country', false],
+    ['blues', false],
+    ['alternative', false],
+    ['classical', false],
+    ['rap', false],
+    ['country', false],
+  ];
+  final List selectedGenreLists = [];
+
   final List artistList = [];
+  final List selectedArtistList = [];
 
   @override
   void initState() {
-    _emailController = TextEditingController();
+    _nameController = TextEditingController();
     _emailCheckController = TextEditingController();
     _pwdController = TextEditingController();
-    _nameController = TextEditingController();
+    _realnameController = TextEditingController();
     _ageController = TextEditingController();
     _genderController = TextEditingController();
-    getMusicGenres();
     getArtists();
     super.initState();
   }
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _nameController.dispose();
     _emailCheckController.dispose();
     _pwdController.dispose();
-    _nameController.dispose();
+    _realnameController.dispose();
     _ageController.dispose();
     _genderController.dispose();
 
     super.dispose();
-  }
-
-  void getMusicGenres() {
-    for (int i = 0; i < 20; i++) {
-      genreLists.add(['장르 $i', kWhite]);
-    }
   }
 
   void getArtists() {
@@ -93,8 +111,8 @@ class _SigninPageState extends State<SigninPage> {
               decoration: outerBorder,
               child: TextField(
                 decoration: InputDecoration(
-                    hintStyle: hintTextStyle, hintText: '이메일을 입력하세요.'),
-                controller: _emailController,
+                    hintStyle: hintTextStyle, hintText: '(예시) guest1234'),
+                controller: _nameController,
                 style: TextStyle(color: kDarkGrey),
               ),
             ),
@@ -115,8 +133,9 @@ class _SigninPageState extends State<SigninPage> {
               height: titleHeight,
               decoration: outerBorder,
               child: TextField(
+                obscureText: true,
                 decoration: InputDecoration(
-                    hintStyle: hintTextStyle, hintText: '비밀번호를 입력하세요.'),
+                    hintStyle: hintTextStyle, hintText: '(예시) guest1234'),
                 controller: _pwdController,
                 style: TextStyle(color: kDarkGrey),
               ),
@@ -139,8 +158,8 @@ class _SigninPageState extends State<SigninPage> {
               decoration: outerBorder,
               child: TextField(
                 decoration: InputDecoration(
-                    hintStyle: hintTextStyle, hintText: '프로필 이름을 입력하세요.'),
-                controller: _nameController,
+                    hintStyle: hintTextStyle, hintText: '(예시) guest'),
+                controller: _realnameController,
                 style: TextStyle(color: kDarkGrey),
               ),
             ),
@@ -241,14 +260,21 @@ class _SigninPageState extends State<SigninPage> {
                           child: Container(
                               width: 25,
                               decoration: BoxDecoration(
-                                color: genreLists[index][1],
+                                color: genreLists[index][1]
+                                    ? Color.fromARGB(255, 255, 146, 127)
+                                    : kWhite,
                                 borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(6.0),
                                     bottomLeft: Radius.circular(6.0)),
                               )),
                           onTap: () {
-                            genreLists[index][1] =
-                                Color.fromARGB(255, 255, 146, 127);
+                            if (genreLists[index][1]) {
+                              genreLists[index][1] = false;
+                              selectedGenreLists.remove(index);
+                            } else {
+                              genreLists[index][1] = true;
+                              selectedGenreLists.add(index);
+                            }
                             setState(() {});
                           }),
                       genreCard(genreLists[index]),
@@ -286,7 +312,13 @@ class _SigninPageState extends State<SigninPage> {
                     left: 3,
                     child: IconButton(
                         onPressed: () {
-                          artistList[index][2] = true;
+                          if (artistList[index][2]) {
+                            artistList[index][2] = false;
+                            selectedArtistList.remove(artistList[index][0]);
+                          } else {
+                            artistList[index][2] = true;
+                            selectedArtistList.add(artistList[index][0]);
+                          }
                           setState(() {});
                         },
                         icon: artistList[index][2]
@@ -308,6 +340,7 @@ class _SigninPageState extends State<SigninPage> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+    ToastContext().init(context);
 
     return Scaffold(
         body: Padding(
@@ -368,19 +401,16 @@ class _SigninPageState extends State<SigninPage> {
                                         onPressed: () async {
                                           isStart = false;
                                           setState(() {});
+                                          // 입력 유효성 체크
+                                          // 아아디 - 이메일형식
 
-                                          // User userInfo = User(
-                                          //   email: _emailController.text,
-                                          //   name: _nameController.text,
-                                          //   pwd: _pwdController.text,
-                                          //   age: int.parse(_ageController.text),
-                                          //   gender: int.parse(
-                                          //       _genderController.text),
-                                          //   profileImage: 'assets/profile.png',
-                                          // );
-                                          // User? retrievedUser = await dioClient
-                                          //     .createUser(user: userInfo);
-                                          // debugPrint(retrievedUser.toString());
+                                          // 비밀번호 - 6자리 이상
+
+                                          // 사용자 이름 - 영문/한글만
+
+                                          // 나이 - int형
+                                          // gender -
+                                          // 이미지 -
                                         },
                                       )),
                                 ],
@@ -422,12 +452,57 @@ class _SigninPageState extends State<SigninPage> {
                                               fontSize: 16.0,
                                               fontWeight: FontWeight.bold,
                                             )),
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      MainPage()));
+                                        onPressed: () async {
+                                          UserInfo userInfo = UserInfo(
+                                            name: _nameController.text,
+                                            pwd: _pwdController.text,
+                                            realname: _realnameController.text,
+                                            image: 'assets/profile.png',
+                                            country: 'Korea',
+                                            age: int.parse(_ageController.text),
+                                            gender: int.parse(
+                                                _genderController.text),
+                                            followers: [],
+                                            following: [],
+                                          );
+
+                                          debugPrint(
+                                              selectedGenreLists.toString());
+                                          debugPrint(
+                                              selectedArtistList.toString());
+
+                                          if (selectedGenreLists.length >= 3 &&
+                                              selectedArtistList.length >= 3) {
+                                            var res = await dioClient
+                                                .signinUser(userInfo: userInfo);
+                                            if (res == 'success') {
+                                              Navigator.pushNamed(
+                                                  context, '/main');
+                                            } else if (res == 'exist') {
+                                              Toast.show('이미 가입하신 내역이 존재합니다.',
+                                                  backgroundColor: kWhite,
+                                                  textStyle:
+                                                      TextStyle(color: kBlack),
+                                                  gravity: Toast.top,
+                                                  duration: Toast.lengthLong);
+                                            } else {
+                                              Toast.show(
+                                                  '입력하신 사항들을 다시 한 번 확인해주세요 !',
+                                                  backgroundColor: kWhite,
+                                                  textStyle:
+                                                      TextStyle(color: kBlack),
+                                                  gravity: Toast.top,
+                                                  duration: Toast.lengthLong);
+                                            }
+                                          } else {
+                                            Toast.show(
+                                                '장르와 아티스트 모두 3개 이상 선택해주세요',
+                                                backgroundColor: kWhite,
+                                                textStyle:
+                                                    TextStyle(color: kBlack),
+                                                gravity: Toast.top,
+                                                duration: Toast.lengthLong);
+                                          }
                                         },
                                       )),
                                 ],
