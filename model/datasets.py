@@ -16,15 +16,15 @@ class PretrainDataset(Dataset):
         self.split_sequence()
 
     def split_sequence(self):
-        for seq in self.user_seq:
+        for seq in self.user_seq: # user별로 split 
             input_ids = seq[-(self.max_len+2):-2] # keeping same as train set / max_seq_len 만큼 길이 맞추기
             for i in range(len(input_ids)):
                 self.part_sequence.append(input_ids[:i+1]) # sequence를 하나씩 추가하면서 append: (0, [0,1], [0,1,2], ...)
 
     def __len__(self):
-        return len(self.part_sequence) # == len(self.max_len)
+        return len(self.part_sequence) 
 
-    def __getitem__(self, index):
+    def __getitem__(self, index): # [TODO] Code Review
 
         sequence = self.part_sequence[index] # pos_items
         # sample neg item for every masked item
