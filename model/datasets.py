@@ -17,12 +17,12 @@ class PretrainDataset(Dataset):
 
     def split_sequence(self):
         for seq in self.user_seq:
-            input_ids = seq[-(self.max_len+2):-2] # keeping same as train set
+            input_ids = seq[-(self.max_len+2):-2] # keeping same as train set / max_seq_len 만큼 길이 맞추기
             for i in range(len(input_ids)):
-                self.part_sequence.append(input_ids[:i+1])
+                self.part_sequence.append(input_ids[:i+1]) # sequence를 하나씩 추가하면서 append: (0, [0,1], [0,1,2], ...)
 
     def __len__(self):
-        return len(self.part_sequence)
+        return len(self.part_sequence) # == len(self.max_len)
 
     def __getitem__(self, index):
 
@@ -32,27 +32,27 @@ class PretrainDataset(Dataset):
         neg_items = []
         # Masked Item Prediction
         item_set = set(sequence)
-        for item in sequence[:-1]:
+        for item in sequence[:-1]: # part_sequence에서 마지막 sequence제외하고 loop
             prob = random.random()
-            if prob < self.args.mask_p:
-                masked_item_sequence.append(self.args.mask_id)
-                neg_items.append(neg_sample(item_set, self.args.item_size))
-            else:
-                masked_item_sequence.append(item)
-                neg_items.append(item)
+            if prob < self.args.mask_p: # mask_p(0.2)보다 확률이 작으면
+                masked_item_sequence.append(self.args.mask_id) # args.mask_id(max_item + 1) append
+                neg_items.append(neg_sample(item_set, self.args.item_size)) # itemset에 없는 item을 neg sample로 1개 append
+            else: # mask_p보다 확률이 크면
+                masked_item_sequence.append(item) # item을 그대로 append
+                neg_items.append(item) # item을 그대로 neg sample로 사용
 
         # add mask at the last position
         masked_item_sequence.append(self.args.mask_id)
         neg_items.append(neg_sample(item_set, self.args.item_size))
 
         # Segment Prediction
-        if len(sequence) < 2:
+        if len(sequence) < 2: # sequence길이가 2보다 작은 경우 : 1,0 => 따로 구분 없이 그대로 사용
             masked_segment_sequence = sequence
             pos_segment = sequence
             neg_segment = sequence
         else:
-            sample_length = random.randint(1, len(sequence) // 2)
-            start_id = random.randint(0, len(sequence) - sample_length)
+            sample_length = random.randint(1, len(sequence) // 2) # 3 = randint(1,5)
+            start_id = random.randint(0, len(sequence) - sample_length) # 5 = randint(0, 10-3)
             neg_start_id = random.randint(0, len(self.long_sequence) - sample_length)
             pos_segment = sequence[start_id: start_id + sample_length]
             neg_segment = self.long_sequence[neg_start_id:neg_start_id + sample_length]

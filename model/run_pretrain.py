@@ -68,13 +68,13 @@ def main():
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_id
     args.cuda_condition = torch.cuda.is_available() and not args.no_cuda
 
-    args.data_file = args.data_dir + args.data_name + '.txt'
-    item2attribute_file = args.data_dir + args.data_name + '_item2attributes.json'
+    args.data_file = args.data_dir + args.data_name + '.txt' # interaction data file
+    item2attribute_file = args.data_dir + args.data_name + '_item2attributes.json' # attribute data file
     # concat all user_seq get a long sequence, from which sample neg segment for SP
-    user_seq, max_item, long_sequence = get_user_seqs_long(args.data_file)
-    item2attribute, attribute_size = get_item2attribute_json(item2attribute_file)
+    user_seq, max_item, long_sequence = get_user_seqs_long(args.data_file) # user별 interaction item list, max(itemset), user 구분 없이 전체 interaction item list
+    item2attribute, attribute_size = get_item2attribute_json(item2attribute_file) # return json, max(attribute_set)
 
-    args.item_size = max_item + 2
+    args.item_size = max_item + 2 # mask_id 때문에 +2
     args.mask_id = max_item + 1
     args.attribute_size = attribute_size + 1
     # save model args

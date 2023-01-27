@@ -30,10 +30,10 @@ def check_path(path):
         print(f'{path} created')
 
 def neg_sample(item_set, item_size):  # 前闭后闭
-    item = random.randint(1, item_size - 1)
-    while item in item_set:
-        item = random.randint(1, item_size - 1)
-    return item
+    item = random.randint(1, item_size - 1) # random.randint(1, max(itemset)+1)
+    while item in item_set: # 임의로 선택한 item 하나가 item_set에 있는 동안
+        item = random.randint(1, item_size - 1) # item을 새로 선택
+    return item # item_set에 없는 item이 나올 때까지 반복하고 return
 
 class EarlyStopping:
     """Early stops the training if validation loss doesn't improve after a given patience."""
@@ -151,18 +151,18 @@ def get_user_seqs(data_file):
     return user_seq, max_item, valid_rating_matrix, test_rating_matrix
 
 def get_user_seqs_long(data_file):
-    lines = open(data_file).readlines()
+    lines = open(data_file).readlines() # data_file read
     user_seq = []
     long_sequence = []
     item_set = set()
-    for line in lines:
-        user, items = line.strip().split(' ', 1)
-        items = items.split(' ')
-        items = [int(item) for item in items]
-        long_sequence.extend(items) # 后面的都是采的负例
-        user_seq.append(items)
-        item_set = item_set | set(items)
-    max_item = max(item_set)
+    for line in lines: # line(user)별로
+        user, items = line.strip().split(' ', 1) # 1번만 ' '을 기준으로 split -> user:str, items:List
+        items = items.split(' ') # item split
+        items = [int(item) for item in items] # change item type from str to int
+        long_sequence.extend(items) # 后面的都是采的负例 / long_sequence에 한 user에 대한 items(item list) extend
+        user_seq.append(items) # 한 user에 대한 items append
+        item_set = item_set | set(items) # unique item set 구성
+    max_item = max(item_set) # item set의 maximum값 
 
     return user_seq, max_item, long_sequence
 
@@ -191,7 +191,7 @@ def get_user_seqs_and_sample(data_file, sample_file):
     return user_seq, max_item, sample_seq
 
 def get_item2attribute_json(data_file):
-    item2attribute = json.loads(open(data_file).readline())
+    item2attribute = json.loads(open(data_file).readline()) # json file read
     attribute_set = set()
     for item, attributes in item2attribute.items():
         attribute_set = attribute_set | set(attributes)
