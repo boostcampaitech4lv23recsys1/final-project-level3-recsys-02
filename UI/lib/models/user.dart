@@ -1,20 +1,21 @@
 class UserInfo {
 // final String country;
-  String name, pwd, realname, image, country;
-  int age, gender;
-  List<String> followers;
+  String user_name, password, realname, image, country;
+  int age, gender, playcount;
+  List<String> follower;
   List<String> following;
 
   UserInfo({
-    required this.name,
-    required this.pwd,
+    required this.user_name,
+    required this.password,
     required this.realname,
     required this.country,
     required this.image,
     required this.age,
     required this.gender,
+    required this.playcount,
     required this.following,
-    required this.followers,
+    required this.follower,
   });
   factory UserInfo.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
@@ -23,28 +24,30 @@ class UserInfo {
 
 UserInfo _$UserFromJson(Map<String, dynamic> json) {
   return UserInfo(
-    name: json['name'] as String,
-    pwd: json['pwd'] as String,
+    user_name: json['name'] as String,
+    password: json['pwd'] as String,
     realname: json['realname'] as String,
     country: json['country'] as String,
     image: json['image'] as String,
     age: json['age'] as int,
     gender: json['gender'] as int,
+    playcount: json['playcount'] as int,
     following: json['following'] as List<String>,
-    followers: json['followers'] as List<String>,
+    follower: json['followers'] as List<String>,
   );
 }
 
 Map<String, dynamic> _$UserToJson(UserInfo instance) => <String, dynamic>{
-      'name': instance.name,
-      'pwd': instance.pwd,
+      'user_name': instance.user_name,
+      'password': instance.password,
       'realname': instance.realname,
       'image': instance.image,
       'country': instance.country,
       'age': instance.age,
       'gender': instance.gender,
+      'playcount': instance.playcount,
       'following': instance.following,
-      'followers': instance.followers,
+      'follower': instance.follower,
     };
 
 class OtherUser {
