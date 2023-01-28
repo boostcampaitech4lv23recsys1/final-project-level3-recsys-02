@@ -11,6 +11,12 @@ import os
 from time import sleep
 import json
 import numpy as np
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--user', type=str)
+parser.add_argument('--api', type=str, default="1a62f2d4937452d62d7426029e4c9997")
+args = parser.parse_args()
 
 os.chdir('/opt/ml/final/API')
 
@@ -26,35 +32,35 @@ params_inter = {
     "extended": 1,
     "user": "",
     "limit": 1,
-    "api_key": "1a62f2d4937452d62d7426029e4c9997",
+    "api_key": f"{args.api}",
     "format": "json",
 }
 params_track = {
     "method": "track.getInfo",
     "track": "",
     "artist": "",
-    "api_key": "1a62f2d4937452d62d7426029e4c9997",
+    "api_key": f"{args.api}",
     "autocorrect": 0,
     "format": "json",
 }
 params_tag = {
     "method": "tag.getInfo",
     "tag": "",
-    "api_key": "1a62f2d4937452d62d7426029e4c9997",
+    "api_key": f"{args.api}",
     "format": "json",
 }
 params_album = {
     "method": "album.getInfo",
     "album": "",
     "artist" : "",
-    "api_key": "1a62f2d4937452d62d7426029e4c9997",
+    "api_key": f"{args.api}",
     "autocorrect": 0,
     "format": "json",
 }
 params_artist = {
     "method": "artist.getInfo",
     "artist": "",
-    "api_key": "1a62f2d4937452d62d7426029e4c9997",
+    "api_key": f"{args.api}",
     "autocorrect": 0,
     "format": "json",
 }
@@ -62,7 +68,7 @@ params_artist = {
 params_user = {
     "method": "user.getInfo",
     "user": "",
-    "api_key": "1a62f2d4937452d62d7426029e4c9997",
+    "api_key": f"{args.api}",
     "format": "json",
 }
 
@@ -150,10 +156,11 @@ def interaction(users):
         except:
             try:
                 if text['error'] == 17: # {'message': 'Login: User required to be logged in', 'error': 17}
-                    print(user_id[0])
+                    # print(user_id[0])
                     continue
             except:
                 print('break!!')
+                print(text)
                 return {'dataframe_list':function_dataframe_list_tmp,
                     'track2artist':tmp_track2artist,
                     'artist2album':tmp_artist2album,
@@ -470,7 +477,7 @@ def multiprocessing_interaction():
         'artist_name':'string',
     })
     print(data_csv.dtypes)
-    data_csv.to_csv("interaction_kdy.csv", index=False)
+    data_csv.to_csv(f"interaction_{args.user}.csv", index=False)
 
 def multiprocessing_trackinfo():
     global tag2id
@@ -503,7 +510,7 @@ def multiprocessing_trackinfo():
         'streamable_text':'int8',
         'streamable_fulltrack':'int8'
     })
-    trackInfo_csv.to_csv("trackinfo_kdy.csv", index=False)
+    trackInfo_csv.to_csv(f"trackinfo_{args.user}.csv", index=False)
     print(trackInfo_csv.dtypes)
 
 def multiprocessing_albuminfo():
@@ -527,7 +534,7 @@ def multiprocessing_albuminfo():
         'url':'string',
         'published':'string',
     })
-    albumInfo_csv.to_csv("albumInfo_kdy.csv", index=False)
+    albumInfo_csv.to_csv(f"albumInfo_{args.user}.csv", index=False)
     print(albumInfo_csv.dtypes)
 
 def multiprocessing_artistinfo():
@@ -541,7 +548,7 @@ def multiprocessing_artistinfo():
     dataframe_list = list(itertools.chain.from_iterable([tmp['dataframe_list'] for tmp in dataframe_list_tmp]))
     artistInfo_csv = pd.concat(dataframe_list, ignore_index=True)
     artistInfo_csv = artistInfo_csv[['mbid','name','small','medium','large','extralarge','mega','']]
-    artistInfo_csv.to_csv("./artist_kdy.csv", index = False)
+    artistInfo_csv.to_csv(f"artist_{args.user}.csv", index = False)
     print(artistInfo_csv.dtypes)
 
 def multiprocessing_userinfo():
@@ -571,7 +578,7 @@ def multiprocessing_userinfo():
         'gender':'int8',
         'url':'string',
     })
-    userInfo_csv.to_csv("userInfo_kdy.csv", index=False)
+    userInfo_csv.to_csv(f"userInfo_{args.user}.csv", index=False)
     print(userInfo_csv.dtypes)
 
 def multiprocessing_taginfo():
@@ -590,7 +597,7 @@ def multiprocessing_taginfo():
         'total':'int',
         'reach':'int',
     })
-    tagInfo_csv.to_csv("tagInfo_kdy.csv", index=False)
+    tagInfo_csv.to_csv(f"tagInfo_{args.user}.csv", index=False)
     print(tagInfo_csv.dtypes)
 
 multiprocessing_interaction()
