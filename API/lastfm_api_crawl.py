@@ -14,8 +14,10 @@ import numpy as np
 
 os.chdir('/opt/ml/final/API')
 
-with open('./username_sample.pkl', 'rb') as f:
+with open('./listeners_1.pkl', 'rb') as f:
 	username_list = pickle.load(f)
+
+# username_list = username_list[:8] # test 용
 
 url = 'http://ws.audioscrobbler.com/2.0'
 
@@ -45,6 +47,13 @@ params_album = {
     "method": "album.getInfo",
     "album": "",
     "artist" : "",
+    "api_key": "1a62f2d4937452d62d7426029e4c9997",
+    "autocorrect": 0,
+    "format": "json",
+}
+params_artist = {
+    "method": "artist.getInfo",
+    "artist": "",
     "api_key": "1a62f2d4937452d62d7426029e4c9997",
     "autocorrect": 0,
     "format": "json",
@@ -139,13 +148,18 @@ def interaction(users):
             text = text['recenttracks']
             attr = text['@attr']
         except:
-            print('break!!')
-            return {'dataframe_list':function_dataframe_list_tmp,
-                'track2artist':tmp_track2artist,
-                'artist2album':tmp_artist2album,
-                'track2id':tmp_track2id,
-                'album2id':tmp_artist2id,
-                'artist2id':tmp_artist2id}
+            try:
+                if text['error'] == 17: # {'message': 'Login: User required to be logged in', 'error': 17}
+                    print(user_id[0])
+                    continue
+            except:
+                print('break!!')
+                return {'dataframe_list':function_dataframe_list_tmp,
+                    'track2artist':tmp_track2artist,
+                    'artist2album':tmp_artist2album,
+                    'track2id':tmp_track2id,
+                    'album2id':tmp_artist2id,
+                    'artist2id':tmp_artist2id}
 
 
         params_inter["limit"] = 200
@@ -198,8 +212,14 @@ def trackinfo(tracks):
         try:
             track = json.loads(track)['track']
         except:
-            print('break!!')
-            return {'dataframe_list':function_dataframe_list_tmp, 'tag2id':tmp_tag2id}
+            try:
+                if track['error'] == 6: # {"error":6,"message":"Track not found","links":[]}
+                    print('track:', track, 'artist:', artist)
+                    continue
+            except:
+                print('break!!')
+                print(track)
+                return {'dataframe_list':function_dataframe_list_tmp, 'tag2id':tmp_tag2id}
 
         track['artist_name'] = track['artist']['name']
         # if 'mbid' in list(track['artist'].keys()):
@@ -257,6 +277,7 @@ def albuminfo(artist2album):
             album = json.loads(album)['album']
         except:
             print('break!!')
+            print(album)
             return {'dataframe_list':function_dataframe_list_tmp}
         
         # album['tag'] = album['tags']
@@ -316,6 +337,7 @@ def userinfo(user2id):
             user = json.loads(user)['user']
         except:
             print('break!!')
+            print(user)
             return {'dataframe_list':function_dataframe_list_tmp}
             
         user['image'] = user['image'][-1]['#text']
@@ -342,6 +364,7 @@ def taginfo(tag2id):
             tag = json.loads(tag)['tag']
         except:
             print('break!!')
+            print(tag)
             return {'dataframe_list':function_dataframe_list_tmp}
 
         # print(tag.keys())
@@ -351,6 +374,44 @@ def taginfo(tag2id):
         tag.drop(columns=['wiki'], inplace=True)
         
         function_dataframe_list_tmp.append(tag)
+        if i % 4 == 0:
+            sleep(1)
+    return {'dataframe_list':function_dataframe_list_tmp}
+
+def artistinfo(artist2id):
+    function_dataframe_list_tmp = []
+    for i, (artist, id) in enumerate(tqdm(artist2id)):
+        params_artist['artist'] = artist
+        result = requests.get(url, params_artist).json()
+
+        try:
+            image = result['artist']['image']
+        except:
+            print('break!!')
+            print(result)
+            return {'dataframe_list':function_dataframe_list_tmp}
+        
+        try :
+            image = result['artist']['image']
+            image_dict = {item["size"]:item["#text"] for item in image}
+        except KeyError :
+            image_dict = {"small":None,"medium":None,"large":None,"extralarge":None,"mega":None,'':None}
+        try :
+            mbid = result['artist']['mbid']
+        except KeyError :
+            mbid = None
+        try :
+            name = result['artist']['name']
+        except KeyError : 
+            name = None
+            
+        image_dict['mbid'] = mbid
+        image_dict['name'] = name
+        dictionary = image_dict
+            
+        tmp = pd.DataFrame.from_dict([dictionary])
+        
+        function_dataframe_list_tmp.append(tmp)
         if i % 4 == 0:
             sleep(1)
     return {'dataframe_list':function_dataframe_list_tmp}
@@ -409,7 +470,7 @@ def multiprocessing_interaction():
         'artist_name':'string',
     })
     print(data_csv.dtypes)
-    data_csv.to_csv("interaction_2000.csv", index=False)
+    data_csv.to_csv("interaction_kdy.csv", index=False)
 
 def multiprocessing_trackinfo():
     global tag2id
@@ -442,9 +503,8 @@ def multiprocessing_trackinfo():
         'streamable_text':'int8',
         'streamable_fulltrack':'int8'
     })
-    trackInfo_csv.to_csv("trackinfo_50.csv", index=False)
+    trackInfo_csv.to_csv("trackinfo_kdy.csv", index=False)
     print(trackInfo_csv.dtypes)
-
 
 def multiprocessing_albuminfo():
     cpu = 8
@@ -467,8 +527,22 @@ def multiprocessing_albuminfo():
         'url':'string',
         'published':'string',
     })
-    albumInfo_csv.to_csv("albumInfo_50.csv", index=False)
+    albumInfo_csv.to_csv("albumInfo_kdy.csv", index=False)
     print(albumInfo_csv.dtypes)
+
+def multiprocessing_artistinfo():
+    cpu = 8
+    pool = Pool(processes=cpu)
+    print(len(artist2id))
+    dataframe_list_tmp = pool.map(artistinfo, list_split(list(artist2id.items()), cpu))
+    # print(dataframe_list_tmp)
+    pool.close()
+    pool.join()
+    dataframe_list = list(itertools.chain.from_iterable([tmp['dataframe_list'] for tmp in dataframe_list_tmp]))
+    artistInfo_csv = pd.concat(dataframe_list, ignore_index=True)
+    artistInfo_csv = artistInfo_csv[['mbid','name','small','medium','large','extralarge','mega','']]
+    artistInfo_csv.to_csv("./artist_kdy.csv", index = False)
+    print(artistInfo_csv.dtypes)
 
 def multiprocessing_userinfo():
     cpu = 8
@@ -497,7 +571,7 @@ def multiprocessing_userinfo():
         'gender':'int8',
         'url':'string',
     })
-    userInfo_csv.to_csv("userInfo_10.csv", index=False)
+    userInfo_csv.to_csv("userInfo_kdy.csv", index=False)
     print(userInfo_csv.dtypes)
 
 def multiprocessing_taginfo():
@@ -516,11 +590,12 @@ def multiprocessing_taginfo():
         'total':'int',
         'reach':'int',
     })
-    tagInfo_csv.to_csv("tagInfo.csv", index=False)
+    tagInfo_csv.to_csv("tagInfo_kdy.csv", index=False)
     print(tagInfo_csv.dtypes)
 
 multiprocessing_interaction()
 multiprocessing_trackinfo()
 multiprocessing_albuminfo()
+multiprocessing_artistinfo()
 multiprocessing_userinfo()
 multiprocessing_taginfo()
