@@ -63,6 +63,7 @@ AppBar mainAppBar(context) {
                 padding: const EdgeInsets.all(12)),
             child: Text('로그아웃', style: subtitleTextStyle),
             onPressed: () {
+              exitSession();
               Navigator.popUntil(context, ModalRoute.withName('/home'));
             },
           )),
@@ -100,6 +101,7 @@ AppBar mypagenAppBar(context) {
                 padding: const EdgeInsets.all(12)),
             child: Text('로그아웃', style: subtitleTextStyle),
             onPressed: () {
+              exitSession();
               Navigator.popUntil(context, ModalRoute.withName('/home'));
             },
           )),

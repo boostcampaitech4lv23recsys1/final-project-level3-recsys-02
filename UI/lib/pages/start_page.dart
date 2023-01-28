@@ -57,7 +57,7 @@ class _StartPageState extends State<StartPage> {
                             padding: const EdgeInsets.all(16)),
                         child: Text('로그아웃', style: subtitleTextStyle),
                         onPressed: () {
-                          exitSession(false);
+                          exitSession();
                           setState(() {});
                           Navigator.popUntil(
                               context, ModalRoute.withName('/home'));

@@ -56,12 +56,12 @@ void enterSession() async {
   final pref = await SharedPreferences.getInstance();
   userName = pref.getString('user_name')!;
   isLogin = true;
-  debugPrint("session == $userName");
+  debugPrint("session == $isLogin / $userName");
 }
 
-void exitSession(bool islogin) async {
+void exitSession() async {
   final pref = await SharedPreferences.getInstance();
   pref.setString('user_name', '');
   isLogin = false;
-  debugPrint("session == $userName");
+  debugPrint("session == $isLogin");
 }
