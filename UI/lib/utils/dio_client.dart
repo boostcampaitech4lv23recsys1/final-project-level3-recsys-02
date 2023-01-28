@@ -81,3 +81,24 @@ class DioClient {
     }
   }
 }
+
+class DioModel {
+  final Dio _dio = Dio(
+    BaseOptions(
+      baseUrl: 'http://27.96.134.64:30001',
+    ),
+  )..interceptors.add(Logging());
+
+  Future profile({required String name}) async {
+    late Response response;
+    try {
+      response = await _dio.get('users/' + name + '/infer');
+      debugPrint(response.toString());
+      List responseBody = response.data;
+      return responseBody;
+    } catch (e) {
+      debugPrint('Error creating user: $e');
+      return -1;
+    }
+  }
+}

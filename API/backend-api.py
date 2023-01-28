@@ -129,12 +129,12 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
 @app.get("/users/{user_id}/profiles", description="사용자 정보")
 def get_profiles(user_id: str):
 
-    get_sample = f"""
+    query = f"""
         select * from user_info where user_name = '{user_id}'
     ;"""
 
     with db_connect.cursor() as cur:
-        cur.execute(get_sample)
+        cur.execute(query)
         values = list(cur.fetchall()[0])
     
     for index, i in enumerate(values):
@@ -163,7 +163,7 @@ def get_profiles(user_id: str):
 
 @app.get("/users/{user_name}/likes", description="좋아요 리스트")
 def get_likes(user_name: str):
-    get_sample = f"""select distinct inter.track_name, 
+    query = f"""select distinct inter.track_name, 
     inter.album_name, track_info.artist_name, track_info.duration, 
     album_info.image from track_info left outer join inter on 
     track_info.track_name = inter.track_name left outer 
@@ -171,7 +171,7 @@ def get_likes(user_name: str):
     where (inter.user_name = '{user_name}' and inter.loved = 0)
     ;"""
     with db_connect.cursor() as cur:
-        cur.execute(get_sample)
+        cur.execute(query)
         values = cur.fetchall()
 
     return values
