@@ -35,7 +35,7 @@ class PretrainDataset(Dataset):
         for item in sequence[:-1]: # part_sequence에서 마지막 sequence제외하고 loop
             prob = random.random()
             if prob < self.args.mask_p: # mask_p(0.2)보다 확률이 작으면
-                masked_item_sequence.append(self.args.mask_id) # args.mask_id(max_item + 1) append
+                masked_item_sequence.append(self.args.mask_id) # args.mask_id(= max_item + 1) append
                 neg_items.append(neg_sample(item_set, self.args.item_size)) # itemset에 없는 item을 neg sample로 1개 append
             else: # mask_p보다 확률이 크면
                 masked_item_sequence.append(item) # item을 그대로 append
@@ -88,7 +88,7 @@ class PretrainDataset(Dataset):
         # Masked Attribute Prediction
         attributes = []
         for item in pos_items:
-            attribute = [0] * self.args.attribute_size
+            attribute = [0] * self.args.attribute_size 
             try:
                 now_attribute = self.args.item2attribute[str(item)]
                 for a in now_attribute:

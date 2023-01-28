@@ -32,7 +32,7 @@ for col in attributes.columns :
     df[col2id] = df[col].apply(a2b(df,col))
     # 하나의 컬럼에 여러개의 attribute가 list로 포함된 경우 => df.explode
 
-# 1. 하나의 임베딩 테이블
+# 1. 하나의 임베딩 테이블 => baseline코드가 하나의 리스트를 읽는 형식으로 되어있어 이 방법 사용해야 할 듯
 offsets = [0]*len(attributes_dict_list)
 for i,dic in enumerate(attributes_dict_list):
     k,v = dic.items()

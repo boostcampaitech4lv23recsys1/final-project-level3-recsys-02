@@ -177,7 +177,7 @@ class PretrainTrainer(Trainer):
             sp_loss_avg += sp_loss.item()
 
         num = len(pretrain_data_iter) * self.args.pre_batch_size
-        post_fix = {
+        post_fix = { # logging target
             "epoch": epoch,
             "aap_loss_avg": '{:.4f}'.format(aap_loss_avg /num),
             "mip_loss_avg": '{:.4f}'.format(mip_loss_avg /num),
