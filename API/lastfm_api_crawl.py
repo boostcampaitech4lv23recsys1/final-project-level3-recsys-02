@@ -10,6 +10,7 @@ import itertools
 import os
 from time import sleep
 import json
+import numpy as np
 
 os.chdir('/opt/ml/final/API')
 
@@ -133,15 +134,20 @@ def interaction(users):
         params_inter["limit"] = 1
         text = requests.get(url, params_inter).text
         text = json.loads(text)
+
         try:
             text = text['recenttracks']
             attr = text['@attr']
         except:
-            sleep(10)
-            text = requests.get(url, params_inter).text
-            text = json.loads(text)
-            text = text['recenttracks']
-            attr = text['@attr']
+            print('break!!')
+            return {'dataframe_list':function_dataframe_list_tmp,
+                'track2artist':tmp_track2artist,
+                'artist2album':tmp_artist2album,
+                'track2id':tmp_track2id,
+                'album2id':tmp_artist2id,
+                'artist2id':tmp_artist2id}
+
+
         params_inter["limit"] = 200
         for page in range(int(attr['totalPages'])):
             params_inter["page"] = page + 1
@@ -168,6 +174,8 @@ def interaction(users):
             
             function_dataframe_list_tmp.append(texts)
             break
+        if i % 4 == 0:
+            sleep(1)
     return {'dataframe_list':function_dataframe_list_tmp,
     'track2artist':tmp_track2artist,
     'artist2album':tmp_artist2album,
@@ -186,12 +194,12 @@ def trackinfo(tracks):
         params_track['track'] = track
         params_track['artist'] = artist
         track = requests.get(url, params_track).text
+
         try:
             track = json.loads(track)['track']
         except:
-            sleep(10)
-            track = requests.get(url, params_track).text
-            track = json.loads(track)['track']
+            print('break!!')
+            return {'dataframe_list':function_dataframe_list_tmp, 'tag2id':tmp_tag2id}
 
         track['artist_name'] = track['artist']['name']
         # if 'mbid' in list(track['artist'].keys()):
@@ -202,7 +210,7 @@ def trackinfo(tracks):
 
         # track['tag'] = track['toptags'].apply(lambda x: x['tag']) # 태그가 다 없음
         tmp = list(pd.DataFrame(track['toptags']['tag']).apply(lambda x: (x['name']), axis=1))
-        track['tags'] = json.dumps({i: tmp[i] for i in range(0, len(tmp))})
+        track['tags'] = {i: tmp[i] for i in range(0, len(tmp))}
         # print(track['tag'])
         push_tag2id(tmp)
 
@@ -233,8 +241,8 @@ def trackinfo(tracks):
         track.drop(columns=['artist', 'streamable', 'toptags', 'url'], inplace=True)
         function_dataframe_list_tmp.append(track)
 
-        # if i % 5 == 0:
-        #     sleep(1)
+        if i % 4 == 0:
+            sleep(1)
     return {'dataframe_list':function_dataframe_list_tmp, 'tag2id':tmp_tag2id}
 
 def albuminfo(artist2album):
@@ -248,9 +256,8 @@ def albuminfo(artist2album):
         try:
             album = json.loads(album)['album']
         except:
-            sleep(10)
-            album = requests.get(url, params_album).text
-            album = json.loads(album)['album']
+            print('break!!')
+            return {'dataframe_list':function_dataframe_list_tmp}
         
         # album['tag'] = album['tags']
         # print(album['image'][-1])
@@ -284,7 +291,7 @@ def albuminfo(artist2album):
         
         try:
             tmp = list(pd.DataFrame(album['tags'].item()['tag']).apply(lambda x: (x['name']), axis=1))
-            album['tag'] = json.dumps({i: tmp[i] for i in range(0, len(tmp))})
+            album['tag'] = {i: tmp[i] for i in range(0, len(tmp))}
         except:
             album['tag'] = np.nan
 
@@ -293,8 +300,8 @@ def albuminfo(artist2album):
 
         album.drop(columns=['tags', 'mbid'], inplace=True)
         function_dataframe_list_tmp.append(album)
-        # if i % 5 == 0:
-        #     sleep(1)
+        if i % 4 == 0:
+            sleep(1)
     return {'dataframe_list':function_dataframe_list_tmp}
 
 def userinfo(user2id):
@@ -304,12 +311,12 @@ def userinfo(user2id):
     for i, (user, id) in enumerate(tqdm(user2id)):
         params_user['user'] = user
         user = requests.get(url, params_user).text
+
         try:
             user = json.loads(user)['user']
         except:
-            sleep(10)
-            user = requests.get(url, params_user).text
-            user = json.loads(user)['user']
+            print('break!!')
+            return {'dataframe_list':function_dataframe_list_tmp}
             
         user['image'] = user['image'][-1]['#text']
         user['registered'] = user['registered']['unixtime']
@@ -321,7 +328,7 @@ def userinfo(user2id):
 
         user.drop(columns=['playlists', 'type', 'artist_count', 'track_count', 'album_count'], inplace=True)
         function_dataframe_list_tmp.append(user)
-        if i % 10 == 0:
+        if i % 4 == 0:
             sleep(1)
     return {'dataframe_list':function_dataframe_list_tmp}
 
@@ -330,12 +337,13 @@ def taginfo(tag2id):
     for i, (tag, id) in enumerate(tqdm(tag2id)):
         params_tag['tag'] = tag
         tag = requests.get(url, params_tag).text
+
         try:
             tag = json.loads(tag)['tag']
         except:
-            sleep(10)
-            tag = requests.get(url, params_tag).text
-            tag = json.loads(tag)['tag']
+            print('break!!')
+            return {'dataframe_list':function_dataframe_list_tmp}
+
         # print(tag.keys())
         # tag['summary'] = tag['wiki']['summary']
         # tag['content'] = tag['wiki']['content']
@@ -343,8 +351,8 @@ def taginfo(tag2id):
         tag.drop(columns=['wiki'], inplace=True)
         
         function_dataframe_list_tmp.append(tag)
-        # if i % 5 == 0:
-        #     sleep(1)
+        if i % 4 == 0:
+            sleep(1)
     return {'dataframe_list':function_dataframe_list_tmp}
 
 
