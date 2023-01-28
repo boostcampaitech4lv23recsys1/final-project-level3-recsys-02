@@ -3,7 +3,6 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:toast/toast.dart';
 import 'package:ui/constants.dart';
 import 'package:ui/models/user.dart';
-import 'package:ui/pages/main_page.dart';
 import 'package:ui/utils/dio_client.dart';
 import 'package:ui/widgets/footer.dart';
 import 'package:ui/widgets/custom_card.dart';
@@ -47,12 +46,12 @@ class _SigninPageState extends State<SigninPage> {
     ['alternative', false],
     ['classical', false],
     ['rap', false],
-    ['country', false],
+    ['etc', false],
   ];
-  final List selectedGenreLists = [];
+  final List<String> selectedGenreLists = [];
 
   final List artistList = [];
-  final List selectedArtistList = [];
+  final List<String> selectedArtistList = [];
 
   @override
   void initState() {
@@ -113,7 +112,7 @@ class _SigninPageState extends State<SigninPage> {
                 decoration: InputDecoration(
                     hintStyle: hintTextStyle, hintText: '(예시) guest1234'),
                 controller: _nameController,
-                style: TextStyle(color: kDarkGrey),
+                style: TextStyle(color: kWhite),
               ),
             ),
             defaultSpacer,
@@ -137,7 +136,7 @@ class _SigninPageState extends State<SigninPage> {
                 decoration: InputDecoration(
                     hintStyle: hintTextStyle, hintText: '(예시) guest1234'),
                 controller: _pwdController,
-                style: TextStyle(color: kDarkGrey),
+                style: TextStyle(color: kWhite),
               ),
             ),
             defaultSpacer,
@@ -160,7 +159,7 @@ class _SigninPageState extends State<SigninPage> {
                 decoration: InputDecoration(
                     hintStyle: hintTextStyle, hintText: '(예시) guest'),
                 controller: _realnameController,
-                style: TextStyle(color: kDarkGrey),
+                style: TextStyle(color: kWhite),
               ),
             ),
             defaultSpacer,
@@ -183,7 +182,7 @@ class _SigninPageState extends State<SigninPage> {
                 decoration: InputDecoration(
                     hintStyle: hintTextStyle, hintText: '(예시) 24'),
                 controller: _ageController,
-                style: TextStyle(color: kDarkGrey),
+                style: TextStyle(color: kWhite),
               ),
             ),
             defaultSpacer,
@@ -206,7 +205,7 @@ class _SigninPageState extends State<SigninPage> {
                 decoration: InputDecoration(
                     hintStyle: hintTextStyle, hintText: '(예시) 2'),
                 controller: _genderController,
-                style: TextStyle(color: kDarkGrey),
+                style: TextStyle(color: kWhite),
               ),
             ),
             defaultSpacer,
@@ -270,10 +269,10 @@ class _SigninPageState extends State<SigninPage> {
                           onTap: () {
                             if (genreLists[index][1]) {
                               genreLists[index][1] = false;
-                              selectedGenreLists.remove(index);
+                              selectedGenreLists.remove(genreLists[index][0]);
                             } else {
                               genreLists[index][1] = true;
-                              selectedGenreLists.add(index);
+                              selectedGenreLists.add(genreLists[index][0]);
                             }
                             setState(() {});
                           }),
@@ -348,11 +347,16 @@ class _SigninPageState extends State<SigninPage> {
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    height: 100,
-                    child: Image.asset(
-                      'logo.png',
+                  GestureDetector(
+                    child: Container(
+                      height: 100,
+                      child: Image.asset(
+                        'logo.png',
+                      ),
                     ),
+                    onTap: () {
+                      Navigator.popAndPushNamed(context, '/home');
+                    },
                   ),
                   Container(
                       width: width * 0.7,
@@ -454,38 +458,37 @@ class _SigninPageState extends State<SigninPage> {
                                             )),
                                         onPressed: () async {
                                           UserInfo userInfo = UserInfo(
-                                            name: _nameController.text,
-                                            pwd: _pwdController.text,
+                                            user_name: _nameController.text,
+                                            password: _pwdController.text,
                                             realname: _realnameController.text,
                                             image: 'assets/profile.png',
                                             country: 'Korea',
                                             age: int.parse(_ageController.text),
                                             gender: int.parse(
                                                 _genderController.text),
-                                            followers: [],
-                                            following: [],
+                                            playcount: 0,
+                                            follower: [''],
+                                            following: [''],
                                           );
-
-                                          debugPrint(
-                                              selectedGenreLists.toString());
-                                          debugPrint(
-                                              selectedArtistList.toString());
 
                                           if (selectedGenreLists.length >= 3 &&
                                               selectedArtistList.length >= 3) {
-                                            var res = await dioClient
-                                                .signinUser(userInfo: userInfo);
-                                            if (res == 'success') {
-                                              Navigator.pushNamed(
-                                                  context, '/main');
-                                            } else if (res == 'exist') {
+                                            var res =
+                                                await dioClient.signinUser(
+                                                    userInfo: userInfo,
+                                                    tags: selectedGenreLists,
+                                                    artists:
+                                                        selectedArtistList);
+                                            debugPrint(
+                                                'signinpage response: $res');
+                                            if (res == 'exist') {
                                               Toast.show('이미 가입하신 내역이 존재합니다.',
                                                   backgroundColor: kWhite,
                                                   textStyle:
                                                       TextStyle(color: kBlack),
                                                   gravity: Toast.top,
                                                   duration: Toast.lengthLong);
-                                            } else {
+                                            } else if (res == 'fail') {
                                               Toast.show(
                                                   '입력하신 사항들을 다시 한 번 확인해주세요 !',
                                                   backgroundColor: kWhite,
@@ -493,6 +496,15 @@ class _SigninPageState extends State<SigninPage> {
                                                       TextStyle(color: kBlack),
                                                   gravity: Toast.top,
                                                   duration: Toast.lengthLong);
+                                            } else {
+                                              Toast.show('회원가입을 완료하였습니다.',
+                                                  backgroundColor: kWhite,
+                                                  textStyle:
+                                                      TextStyle(color: kBlack),
+                                                  gravity: Toast.top,
+                                                  duration: Toast.lengthLong);
+                                              Navigator.pushNamed(
+                                                  context, '/home');
                                             }
                                           } else {
                                             Toast.show(

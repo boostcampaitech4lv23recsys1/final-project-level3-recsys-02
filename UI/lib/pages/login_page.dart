@@ -56,6 +56,7 @@ class _LoginPageState extends State<LoginPage> {
                         prefixIcon: const Icon(Icons.person)),
                   ),
                   TextField(
+                    obscureText: true,
                     textAlign: TextAlign.center,
                     controller: pwdTextController,
                     keyboardType: TextInputType.text,
@@ -95,14 +96,15 @@ class _LoginPageState extends State<LoginPage> {
                               fontWeight: FontWeight.bold,
                             )),
                         onPressed: () async {
-                          var code = await dioClient.loginUser(
+                          var res = await dioClient.loginUser(
                               name: idTextController.text,
                               pwd: pwdTextController.text);
-                          if (code == 'success') {
-                            enterSession();
-                            Navigator.pushReplacementNamed(context, '/main');
-                          } else {
+                          if (res == 'empty' || res == 'fail') {
                             errorMsg = '아이디 혹은 비밀번호가 존재하지 않습니다';
+                          } else {
+                            enterSession();
+                            setState(() {});
+                            Navigator.pushReplacementNamed(context, '/main');
                           }
                           setState(() {});
                         },
@@ -142,7 +144,9 @@ class _LoginPageState extends State<LoginPage> {
                               color: kWhite,
                               fontSize: 14.0,
                             )),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(context, '/signin');
+                        },
                       ),
                       defaultSpacer,
                     ],
