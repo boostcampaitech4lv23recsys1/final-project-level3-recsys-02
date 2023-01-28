@@ -5,6 +5,7 @@ import psycopg2
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from datetime import datetime, timezone
+import json
 
 app = FastAPI()
 
@@ -46,10 +47,8 @@ class userInfo(BaseModel):
     age: int
     gender: int
     playcount: int
-    following: list
-    follower: list
-    result: str
-
+    following: object
+    follower: object
 
 @app.get('/user')
 def get_user_table():
@@ -64,46 +63,47 @@ def get_track_table():
     return pd.read_sql(query, db_connect)
 
 @app.post('/login', description='로그인')
-def login_user(user: User) -> userInfo:
-    query = f"SELECT password FROM user_info WHERE user_name ='{user.id}';"
-    user_df = pd.read_sql(query, db_connect)
-    if user.pwd == user_df['password']: 
-        return userInfo(
-            user_name=user_df['user_name'],
-            password=user_df['password'],
-            realname =user_df['realname'],
-            image =user_df['image'],
-            country =user_df['country'],
-            age =user_df['age'],
-            gender =user_df['gender'],
-            playcount =user_df['playcount'],
-            following =user_df['following'],
-            follower =user_df['follower'],
-            result=user_df['user_name'])
+def login_user(user: User) -> str:
+    user_query = f"SELECT user_name, password FROM user_info WHERE user_name='{user.id}';"
+    user_df = pd.read_sql(user_query, db_connect)
+    print (user_df)
+    if (len(user_df) == 0):
+        return 'empty'
+    elif user.pwd == user_df['password'][0]: 
+        return user_df['user_name'][0]
     else:
-        return userInfo(result='fail')
+        return 'empty'
+
+@app.get('/tracks/random_artists')
+def get_artists():
+    return ""
+
+def list2json(list_data):
+    json_data = pd.DataFrame(list_data).to_json()
+    return json_data[5:-1]
 
 
 @app.post('/signin', description='회원가입')
+# , tags: list, artists: list
 def signin_user(userInfo: userInfo, tags: list, artists: list):
     user_query = f"SELECT user_name FROM user_info WHERE user_name='{userInfo.user_name}';"
     user_df = pd.read_sql(user_query, db_connect)
+    print (user_df.to_string())
 
-    # 해당 이름이 이미 존재하는 경우
-    if(user_df.shape[0] != 0):
-        return 'exist'
-    else:
+    if (user_df.shape[0] == 0):
+        following = list2json(userInfo.following)
+        follower = list2json(userInfo.follower)
         # insert user personal information
         user_query = f"INSERT INTO user_info (user_name, realname, password, age, gender, country, playcount, follower, following) \
                 VALUES ('{userInfo.user_name}', '{userInfo.realname}', '{userInfo.password}', \
                     {userInfo.age}, {userInfo.gender}, '{userInfo.country}', \
-                    {userInfo.playcount}, {userInfo.follower},{userInfo.following}) \
-                RETURNING success;"
+                    0, '{follower}','{following}') \
+                RETURNING user_name;"
         response1 = pd.read_sql(user_query, db_connect)
 
         # interaction : user_name, track_name, album_name, artist_name, timestamp(uts), loved(int)
         # tag 별 N개 트랙 inter에 넣기
-        # N = 10
+        N = 10
         # 선택한 태그를 포함하는 경우의 track들을 줄 세우고, playcount을 기준으로 높은 거 N개
         # tag_string = ", ".join(tags)
         # tag_query = f"SELECT * FROM track_info \
@@ -113,7 +113,7 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
         # tag_tracks = pd.read_sql(tag_query, db_connect)
         # print(tag_tracks)
 
-        # 아티스트별 N개 트랙 inter에 넣기
+        # # 아티스트별 N개 트랙 inter에 넣기
         # artist_string = ", ".join(artists)
         # artist_query = f"SELECT * FROM track_info \
         #             WHERE artist_name IN ({artist_string})\
@@ -132,9 +132,12 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
         #             RETURNING success;"
         # response2 = pd.read_sql(inter_query, db_connect)
         
-        # return response1 and response2    
+        # return response1 and response2  
         return response1
-
+        
+    # 해당 이름이 이미 존재하는 경우
+    else:   
+        return 'exist'
 
 @app.get("/users/{user_id}/profiles", description="사용자 정보")
 async def get_profiles(user_id: str):
@@ -215,4 +218,4 @@ if __name__ == "__main__":
         port=5432,
         database="mydatabase",
     )
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    uvicorn.run(app, port=8001)
