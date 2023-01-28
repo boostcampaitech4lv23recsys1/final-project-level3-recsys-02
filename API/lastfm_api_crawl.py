@@ -173,7 +173,23 @@ def interaction(users):
         for page in range(int(attr['totalPages'])):
             params_inter["page"] = page + 1
             text = requests.get(url, params_inter).text
-            texts = json.loads(text)['recenttracks']['track']
+            try:
+                texts = json.loads(text)['recenttracks']['track']
+            except:
+                try:
+                    if text['error'] == 8: # {'message': 'Login: User required to be logged in', 'error': 17}
+                        print(text)
+                        # print(user_id[0])
+                        continue
+                except:
+                    print('break!!')
+                    print(text)
+                    return {'dataframe_list':function_dataframe_list_tmp,
+                        'track2artist':tmp_track2artist,
+                        'artist2album':tmp_artist2album,
+                        'track2id':tmp_track2id,
+                        'album2id':tmp_artist2id,
+                        'artist2id':tmp_artist2id}
             texts = pd.DataFrame(texts)
             texts['username'] = user_id[0]
             # texts['user_total'] = attr['total']
