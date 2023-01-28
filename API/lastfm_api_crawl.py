@@ -495,6 +495,17 @@ def multiprocessing_interaction():
     print(data_csv.dtypes)
     data_csv.to_csv(f"interaction_{args.user}.csv", index=False)
 
+    with open(f'track2id_{args.user}.pickle', 'wb') as f:
+        pickle.dump(track2id, f, pickle.HIGHEST_PROTOCOL)
+    with open(f'track2artist_{args.user}.pickle', 'wb') as f:
+        pickle.dump(track2artist, f, pickle.HIGHEST_PROTOCOL)
+    with open(f'album2id_{args.user}.pickle', 'wb') as f:
+        pickle.dump(album2id, f, pickle.HIGHEST_PROTOCOL)
+    with open(f'artist2id_{args.user}.pickle', 'wb') as f:
+        pickle.dump(artist2id, f, pickle.HIGHEST_PROTOCOL)
+    with open(f'artist2album_{args.user}.pickle', 'wb') as f:
+        pickle.dump(artist2album, f, pickle.HIGHEST_PROTOCOL)
+
 def multiprocessing_trackinfo():
     global tag2id
     cpu = 8
@@ -528,6 +539,8 @@ def multiprocessing_trackinfo():
     })
     trackInfo_csv.to_csv(f"trackinfo_{args.user}.csv", index=False)
     print(trackInfo_csv.dtypes)
+    with open(f'tag2id_{args.user}.pickle', 'wb') as f:
+        pickle.dump(tag2id, f, pickle.HIGHEST_PROTOCOL)
 
 def multiprocessing_albuminfo():
     cpu = 8
