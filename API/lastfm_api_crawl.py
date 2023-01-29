@@ -156,11 +156,14 @@ def interaction(users):
         except:
             try:
                 if text['error'] == 17: # {'message': 'Login: User required to be logged in', 'error': 17}
-                    # print(user_id[0])
+                    sleep(1)
+                    continue
+                elif text['error'] == 8: # {"message":"Operation failed - Most likely the backend service failed. Please try again.","error":8}
+                    sleep(1)
                     continue
             except:
-                print('break!!')
-                print(text)
+                print('break!!-loop1')
+                print(text, '-loop1')
                 return {'dataframe_list':function_dataframe_list_tmp,
                     'track2artist':tmp_track2artist,
                     'artist2album':tmp_artist2album,
@@ -176,20 +179,21 @@ def interaction(users):
             try:
                 texts = json.loads(text)['recenttracks']['track']
             except:
+                text = json.loads(text)
                 try:
-                    if text['error'] == 8: # {'message': 'Login: User required to be logged in', 'error': 17}
-                        print(text)
-                        # print(user_id[0])
-                        continue
+                    if text['error'] == 8: # {"message":"Operation failed - Most likely the backend service failed. Please try again.","error":8}
+                        print(text['error'], '-loop2')
+                        sleep(1)
+                        break
+                    elif text['error'] == 6: # {"message":"User not found","error":6}
+                        print(text['error'], '-loop2')
+                        sleep(1)
+                        break
                 except:
-                    print('break!!')
-                    print(text)
-                    return {'dataframe_list':function_dataframe_list_tmp,
-                        'track2artist':tmp_track2artist,
-                        'artist2album':tmp_artist2album,
-                        'track2id':tmp_track2id,
-                        'album2id':tmp_artist2id,
-                        'artist2id':tmp_artist2id}
+                    print('break!!-loop2')
+                    print(text, '-loop2')
+                    sleep(1)
+                    break
             texts = pd.DataFrame(texts)
             texts['username'] = user_id[0]
             # texts['user_total'] = attr['total']
@@ -235,13 +239,16 @@ def trackinfo(tracks):
         try:
             track = json.loads(track)['track']
         except:
+            track = json.loads(track)
             try:
                 if track['error'] == 6: # {"error":6,"message":"Track not found","links":[]}
                     print('track:', track, 'artist:', artist)
+                    sleep(1)
                     continue
             except:
                 print('break!!')
                 print(track)
+                sleep(1)
                 return {'dataframe_list':function_dataframe_list_tmp, 'tag2id':tmp_tag2id}
 
         track['artist_name'] = track['artist']['name']
@@ -508,6 +515,10 @@ def multiprocessing_interaction():
 
 def multiprocessing_trackinfo():
     global tag2id
+    # filename = f'track2artist_{args.user}.pickle'
+    # if os.path.isfile(filename):
+    #     with open(filename, 'rb') as f:
+	#         track2artist = pickle.load(f)
     cpu = 8
     pool = Pool(processes=cpu)
     print(len(track2artist))
