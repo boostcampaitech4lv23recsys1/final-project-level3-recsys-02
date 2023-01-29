@@ -21,19 +21,24 @@ class DioClient {
       response = await _dio.post('/login', data: userData);
       debugPrint('dioclient: ${response.data}');
 
-      if (response.data == 'empty') {
-        return 'empty';
+      if (response.data == 'Empty') {
+        return 'Empty';
       } else if (response.data == 'Internal Server Error') {
-        return 'fail';
+        return 'Error';
       } else {
         // user_name만 전역적으로 저장
         final SharedPreferences pref = await SharedPreferences.getInstance();
         pref.setString('user_name', response.data);
-        return 'success';
+        return 'Success';
       }
     } catch (e) {
       debugPrint('Error login : $e');
     }
+  }
+
+  Future getArtists() async {
+    Response response = await _dio.get('/signin/artists');
+    return response.data;
   }
 
   Future signinUser(
@@ -52,14 +57,11 @@ class DioClient {
 
       response = await _dio.post('/signin', data: datas);
       debugPrint('dioclient: $response');
-      if (response.data == 'exist') {
-        return 'exist';
-      } else {
-        return response.data['user_name'];
-      }
+      // 회원가입 성공 - True / False
+      return response.data.toString();
     } catch (e) {
       debugPrint('Error signin: $e');
-      return 'fail';
+      return 'Error';
     }
   }
 }

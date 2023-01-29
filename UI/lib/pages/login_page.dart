@@ -99,9 +99,9 @@ class _LoginPageState extends State<LoginPage> {
                           var res = await dioClient.loginUser(
                               name: idTextController.text,
                               pwd: pwdTextController.text);
-                          if (res == 'empty' || res == 'fail') {
-                            errorMsg = '아이디 혹은 비밀번호가 존재하지 않습니다';
-                          } else {
+                          if (res == 'Empty' || res == 'Error') {
+                            errorMsg = '아이디 혹은 비밀번호가 일치하지 않습니다';
+                          } else if (res == 'Success') {
                             enterSession();
                             setState(() {});
                             Navigator.pushReplacementNamed(context, '/main');

@@ -77,9 +77,10 @@ class _SigninPageState extends State<SigninPage> {
     super.dispose();
   }
 
-  void getArtists() {
-    for (int i = 0; i < 16; i++) {
-      artistList.add(['아티스트 $i', 'profile.png', false]);
+  void getArtists() async {
+    var res = await dioClient.getArtists();
+    for (var r in res) {
+      artistList.add([r['artist_name'], 'profile.png', false]);
     }
   }
 
@@ -481,14 +482,14 @@ class _SigninPageState extends State<SigninPage> {
                                                         selectedArtistList);
                                             debugPrint(
                                                 'signinpage response: $res');
-                                            if (res == 'exist') {
+                                            if (res == 'False') {
                                               Toast.show('이미 가입하신 내역이 존재합니다.',
                                                   backgroundColor: kWhite,
                                                   textStyle:
                                                       TextStyle(color: kBlack),
                                                   gravity: Toast.top,
                                                   duration: Toast.lengthLong);
-                                            } else if (res == 'fail') {
+                                            } else if (res == 'Error') {
                                               Toast.show(
                                                   '입력하신 사항들을 다시 한 번 확인해주세요 !',
                                                   backgroundColor: kWhite,
@@ -496,7 +497,7 @@ class _SigninPageState extends State<SigninPage> {
                                                       TextStyle(color: kBlack),
                                                   gravity: Toast.top,
                                                   duration: Toast.lengthLong);
-                                            } else {
+                                            } else if (res == 'True') {
                                               Toast.show('회원가입을 완료하였습니다.',
                                                   backgroundColor: kWhite,
                                                   textStyle:
