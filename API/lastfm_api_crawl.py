@@ -15,15 +15,21 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--user', type=str)
-parser.add_argument('--api', type=str, default="1a62f2d4937452d62d7426029e4c9997")
+parser.add_argument('--api', type=str)
+parser.add_argument('--ver', type=str)
+parser.add_argument('--user_sampling', type=int)
+parser.add_argument('--phase', type=int)
 args = parser.parse_args()
 
 os.chdir('/opt/ml/final/API')
+dirname = f'ver_{args.ver}'
+if not os.path.isdir(dirname):
+    os.makedirs(dirname)
 
 with open('./listeners_1.pkl', 'rb') as f:
 	username_list = pickle.load(f)
 
-# username_list = username_list[:8] # test 용
+username_list = username_list[:args.user_sampling]
 
 url = 'http://ws.audioscrobbler.com/2.0'
 
@@ -238,20 +244,23 @@ def trackinfo(tracks):
 
         try:
             track = json.loads(track)['track']
+            track['artist_name'] = track['artist']['name']
         except:
-            track = json.loads(track)
             try:
-                if track['error'] == 6: # {"error":6,"message":"Track not found","links":[]}
-                    print('track:', track, 'artist:', artist)
-                    sleep(1)
-                    continue
+                track = json.loads(track)
+                print(track, '1')
+                try:
+                    if track['error'] == 6: # {"error":6,"message":"Track not found","links":[]}
+                        print('track:', track, 'artist:', artist)
+                        continue
+                except:
+                    print('break!!')
+                    print(track, '2')
+                    return {'dataframe_list':function_dataframe_list_tmp, 'tag2id':tmp_tag2id}
             except:
-                print('break!!')
-                print(track)
-                sleep(1)
-                return {'dataframe_list':function_dataframe_list_tmp, 'tag2id':tmp_tag2id}
+                print(track, '3')
+                continue
 
-        track['artist_name'] = track['artist']['name']
         # if 'mbid' in list(track['artist'].keys()):
         #     track['artist_mbid'] = track['artist'].apply(lambda x: x['mbid'])
         # else:
@@ -291,7 +300,7 @@ def trackinfo(tracks):
         track.drop(columns=['artist', 'streamable', 'toptags', 'url'], inplace=True)
         function_dataframe_list_tmp.append(track)
 
-        if i % 4 == 0:
+        if i % 5 == 0:
             sleep(1)
     return {'dataframe_list':function_dataframe_list_tmp, 'tag2id':tmp_tag2id}
 
@@ -303,12 +312,23 @@ def albuminfo(artist2album):
         # for album in albums:
         params_album['album'] = album_
         album = requests.get(url, params_album).text
+
         try:
             album = json.loads(album)['album']
         except:
-            print('break!!')
-            print(album)
-            return {'dataframe_list':function_dataframe_list_tmp}
+            try:
+                album = json.loads(album)
+                try:
+                    if album['error'] == 6: # {'message': 'Album not found', 'error': 6}
+                        # print(album, '2')
+                        continue
+                except:
+                    print('break!!')
+                    print(album, '3')
+                    return {'dataframe_list':function_dataframe_list_tmp}
+            except:
+                print(album, '4')
+                continue
         
         # album['tag'] = album['tags']
         # print(album['image'][-1])
@@ -417,9 +437,18 @@ def artistinfo(artist2id):
         try:
             image = result['artist']['image']
         except:
-            print('break!!')
-            print(result)
-            return {'dataframe_list':function_dataframe_list_tmp}
+            try:
+                try:
+                    if result['error'] == 6: # {'error': 6, 'message': 'The artist you supplied could not be found', 'links': []}
+                        print(result, '2')
+                        continue
+                except:
+                    print('break!!')
+                    print(result, '3')
+                    return {'dataframe_list':function_dataframe_list_tmp}
+            except:
+                print(result, '4')
+                continue
         
         try :
             image = result['artist']['image']
@@ -446,6 +475,8 @@ def artistinfo(artist2id):
             sleep(1)
     return {'dataframe_list':function_dataframe_list_tmp}
 
+def make_path(string):
+    return dirname + '/' + string
 
 def multiprocessing_interaction():
     global track2id, track2artist, album2id, artist2id, artist2album
@@ -500,25 +531,26 @@ def multiprocessing_interaction():
         'artist_name':'string',
     })
     print(data_csv.dtypes)
-    data_csv.to_csv(f"interaction_{args.user}.csv", index=False)
+    data_csv.to_csv(make_path(f"interaction_{args.user}_{args.ver}.csv"), index=False)
 
-    with open(f'track2id_{args.user}.pickle', 'wb') as f:
+    with open(make_path(f'track2id_{args.user}.pickle'), 'wb') as f:
         pickle.dump(track2id, f, pickle.HIGHEST_PROTOCOL)
-    with open(f'track2artist_{args.user}.pickle', 'wb') as f:
+    with open(make_path(f'track2artist_{args.user}.pickle'), 'wb') as f:
         pickle.dump(track2artist, f, pickle.HIGHEST_PROTOCOL)
-    with open(f'album2id_{args.user}.pickle', 'wb') as f:
+    with open(make_path(f'album2id_{args.user}.pickle'), 'wb') as f:
         pickle.dump(album2id, f, pickle.HIGHEST_PROTOCOL)
-    with open(f'artist2id_{args.user}.pickle', 'wb') as f:
+    with open(make_path(f'artist2id_{args.user}.pickle'), 'wb') as f:
         pickle.dump(artist2id, f, pickle.HIGHEST_PROTOCOL)
-    with open(f'artist2album_{args.user}.pickle', 'wb') as f:
+    with open(make_path(f'artist2album_{args.user}.pickle'), 'wb') as f:
         pickle.dump(artist2album, f, pickle.HIGHEST_PROTOCOL)
 
 def multiprocessing_trackinfo():
     global tag2id
-    # filename = f'track2artist_{args.user}.pickle'
-    # if os.path.isfile(filename):
-    #     with open(filename, 'rb') as f:
-	#         track2artist = pickle.load(f)
+    filename = f'./track2artist_{args.user}.pickle' # 위쪽 주석처리하고 여기부터 수집할 수 있도록
+    if os.path.isfile(make_path(filename)):
+        with open(make_path(filename), 'rb') as f:
+            track2artist = pickle.load(f)
+        print('track2artist loaded!')
     cpu = 8
     pool = Pool(processes=cpu)
     print(len(track2artist))
@@ -548,12 +580,17 @@ def multiprocessing_trackinfo():
         'streamable_text':'int8',
         'streamable_fulltrack':'int8'
     })
-    trackInfo_csv.to_csv(f"trackinfo_{args.user}.csv", index=False)
+    trackInfo_csv.to_csv(make_path(f"trackinfo_{args.user}_{args.ver}.csv"), index=False)
     print(trackInfo_csv.dtypes)
-    with open(f'tag2id_{args.user}.pickle', 'wb') as f:
+    with open(make_path(f'tag2id_{args.user}.pickle'), 'wb') as f:
         pickle.dump(tag2id, f, pickle.HIGHEST_PROTOCOL)
 
 def multiprocessing_albuminfo():
+    filename = f'./artist2album_{args.user}.pickle' # 위쪽 주석처리하고 여기부터 수집할 수 있도록
+    if os.path.isfile(make_path(filename)):
+        with open(make_path(filename), 'rb') as f:
+            artist2album = pickle.load(f)
+        print('artist2album loaded!')
     cpu = 8
     pool = Pool(processes=cpu)
     print(len(artist2album))
@@ -574,10 +611,15 @@ def multiprocessing_albuminfo():
         'url':'string',
         'published':'string',
     })
-    albumInfo_csv.to_csv(f"albumInfo_{args.user}.csv", index=False)
+    albumInfo_csv.to_csv(make_path(f"albumInfo_{args.user}_{args.ver}.csv"), index=False)
     print(albumInfo_csv.dtypes)
 
 def multiprocessing_artistinfo():
+    filename = f'./artist2id_{args.user}.pickle' # 위쪽 주석처리하고 여기부터 수집할 수 있도록
+    if os.path.isfile(make_path(filename)):
+        with open(make_path(filename), 'rb') as f:
+            artist2id = pickle.load(f)
+        print('artist2id loaded!')
     cpu = 8
     pool = Pool(processes=cpu)
     print(len(artist2id))
@@ -588,7 +630,7 @@ def multiprocessing_artistinfo():
     dataframe_list = list(itertools.chain.from_iterable([tmp['dataframe_list'] for tmp in dataframe_list_tmp]))
     artistInfo_csv = pd.concat(dataframe_list, ignore_index=True)
     artistInfo_csv = artistInfo_csv[['mbid','name','small','medium','large','extralarge','mega','']]
-    artistInfo_csv.to_csv(f"artist_{args.user}.csv", index = False)
+    artistInfo_csv.to_csv(make_path(f"artist_{args.user}_{args.ver}.csv"), index = False)
     print(artistInfo_csv.dtypes)
 
 def multiprocessing_userinfo():
@@ -618,10 +660,15 @@ def multiprocessing_userinfo():
         'gender':'int8',
         'url':'string',
     })
-    userInfo_csv.to_csv(f"userInfo_{args.user}.csv", index=False)
+    userInfo_csv.to_csv(make_path(f"userInfo_{args.user}_{args.ver}.csv"), index=False)
     print(userInfo_csv.dtypes)
 
 def multiprocessing_taginfo():
+    filename = f'./tag2id_{args.user}.pickle' # 위쪽 주석처리하고 여기부터 수집할 수 있도록
+    if os.path.isfile(make_path(filename)):
+        with open(make_path(filename), 'rb') as f:
+            tag2id = pickle.load(f)
+        print('tag2id loaded!')
     cpu = 8
     pool = Pool(processes=cpu)
     print(len(tag2id))
@@ -637,12 +684,14 @@ def multiprocessing_taginfo():
         'total':'int',
         'reach':'int',
     })
-    tagInfo_csv.to_csv(f"tagInfo_{args.user}.csv", index=False)
+    tagInfo_csv.to_csv(make_path(f"tagInfo_{args.user}_{args.ver}.csv"), index=False)
     print(tagInfo_csv.dtypes)
 
-multiprocessing_interaction()
-multiprocessing_trackinfo()
-multiprocessing_albuminfo()
-multiprocessing_artistinfo()
-multiprocessing_userinfo()
-multiprocessing_taginfo()
+if args.phase == 1:
+    multiprocessing_interaction()
+else:
+    multiprocessing_trackinfo()
+    multiprocessing_albuminfo()
+    multiprocessing_artistinfo()
+    multiprocessing_userinfo()
+    multiprocessing_taginfo()
