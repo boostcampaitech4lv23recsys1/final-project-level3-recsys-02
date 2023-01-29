@@ -248,10 +248,9 @@ def trackinfo(tracks):
         except:
             try:
                 track = json.loads(track)
-                print(track, '1')
                 try:
                     if track['error'] == 6: # {"error":6,"message":"Track not found","links":[]}
-                        print('track:', track, 'artist:', artist)
+                        # print('track:', track, 'artist:', artist)
                         continue
                 except:
                     print('break!!')
