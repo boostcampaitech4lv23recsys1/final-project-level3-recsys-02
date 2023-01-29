@@ -268,10 +268,11 @@ def trackinfo(tracks):
 
         # track['tag'] = track['toptags'].apply(lambda x: x['tag']) # 태그가 다 없음
         track['tags'] = list(pd.DataFrame(track['toptags']['tag']).apply(lambda x: (x['name']), axis=1))
+        push_tag2id(track['tags'])
+        if len(track['tags']) == 0:
+            track['tags'] = np.nan
         # track['tags'] = {i: tmp[i] for i in range(0, len(tmp))}
         # print(track['tag'])
-        push_tag2id(track['tags'])
-
         # track['toptags'].apply(lambda x: push_tag2id(x['tag']), axis=1)
         # track['tag'] = track['toptags'].apply(lambda x: x['tag'] if x != list([]) else np.nan)
         
@@ -331,7 +332,10 @@ def albuminfo(artist2album):
         
         # album['tag'] = album['tags']
         # print(album['image'][-1])
-        album['image'] = album['image'][-1]['#text']
+        try:
+            album['image'] = album['image'][-1]['#text']
+        except:
+            print(album, '1234')
         # print(album['wiki'])
         # print(album.keys())
 
@@ -439,7 +443,7 @@ def artistinfo(artist2id):
             try:
                 try:
                     if result['error'] == 6: # {'error': 6, 'message': 'The artist you supplied could not be found', 'links': []}
-                        print(result, '2')
+                        # print(result, '2')
                         continue
                 except:
                     print('break!!')
