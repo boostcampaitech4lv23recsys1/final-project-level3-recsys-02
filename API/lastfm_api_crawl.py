@@ -267,10 +267,10 @@ def trackinfo(tracks):
         track['artist_url'] = track['artist']['url']
 
         # track['tag'] = track['toptags'].apply(lambda x: x['tag']) # 태그가 다 없음
-        tmp = list(pd.DataFrame(track['toptags']['tag']).apply(lambda x: (x['name']), axis=1))
-        track['tags'] = {i: tmp[i] for i in range(0, len(tmp))}
+        track['tags'] = list(pd.DataFrame(track['toptags']['tag']).apply(lambda x: (x['name']), axis=1))
+        # track['tags'] = {i: tmp[i] for i in range(0, len(tmp))}
         # print(track['tag'])
-        push_tag2id(tmp)
+        push_tag2id(track['tags'])
 
         # track['toptags'].apply(lambda x: push_tag2id(x['tag']), axis=1)
         # track['tag'] = track['toptags'].apply(lambda x: x['tag'] if x != list([]) else np.nan)
@@ -336,6 +336,12 @@ def albuminfo(artist2album):
         # print(album.keys())
 
         try:
+            album['tag'] = list(pd.DataFrame(album['tags']['tag']).apply(lambda x: (x['name']), axis=1))
+            # album['tag'] = {i: tmp[i] for i in range(0, len(tmp))}
+        except:
+            album['tag'] = np.nan
+
+        try:
             album['published'] = album['wiki']['published']
             # album['summary'] = album['wiki']['summary']
             # album['content'] = album['wiki']['content']
@@ -358,12 +364,6 @@ def albuminfo(artist2album):
         #         album['track'] = [list(pd.DataFrame([album['tracks'].item()['track']]).apply(lambda x: (x['name'], x['artist']['name']), axis=1))]
         # except:
         #     album['track'] = np.nan # album 을 조회했는데 tracks 가 없는 경우..?
-        
-        try:
-            tmp = list(pd.DataFrame(album['tags'].item()['tag']).apply(lambda x: (x['name']), axis=1))
-            album['tag'] = {i: tmp[i] for i in range(0, len(tmp))}
-        except:
-            album['tag'] = np.nan
 
         if 'tracks' in list(album.keys()):
             album.drop(columns=['tracks'], inplace=True)

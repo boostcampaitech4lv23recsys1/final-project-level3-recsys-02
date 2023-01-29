@@ -2,7 +2,7 @@
 
 1. 본인 api 키를 api_key 파일에 넣는다.
 2. sh lastfm_api_crawl.sh [USER] [VER] [USER_SAMPLING] [SKIP]  
-e.g., sh lastfm_api_crawl.sh kdy kdy_test 200
+e.g., sh lastfm_api_crawl.sh kdy kdy_200 200 0
 
 ---
 

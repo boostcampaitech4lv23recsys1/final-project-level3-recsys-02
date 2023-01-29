@@ -17,4 +17,4 @@ then
     python lastfm_api_crawl.py --user $user --api $api --ver $ver --user_sampling $user_sampling --phase 1
 fi
 echo "phase 2"
-python lastfm_api_crawl.py --user $user --api $api --ver $ver --phase 2
+python lastfm_api_crawl.py --user $user --api $api --ver $ver --user_sampling $user_sampling --phase 2
