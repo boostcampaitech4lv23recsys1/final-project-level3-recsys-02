@@ -244,7 +244,6 @@ def trackinfo(tracks):
 
         try:
             track = json.loads(track)['track']
-            track['artist_name'] = track['artist']['name']
         except:
             try:
                 track = json.loads(track)
@@ -264,6 +263,7 @@ def trackinfo(tracks):
         #     track['artist_mbid'] = track['artist'].apply(lambda x: x['mbid'])
         # else:
         #     track['artist_mbid'] = np.nan
+        track['artist_name'] = track['artist']['name']
         track['artist_url'] = track['artist']['url']
 
         # track['tag'] = track['toptags'].apply(lambda x: x['tag']) # 태그가 다 없음
