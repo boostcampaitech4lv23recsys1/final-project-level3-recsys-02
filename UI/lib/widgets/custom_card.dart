@@ -15,7 +15,7 @@ Widget sampleCard() {
   );
 }
 
-Widget genreCard(item) {
+Widget signinItemCard(item) {
   return Container(
     color: Colors.transparent,
     height: titleHeight,
@@ -27,24 +27,6 @@ Widget genreCard(item) {
       style: contentsTextStyle,
     ),
   );
-}
-
-Widget artistCard(item) {
-  return Container(
-      width: 150,
-      padding: EdgeInsets.all(15),
-      child: Column(children: [
-        SizedBox(
-          height: 100,
-          width: 100,
-          child: CircleAvatar(
-            backgroundColor: Colors.transparent,
-            backgroundImage: AssetImage(item[1]),
-          ),
-        ),
-        defaultSpacer,
-        Text(item[0], style: contentsTextStyle, textAlign: TextAlign.start),
-      ]));
 }
 
 Widget userCoverCard(image, name, follower) {

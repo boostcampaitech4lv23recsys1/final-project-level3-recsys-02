@@ -25,7 +25,17 @@ class _SigninPageState extends State<SigninPage> {
   late TextEditingController _genderController;
 
   final DioClient dioClient = DioClient();
+  final List imageList = [
+    'assets/profile1.png',
+    'assets/profile2.png',
+    'assets/profile3.png',
+    'assets/profile4.png',
+    'assets/profile5.png',
+    'assets/profile6.png',
+  ];
+  String msg = '';
 
+  String selectedProfileImage = 'assets/profile.png';
   final List genreLists = [
     ['electronic', false],
     ['metal', false],
@@ -53,6 +63,11 @@ class _SigninPageState extends State<SigninPage> {
   final List artistList = [];
   final List<String> selectedArtistList = [];
 
+  var selectedGender = '성별';
+  var genders = ['성별', '남성', '여성', '기타'];
+  var selectedCountry = '거주국가';
+  var countries = ['거주국가', '대한민국'];
+
   @override
   void initState() {
     _nameController = TextEditingController();
@@ -60,7 +75,7 @@ class _SigninPageState extends State<SigninPage> {
     _pwdController = TextEditingController();
     _realnameController = TextEditingController();
     _ageController = TextEditingController();
-    _genderController = TextEditingController();
+
     getArtists();
     super.initState();
   }
@@ -72,7 +87,6 @@ class _SigninPageState extends State<SigninPage> {
     _pwdController.dispose();
     _realnameController.dispose();
     _ageController.dispose();
-    _genderController.dispose();
 
     super.dispose();
   }
@@ -80,7 +94,7 @@ class _SigninPageState extends State<SigninPage> {
   void getArtists() async {
     var res = await dioClient.getArtists();
     for (var r in res) {
-      artistList.add([r['artist_name'], 'profile.png', false]);
+      artistList.add([r['artist_name'], false]);
     }
   }
 
@@ -94,6 +108,64 @@ class _SigninPageState extends State<SigninPage> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(
+              '프로필 사진 $msg',
+              style: subtitleTextStyle,
+              textAlign: TextAlign.start,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Container(
+                height: 135,
+                alignment: Alignment.center,
+                margin: const EdgeInsets.all(10),
+                // decoration: outerBorder,
+                child: GridView.builder(
+                  scrollDirection: Axis.vertical,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 6,
+                    crossAxisSpacing: 30,
+                    childAspectRatio: 1,
+                  ),
+                  itemCount: imageList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return GestureDetector(
+                        onTap: () {
+                          msg = ': ${index + 1}번째 이미지가 선택되었습니다 ! ';
+                          selectedProfileImage = imageList[index];
+                          setState(() {});
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: Colors.transparent,
+                          backgroundImage: AssetImage(imageList[index]),
+                        ));
+                  },
+                )),
+            defaultSpacer,
+            // 사용자 이름 입력
+            Text(
+              '프로필 이름',
+              style: subtitleTextStyle,
+              textAlign: TextAlign.start,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              width: MediaQuery.of(context).size.width,
+              height: titleHeight,
+              decoration: outerBorder,
+              child: TextField(
+                decoration: InputDecoration(
+                    hintStyle: hintTextStyle, hintText: '(예시) guest'),
+                controller: _realnameController,
+                style: TextStyle(color: kWhite),
+              ),
+            ),
+            defaultSpacer,
             // 이메일 입력
             Text(
               '아이디',
@@ -141,29 +213,6 @@ class _SigninPageState extends State<SigninPage> {
               ),
             ),
             defaultSpacer,
-            // 사용자 이름 입력
-            Text(
-              '프로필 이름',
-              style: subtitleTextStyle,
-              textAlign: TextAlign.start,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Container(
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              width: MediaQuery.of(context).size.width,
-              height: titleHeight,
-              decoration: outerBorder,
-              child: TextField(
-                decoration: InputDecoration(
-                    hintStyle: hintTextStyle, hintText: '(예시) guest'),
-                controller: _realnameController,
-                style: TextStyle(color: kWhite),
-              ),
-            ),
-            defaultSpacer,
             // 나이 입력
             Text(
               '나이',
@@ -187,44 +236,95 @@ class _SigninPageState extends State<SigninPage> {
               ),
             ),
             defaultSpacer,
-            // 성별 입력
-            Text(
-              '성별 (1: 남성, 2: 여성, 3: 기타)',
-              style: subtitleTextStyle,
-              textAlign: TextAlign.start,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Container(
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              width: MediaQuery.of(context).size.width,
-              height: titleHeight,
-              decoration: outerBorder,
-              child: TextField(
-                decoration: InputDecoration(
-                    hintStyle: hintTextStyle, hintText: '(예시) 2'),
-                controller: _genderController,
-                style: TextStyle(color: kWhite),
-              ),
-            ),
-            defaultSpacer,
-            // 성별 입력
-            Text(
-              '거주국가',
-              style: subtitleTextStyle,
-              textAlign: TextAlign.start,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Container(
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              width: MediaQuery.of(context).size.width,
-              height: titleHeight,
-              decoration: outerBorder,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 성별 입력
+                    Text(
+                      '성별 (1: 남성, 2: 여성, 3: 기타)',
+                      style: subtitleTextStyle,
+                      textAlign: TextAlign.start,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      height: titleHeight,
+                      width: MediaQuery.of(context).size.width * 0.3,
+                      decoration: outerBorder,
+                      child: DropdownButton(
+                        value: selectedGender,
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        isExpanded: true,
+                        dropdownColor: kBlack,
+                        items: genders.map((String items) {
+                          return DropdownMenuItem(
+                            value: items,
+                            child: Text(
+                              items,
+                              style: TextStyle(color: kWhite),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedGender = newValue!;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                defaultSpacer,
+                defaultSpacer,
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '거주국가',
+                      style: subtitleTextStyle,
+                      textAlign: TextAlign.start,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      height: titleHeight,
+                      width: MediaQuery.of(context).size.width * 0.3,
+                      decoration: outerBorder,
+                      child: DropdownButton(
+                        value: selectedCountry,
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        isExpanded: true,
+                        dropdownColor: kBlack,
+                        items: countries.map((String items) {
+                          return DropdownMenuItem(
+                            value: items,
+                            child: Text(
+                              items,
+                              style: TextStyle(color: kWhite),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedCountry = newValue!;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                )
+              ],
             ),
           ],
         )
@@ -277,12 +377,11 @@ class _SigninPageState extends State<SigninPage> {
                             }
                             setState(() {});
                           }),
-                      genreCard(genreLists[index]),
+                      signinItemCard(genreLists[index]),
                     ],
                   ));
             },
           )),
-      defaultSpacer,
       Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -293,44 +392,48 @@ class _SigninPageState extends State<SigninPage> {
         ],
       ),
       Container(
-          margin: const EdgeInsets.all(10),
-          decoration: outerBorder,
-          height: 350,
+          height: boxHeight,
           alignment: Alignment.center,
-          child: AlignedGridView.count(
-            controller: artistController,
-            crossAxisCount: 8,
-            mainAxisSpacing: 4,
-            crossAxisSpacing: 4,
+          margin: const EdgeInsets.all(10),
+          // decoration: outerBorder,
+          child: GridView.builder(
+            scrollDirection: Axis.vertical,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              mainAxisSpacing: 15,
+              crossAxisSpacing: 15,
+              childAspectRatio: 1 / 0.2,
+            ),
             itemCount: artistList.length,
-            itemBuilder: (context, index) {
-              return Stack(
-                children: [
-                  artistCard(artistList[index]),
-                  Positioned(
-                    top: 3,
-                    left: 3,
-                    child: IconButton(
-                        onPressed: () {
-                          if (artistList[index][2]) {
-                            artistList[index][2] = false;
-                            selectedArtistList.remove(artistList[index][0]);
-                          } else {
-                            artistList[index][2] = true;
-                            selectedArtistList.add(artistList[index][0]);
-                          }
-                          setState(() {});
-                        },
-                        icon: artistList[index][2]
-                            ? Icon(Icons.bookmark_rounded,
-                                color: Color.fromARGB(255, 255, 146, 127))
-                            : Icon(
-                                Icons.bookmark_rounded,
-                                color: kWhite,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                  decoration: outerBorder,
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                          child: Container(
+                              width: 25,
+                              decoration: BoxDecoration(
+                                color: artistList[index][1]
+                                    ? Color.fromARGB(255, 255, 146, 127)
+                                    : kWhite,
+                                borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(6.0),
+                                    bottomLeft: Radius.circular(6.0)),
                               )),
-                  )
-                ],
-              );
+                          onTap: () {
+                            if (artistList[index][1]) {
+                              artistList[index][1] = false;
+                              selectedArtistList.remove(artistList[index][0]);
+                            } else {
+                              artistList[index][1] = true;
+                              selectedArtistList.add(artistList[index][0]);
+                            }
+                            setState(() {});
+                          }),
+                      signinItemCard(artistList[index]),
+                    ],
+                  ));
             },
           )),
     ]));
@@ -462,11 +565,11 @@ class _SigninPageState extends State<SigninPage> {
                                             user_name: _nameController.text,
                                             password: _pwdController.text,
                                             realname: _realnameController.text,
-                                            image: 'assets/profile.png',
-                                            country: 'Korea',
+                                            image: selectedProfileImage,
+                                            country: selectedCountry,
                                             age: int.parse(_ageController.text),
-                                            gender: int.parse(
-                                                _genderController.text),
+                                            gender:
+                                                genders.indexOf(selectedGender),
                                             playcount: 0,
                                             follower: [''],
                                             following: [''],

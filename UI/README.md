@@ -15,7 +15,7 @@ Some steps to run a Flutter Project
 
 ## Screenshots
 
-- 'UI/screenshots' (last update 22/01/25)
+- 'UI/screenshots' (last update 22/01/29)
 
 - 페이지 목록
     - home
