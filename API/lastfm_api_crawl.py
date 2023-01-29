@@ -251,6 +251,11 @@ def trackinfo(tracks):
                     if track['error'] == 6: # {"error":6,"message":"Track not found","links":[]}
                         # print('track:', track, 'artist:', artist)
                         continue
+                    elif track['error'] == 29: #{'message': 'Rate Limit Exceeded - This application has made too many requests in a short period. If this is your API key, see https://www.last.fm/api/tos#4.4 for information about raising the limit.', 'error': 29}
+                        sleep(10)
+                        continue
+                    elif track['error'] == 8: #{'message': 'Operation failed - Most likely the backend service failed. Please try again.', 'error': 8}
+                        continue
                 except:
                     print('break!!')
                     print(track, '2')
@@ -300,7 +305,7 @@ def trackinfo(tracks):
         track.drop(columns=['artist', 'streamable', 'toptags', 'url'], inplace=True)
         function_dataframe_list_tmp.append(track)
 
-        if i % 5 == 0:
+        if i % 4 == 0:
             sleep(1)
     return {'dataframe_list':function_dataframe_list_tmp, 'tag2id':tmp_tag2id}
 
@@ -372,7 +377,12 @@ def albuminfo(artist2album):
         if 'tracks' in list(album.keys()):
             album.drop(columns=['tracks'], inplace=True)
 
-        album.drop(columns=['tags', 'mbid'], inplace=True)
+        if 'tags' in list(album.keys()):
+            album.drop(columns=['tags'], inplace=True)
+
+        if 'mbid' in list(album.keys()):
+            album.drop(columns=['mbid'], inplace=True)
+
         function_dataframe_list_tmp.append(album)
         if i % 4 == 0:
             sleep(1)
@@ -403,7 +413,7 @@ def userinfo(user2id):
 
         user.drop(columns=['playlists', 'type', 'artist_count', 'track_count', 'album_count'], inplace=True)
         function_dataframe_list_tmp.append(user)
-        if i % 4 == 0:
+        if i % 10 == 0:
             sleep(1)
     return {'dataframe_list':function_dataframe_list_tmp}
 
@@ -412,13 +422,27 @@ def taginfo(tag2id):
     for i, (tag, id) in enumerate(tqdm(tag2id)):
         params_tag['tag'] = tag
         tag = requests.get(url, params_tag).text
-
+        
         try:
             tag = json.loads(tag)['tag']
         except:
-            print('break!!')
-            print(tag)
-            return {'dataframe_list':function_dataframe_list_tmp}
+            try:
+                tag = json.loads(tag)
+                try:
+                    if tag == {}:
+                        print(tag, '-1')
+                        continue
+                    elif tag['error'] == 29: # {'message': 'Album not found', 'error': 6}
+                        # print(album, '2')
+                        sleep(10)
+                        continue
+                except:
+                    print('break!!')
+                    print(tag)
+                    return {'dataframe_list':function_dataframe_list_tmp}
+            except:
+                print(tag, '4')
+                continue
 
         # print(tag.keys())
         # tag['summary'] = tag['wiki']['summary']
@@ -427,7 +451,7 @@ def taginfo(tag2id):
         tag.drop(columns=['wiki'], inplace=True)
         
         function_dataframe_list_tmp.append(tag)
-        if i % 4 == 0:
+        if i % 10 == 0:
             sleep(1)
     return {'dataframe_list':function_dataframe_list_tmp}
 
@@ -474,7 +498,7 @@ def artistinfo(artist2id):
         tmp = pd.DataFrame.from_dict([dictionary])
         
         function_dataframe_list_tmp.append(tmp)
-        if i % 4 == 0:
+        if i % 10 == 0:
             sleep(1)
     return {'dataframe_list':function_dataframe_list_tmp}
 
