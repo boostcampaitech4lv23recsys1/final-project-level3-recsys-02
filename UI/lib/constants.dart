@@ -12,6 +12,8 @@ Color kDarkGrey = const Color.fromARGB(255, 155, 155, 155);
 Color kBlack = const Color.fromRGBO(22, 22, 22, 1);
 Color kWhite = const Color.fromARGB(255, 240, 240, 240);
 
+const String username = "yongheewon";
+
 EdgeInsets outerMargin = const EdgeInsets.all(20);
 EdgeInsets defaultPadding = const EdgeInsets.all(8);
 const kPadding = EdgeInsets.only(top: 8, bottom: 12, left: 8, right: 8);

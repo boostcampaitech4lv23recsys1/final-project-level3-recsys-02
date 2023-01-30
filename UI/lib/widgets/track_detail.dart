@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ui/constants.dart';
 import 'package:ui/models/item.dart';
+import 'package:ui/utils/dio_client.dart';
 
 class DetailPage extends StatefulWidget {
   const DetailPage({super.key, required this.item});
@@ -13,8 +14,9 @@ class _DetailPageState extends State<DetailPage> {
   late String _image, _name, _albumName, _artistName;
   var isLike = false;
   var url = 'https://www.naver.com';
-
+  final DioClient dioClient = DioClient();
   void getAlbum(Item item) {}
+
   @override
   void initState() {
     super.initState();
@@ -24,7 +26,12 @@ class _DetailPageState extends State<DetailPage> {
     _artistName = widget.item.artistName;
     getAlbum(widget.item);
   }
-
+  void addLike(Item item) async {
+    int code = await dioClient.interactionClick(username: username, itemInfo: item);
+    if (code == 200) {
+    } else {
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,8 +69,10 @@ class _DetailPageState extends State<DetailPage> {
                       IconButton(
                           onPressed: () {
                             if (isLike) {
+                              //yhw
                               isLike = false;
                             } else {
+                              //yhw
                               isLike = true;
                             }
                           },

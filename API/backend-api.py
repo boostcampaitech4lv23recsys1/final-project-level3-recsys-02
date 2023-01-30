@@ -19,7 +19,6 @@ def change_str(a):
 class trackInfo(BaseModel):
     track_name: str
     loved: int
-    username: str
     album_name: str
     date_uts: int
     artist_name: str
@@ -55,28 +54,30 @@ def get_user_table():
     print(test)
     return test.to_string()
 
+
 @app.get('/track')
 def get_track_table():
     query = f"SELECT * FROM track_info;"
     return pd.read_sql(query, db_connect)
+
 
 @app.post('/login', description='로그인')
 def login_user(user: User) -> userInfo:
     query = f"SELECT password FROM user_info WHERE user_name ='{user.id}';"
     user_df = pd.read_sql(query, db_connect)
 
-    if user.pwd == user_df['password']: 
+    if user.pwd == user_df['password']:
         return userInfo(
             user_name=user_df['user_name'],
             password=user_df['password'],
-            realname =user_df['realname'],
-            image =user_df['image'],
-            country =user_df['country'],
-            age =user_df['age'],
-            gender =user_df['gender'],
-            playcount =user_df['playcount'],
-            following =user_df['following'],
-            follower =user_df['follower'],
+            realname=user_df['realname'],
+            image=user_df['image'],
+            country=user_df['country'],
+            age=user_df['age'],
+            gender=user_df['gender'],
+            playcount=user_df['playcount'],
+            following=user_df['following'],
+            follower=user_df['follower'],
             result='success')
     else:
         return userInfo(result='fail')
@@ -122,7 +123,7 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
                 VALUES ('{userInfo.user_name}', '{ut['track_name']}', '{ut['album_name']}', '{ut['artist_name']}', {timestamp}, 0)\
                 RETURNING success;"
     response2 = pd.read_sql(inter_query, db_connect)
-    
+
     return response1 and response2
 
 
@@ -176,23 +177,22 @@ def get_likes(user_name: str):
 
     return values
 
-@app.put("/users/{user_name}/likes/{track_name}", description='인터렉션 추가, 좋아요 추가, 삭제')
+
+@app.post("/users/interaction", description='click, like, delete interaction')
 def add_interaction(input_1: userInfo, input_2: trackInfo, option: ops):
     timestamp = int(datetime.now().replace(tzinfo=timezone.utc).timestamp())
-    if input_1.authentication == -1:
-        return AuthError()
-    else:
-        query = f"INSERT INTO inter (track_name, loved, username, album_name, date_uts, artist_name)\
-                 VALUES ('{change_str(input_2.track_name)}', {option.option}, '{input_1.user_name}', '{change_str(input_2.album_name)}', {timestamp}, '{input_2.artist_name}');"
-        with db_connect.cursor() as cur:
-            cur.execute(query)
-            return "Success"
+    print("hi")
+    query = f"INSERT INTO inter (track_name, loved, user_name, album_name, date_uts, artist_name)\
+             VALUES ('{change_str(input_2.track_name)}', {option.option}, '{input_1.user_name}', '{change_str(input_2.album_name)}', {timestamp}, '{input_2.artist_name}');"
+    with db_connect.cursor() as cur:
+        cur.execute(query)
+        db_connect.commit()
 
 if __name__ == "__main__":
     db_connect = psycopg2.connect(
         user="myuser",
         password="mypassword",
-        host="localhost",
+        host="34.64.50.61",
         port=5432,
         database="mydatabase",
     )
