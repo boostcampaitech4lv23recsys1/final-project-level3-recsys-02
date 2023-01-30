@@ -16,13 +16,12 @@ class SigninPage extends StatefulWidget {
 
 class _SigninPageState extends State<SigninPage> {
   bool isStart = true;
-
+  late UserInfo userInfo;
   late TextEditingController _nameController;
   late TextEditingController _emailCheckController;
   late TextEditingController _pwdController;
   late TextEditingController _realnameController;
   late TextEditingController _ageController;
-  late TextEditingController _genderController;
 
   final DioClient dioClient = DioClient();
   final List imageList = [
@@ -149,9 +148,12 @@ class _SigninPageState extends State<SigninPage> {
               style: subtitleTextStyle,
               textAlign: TextAlign.start,
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            Container(
+                margin: EdgeInsets.only(bottom: 7),
+                child: Text(
+                  '최대 5자까지 가능해요',
+                  style: hintTextStyle,
+                )),
             Container(
               alignment: Alignment.centerLeft,
               padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -172,9 +174,10 @@ class _SigninPageState extends State<SigninPage> {
               style: subtitleTextStyle,
               textAlign: TextAlign.start,
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            Container(
+                margin: EdgeInsets.only(bottom: 7),
+                child:
+                    Text('6-10자의 영문 소문자, 숫자를 사용해주세요. ', style: hintTextStyle)),
             Container(
               alignment: Alignment.centerLeft,
               padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -195,9 +198,10 @@ class _SigninPageState extends State<SigninPage> {
               style: subtitleTextStyle,
               textAlign: TextAlign.start,
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            Container(
+                margin: EdgeInsets.only(bottom: 7),
+                child:
+                    Text('6-10자의 영문 소문자, 숫자를 사용해주세요. ', style: hintTextStyle)),
             Container(
               alignment: Alignment.centerLeft,
               padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -507,18 +511,31 @@ class _SigninPageState extends State<SigninPage> {
                                               fontWeight: FontWeight.bold,
                                             )),
                                         onPressed: () async {
+                                          // 입력 유효성 체크
+                                          // 사용자 이름 - 최대 5자
+
+                                          // 아아디 - 6-10자 영문/숫자
+
+                                          // 비밀번호 - 6-10자 영문/숫자
+
+                                          // 나이 - 숫자
+                                          if (_ageController.text is num) {}
+
+                                          userInfo = UserInfo(
+                                            user_name: _nameController.text,
+                                            password: _pwdController.text,
+                                            realname: _realnameController.text,
+                                            image: selectedProfileImage,
+                                            country: selectedCountry,
+                                            age: int.parse(_ageController.text),
+                                            gender:
+                                                genders.indexOf(selectedGender),
+                                            playcount: 0,
+                                            follower: [''],
+                                            following: [''],
+                                          );
                                           isStart = false;
                                           setState(() {});
-                                          // 입력 유효성 체크
-                                          // 아아디 - 이메일형식
-
-                                          // 비밀번호 - 6자리 이상
-
-                                          // 사용자 이름 - 영문/한글만
-
-                                          // 나이 - int형
-                                          // gender -
-                                          // 이미지 -
                                         },
                                       )),
                                 ],
@@ -561,20 +578,6 @@ class _SigninPageState extends State<SigninPage> {
                                               fontWeight: FontWeight.bold,
                                             )),
                                         onPressed: () async {
-                                          UserInfo userInfo = UserInfo(
-                                            user_name: _nameController.text,
-                                            password: _pwdController.text,
-                                            realname: _realnameController.text,
-                                            image: selectedProfileImage,
-                                            country: selectedCountry,
-                                            age: int.parse(_ageController.text),
-                                            gender:
-                                                genders.indexOf(selectedGender),
-                                            playcount: 0,
-                                            follower: [''],
-                                            following: [''],
-                                          );
-
                                           if (selectedGenreLists.length >= 3 &&
                                               selectedArtistList.length >= 3) {
                                             var res =
