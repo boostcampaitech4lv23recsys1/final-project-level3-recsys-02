@@ -28,11 +28,8 @@ class _MainPageState extends State<MainPage> {
   List<Item> musicList = [];
   List<Item> recList = [];
   
-  void addInteraction(Item item) async {
-    int code = await dioClient.interactionClick(username: username, itemInfo: item);
-    if (code == 200) {
-    } else {
-    }
+  Future addInteraction(Item item) async {
+    await dioClient.interactionClick(username: username, albumName: item.albumName, artistName: item.artistName, trackName: item.trackName);
   }
   void getMusicList() {
     for (int i = 0; i < 20; i++) {
