@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ui/constants.dart';
+import 'package:ui/utils/dio_client.dart';
 
 AppBar mainAppBar(context) {
   return AppBar(
@@ -48,6 +49,9 @@ AppBar mainAppBar(context) {
               padding: const EdgeInsets.all(12)),
           child: Text('마이페이지', style: subtitleTextStyle),
           onPressed: () {
+            // list<str> = likesList;
+            // userInfo = profile;
+
             Navigator.pushNamed(context, '/mypage');
           },
         ),

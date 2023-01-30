@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,6 +13,7 @@ import 'package:ui/widgets/custom_card.dart';
 import 'package:ui/widgets/titlebar.dart';
 import 'package:ui/widgets/track_detail.dart';
 import 'package:web_smooth_scroll/web_smooth_scroll.dart';
+import 'package:ui/utils/dio_client.dart';
 
 class UserPage extends StatefulWidget {
   const UserPage({super.key, this.isMyPage = true});
@@ -29,14 +32,17 @@ class _UserPageState extends State<UserPage> {
 
   late List<Item> myPlaylist = [];
   late SharedPreferences pref;
+  final DioClient dio = DioClient();
 
   String name = 'GUEST';
 
-  List<String> follower = [];
-  List<String> following = [];
+  List follower = [];
+  List following = [];
   int followerNum = 0;
   int followingNum = 0;
   int match = 85;
+  Map profile_info = {};
+  List likelist = [];
 
   List<OtherUser> userList = [];
   void getUserRec() {
@@ -49,33 +55,49 @@ class _UserPageState extends State<UserPage> {
     }
   }
 
-  void getProfile() async {
-    // pref = await SharedPreferences.getInstance();
-
-    // name = pref.getString('name')!;
-    // follower = pref.getStringList('follower')!;
-    // following = pref.getStringList('following')!;
-    // followerNum = follower.length;
-    // followingNum = following.length;
+  Future getProfile() async {
+    profile_info = await dio.profile(name: 'cynocauma');
+    return profile_info;
   }
 
-  void getMyMusics() {
+  Future getMyMusics() async {
+    likelist = await dio.likesList(name: 'cynocauma');
+
     for (int i = 0; i < 10; i++) {
+      if (likelist[i][4] == null) {
+        likelist[i][4] =
+            'https://fastly.picsum.photos/id/237/200/300.jpg?hmac=TmmQSbShHz9CdQm0NkEjx1Dyh_Y984R9LpNrpvH2D_U';
+      }
+
       myPlaylist.add(Item(
-          image: 'assets/album.png',
-          trackName: 'Track Name $i',
-          albumName: 'Album Name $i',
-          artistName: 'Artist Name $i',
-          duration: 24000));
+          image: likelist[i][4],
+          trackName: likelist[i][0],
+          albumName: likelist[i][1],
+          artistName: likelist[i][2],
+          duration: likelist[i][3]));
     }
+    return myPlaylist;
   }
 
   @override
   void initState() {
-    getProfile();
     getMyMusics();
     getUserRec();
     super.initState();
+    getProfile().then((value) {
+      setState(() {
+        name = value['user_name'];
+        follower = value['follower'];
+        following = value['following'];
+        followerNum = value['follower'].length;
+        followingNum = value['following'].length;
+      });
+    });
+    getMyMusics().then((value) {
+      setState(() {
+        myPlaylist = value;
+      });
+    });
   }
 
   Widget profile({isOther = true}) {

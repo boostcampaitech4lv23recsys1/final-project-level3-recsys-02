@@ -190,7 +190,7 @@ Widget playlistCard(Item item) {
       children: [
         // image
         ClipRect(
-          child: Image.asset(
+          child: Image.network(
             item.image,
           ),
         ),
