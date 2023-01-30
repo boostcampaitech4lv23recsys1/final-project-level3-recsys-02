@@ -46,7 +46,7 @@ class _DetailPageState extends State<DetailPage> {
                   Container(
                       height: 200,
                       width: 500,
-                      child: Image.asset(
+                      child: Image.network(
                         _image,
                         fit: BoxFit.cover,
                       )),

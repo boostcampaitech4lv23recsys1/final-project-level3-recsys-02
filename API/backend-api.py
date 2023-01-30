@@ -13,10 +13,8 @@ NAME_NOT_FOUND = HTTPException(status_code=400, detail="Name not found.")
 TRACK_NOT_FOUND = HTTPException(status_code=400, detail="Track not found.")
 AuthError = HTTPException(status_code=400, detail="not auth user")
 
-
 def change_str(a):
     return a.replace('\'', '')
-
 
 class trackInfo(BaseModel):
     track_name: str
@@ -129,64 +127,56 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
 
 
 @app.get("/users/{user_id}/profiles", description="사용자 정보")
-async def get_profiles(user_id: str):
-    get_sample = f"""
+def get_profiles(user_id: str):
+
+    query = f"""
         select * from user_info where user_name = '{user_id}'
     ;"""
 
     with db_connect.cursor() as cur:
-        cur.execute(get_sample)
-        values = cur.fetchall()[0]
+        cur.execute(query)
+        values = list(cur.fetchall()[0])
+    
+    for index, i in enumerate(values):
+        if values[index] == None:
+            if index == 0 or index == 3 or index == 10 or index == 12 or index == 14 or index == 17:
+                values[index] = 'None'
+            elif index == 15 or index == 16:
+                values[index] = []
+            else:
+                values[index] = -1
 
-    info = userInfo()
-    info.user_name = values[0]
-    info.password = values[1]
-    info.realname = values[2]
-    info.image = values[3]
-    info.country = values[4]
-    info.age = values[5]
-    info.gender = values[6]
-    info.playcount = values[7]
-    info.following = values[8]
-    info.follower = values[9]
-    info.result = values[10]
+    info = userInfo(user_name=values[0],
+            password=values[17],
+            realname =values[3],
+            image =values[10],
+            country =values[12],
+            age =values[1],
+            gender =values[13],
+            playcount =values[5],
+            following =values[15],
+            follower =values[16],
+            result='success')
 
     return info
 
 
-@app.get("/users/{user_id}/likes", description="좋아요 리스트")
-async def get_likes(user_id: str):
-    get_sample = f"""
-        select track_name from inter where (user_name = '{user_id}' and loved = 1)
+@app.get("/users/{user_name}/likes", description="좋아요 리스트")
+def get_likes(user_name: str):
+    query = f"""select distinct inter.track_name, 
+    inter.album_name, track_info.artist_name, track_info.duration, 
+    album_info.image from track_info left outer join inter on 
+    track_info.track_name = inter.track_name left outer 
+    join album_info on inter.album_name = album_info.album_name 
+    where (inter.user_name = '{user_name}' and inter.loved = 0)
     ;"""
-
     with db_connect.cursor() as cur:
-        cur.execute(get_sample)
-        likes = cur.fetchall()
+        cur.execute(query)
+        values = cur.fetchall()
 
-    get_sample = f"""
-        select track_name from inter where (user_name = '{user_id}' and loved = 2)
-    ;"""
+    return values
 
-    with db_connect.cursor() as cur:
-        cur.execute(get_sample)
-        unlikes = cur.fetchall()
-
-    return list(set(likes) - set(unlikes))
-
-
-@app.post("/users/{user_id}/profiles", description='내 정보, 프로필, 공개 여부,..')
-def get_user_info(input: userInfo):
-    user_name = input.user_name
-    query = f"SELECT * FROM user_info WHERE user_name=\'{user_name}\'"
-    df = pd.read_sql(query, db_connect)
-    if df.shape[0] == 0:
-        return NAME_NOT_FOUND
-    else:
-        return df
-
-
-@app.put("/users/{user_id}/likes/{track_name}", description='좋아요 목록')
+@app.put("/users/{user_name}/likes/{track_name}", description='인터렉션 추가, 좋아요 추가, 삭제')
 def add_interaction(input_1: userInfo, input_2: trackInfo, option: ops):
     timestamp = int(datetime.now().replace(tzinfo=timezone.utc).timestamp())
     if input_1.authentication == -1:
@@ -197,7 +187,6 @@ def add_interaction(input_1: userInfo, input_2: trackInfo, option: ops):
         with db_connect.cursor() as cur:
             cur.execute(query)
             return "Success"
-        return "False"
 
 if __name__ == "__main__":
     db_connect = psycopg2.connect(
