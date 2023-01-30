@@ -15,7 +15,7 @@ Widget sampleCard() {
   );
 }
 
-Widget genreCard(item) {
+Widget signinItemCard(item) {
   return Container(
     color: Colors.transparent,
     height: titleHeight,
@@ -27,24 +27,6 @@ Widget genreCard(item) {
       style: contentsTextStyle,
     ),
   );
-}
-
-Widget artistCard(item) {
-  return Container(
-      width: 150,
-      padding: EdgeInsets.all(15),
-      child: Column(children: [
-        SizedBox(
-          height: 100,
-          width: 100,
-          child: CircleAvatar(
-            backgroundColor: Colors.transparent,
-            backgroundImage: AssetImage(item[1]),
-          ),
-        ),
-        defaultSpacer,
-        Text(item[0], style: contentsTextStyle, textAlign: TextAlign.start),
-      ]));
 }
 
 Widget userCoverCard(image, name, follower) {
@@ -136,7 +118,8 @@ Widget trackCoverCard(Item item) {
           height: 20,
         ),
         // track name
-        Text(item.name, style: subtitleTextStyle, textAlign: TextAlign.start),
+        Text(item.trackName,
+            style: subtitleTextStyle, textAlign: TextAlign.start),
         SizedBox(
           height: 10,
         ),
@@ -176,7 +159,7 @@ Widget trackCard(Item item, {bool isRank = false, int index = 1}) {
           children: [
             // track name
             Text(
-              item.name,
+              item.trackName,
               style: contentsTextStyle,
               textAlign: TextAlign.start,
             ),
@@ -213,7 +196,7 @@ Widget playlistCard(Item item) {
         ),
         defaultSpacer,
         Text(
-          item.name,
+          item.trackName,
           style: contentsTextStyle,
           textAlign: TextAlign.start,
         ),

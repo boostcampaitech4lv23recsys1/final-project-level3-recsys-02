@@ -21,7 +21,7 @@ class _DetailPageState extends State<DetailPage> {
   void initState() {
     super.initState();
     _image = widget.item.image;
-    _name = widget.item.name;
+    _name = widget.item.trackName;
     _albumName = widget.item.albumName;
     _artistName = widget.item.artistName;
     getAlbum(widget.item);

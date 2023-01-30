@@ -71,7 +71,7 @@ class _UserPageState extends State<UserPage> {
 
       myPlaylist.add(Item(
           image: likelist[i][4],
-          name: likelist[i][0],
+          trackName: likelist[i][0],
           albumName: likelist[i][1],
           artistName: likelist[i][2],
           duration: likelist[i][3]));
@@ -282,15 +282,32 @@ class _UserPageState extends State<UserPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           titleBar('$name님의 취향분석 결과'),
-          Container(
-              decoration: outerBorder,
-              width: width,
-              height: 590,
-              child: Center(
-                  child: Text(
-                '취향분석 결과',
-                style: titleTextStyle,
-              )))
+          Stack(
+            alignment: Alignment.topRight,
+            children: [
+              Container(
+                  decoration: outerBorder,
+                  width: width,
+                  height: 590,
+                  child: Center(
+                      child: Text(
+                    '취향분석 결과',
+                    style: titleTextStyle,
+                  ))),
+              Container(
+                  width: buttonWidth * 2,
+                  padding:
+                      const EdgeInsets.only(top: 20, bottom: 20, right: 20),
+                  child: ElevatedButton(
+                    style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        side: whiteBorder,
+                        padding: const EdgeInsets.all(12)),
+                    child: Text('선호도 조사 다시하기', style: subtitleTextStyle),
+                    onPressed: () {},
+                  )),
+            ],
+          ),
         ]);
   }
 

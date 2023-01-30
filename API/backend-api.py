@@ -5,6 +5,7 @@ import psycopg2
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from datetime import datetime, timezone
+import json
 
 app = FastAPI()
 
@@ -17,11 +18,13 @@ def change_str(a):
     return a.replace('\'', '')
 
 class trackInfo(BaseModel):
+    username: str
     track_name: str
-    loved: int
     album_name: str
-    date_uts: int
     artist_name: str
+    duration: int
+    date_uts: int
+    loved: int
 
 
 class ops(BaseModel):
@@ -42,10 +45,8 @@ class userInfo(BaseModel):
     age: int
     gender: int
     playcount: int
-    following: list
-    follower: list
-    result: str
-
+    following: object
+    follower: object
 
 @app.get('/user')
 def get_user_table():
@@ -62,70 +63,96 @@ def get_track_table():
 
 
 @app.post('/login', description='로그인')
-def login_user(user: User) -> userInfo:
-    query = f"SELECT password FROM user_info WHERE user_name ='{user.id}';"
-    user_df = pd.read_sql(query, db_connect)
-
-    if user.pwd == user_df['password']:
-        return userInfo(
-            user_name=user_df['user_name'],
-            password=user_df['password'],
-            realname=user_df['realname'],
-            image=user_df['image'],
-            country=user_df['country'],
-            age=user_df['age'],
-            gender=user_df['gender'],
-            playcount=user_df['playcount'],
-            following=user_df['following'],
-            follower=user_df['follower'],
-            result='success')
+def login_user(user: User) -> str:
+    user_query = f"SELECT user_name, password FROM user_info WHERE user_name='{user.id}';"
+    user_df = pd.read_sql(user_query, db_connect)
+    print (user_df)
+    if (len(user_df) == 0):
+        return 'Empty'
+    elif user.pwd == user_df['password'][0]: 
+        return user_df['user_name'][0]
     else:
-        return userInfo(result='fail')
+        return 'Empty'
 
+@app.get('/signin/artists')
+def get_artists():
+    artist_query = f"SELECT DISTINCT artist_name, artist_url FROM track_info ORDER BY artist_name;"
+    artist_df = pd.read_sql(artist_query, db_connect)
+    return artist_df.to_dict('records')
+
+def list2array(list_data):
+    tmp = ''
+    for d in list_data:
+        tmp += f'"{d}",'
+    return tmp[:-1]
+
+def getTopTracks(tags, artists):
+    # 태그를 포함하는 top 10개 트랙 inter에 넣기
+    tag_string = list2array(tags)
+    tag_query = "SELECT * FROM track_info \
+                WHERE track_tag_list && '{"+ tag_string + "}' \
+                ORDER BY playcount \
+                LIMIT 10;"
+    # print(tag_query)
+    tag_tracks = pd.read_sql(tag_query, db_connect)
+
+    #### 예상한 알고리즘대로 안됌 ### 
+    # print(tag_tracks)
+    ###############################
+    #  
+    # 아티스트별 top 10개 트랙 inter에 넣기
+    artist_string = "', '".join(artists)
+    artist_string = "'" + artist_string + "'"
+    artist_query = f"SELECT * FROM track_info WHERE artist_name IN ({artist_string})\
+                ORDER BY playcount;"
+    # print(artist_query)
+    artist_tracks = pd.read_sql(artist_query, db_connect)
+    # print(artist_tracks)
+    return pd.concat([tag_tracks, artist_tracks])
 
 @app.post('/signin', description='회원가입')
 def signin_user(userInfo: userInfo, tags: list, artists: list):
-    # insert user personal information
-    user_query = f"INSERT INTO user_info (user_name, realname, password, age, gender, country, playcount, follower, following) \
-            VALUES ('{userInfo.user_name}', '{userInfo.realname}', '{userInfo.password}', \
-                {userInfo.age}, {userInfo.gender}, '{userInfo.country}', \
-                {userInfo.playcount}, {userInfo.follower},{userInfo.following}) \
-            RETURNING success;"
-    response1 = pd.read_sql(user_query, db_connect)
+    # print(userInfo)
+    # print(tags)
+    # print(artists)
 
-    # interaction : user_name, track_name, album_name, artist_name, timestamp(uts), loved(int)
-    # tag 별 N개 트랙 inter에 넣기
-    N = 10
-    # 선택한 태그를 포함하는 경우의 track들을 줄 세우고, playcount을 기준으로 높은 거 N개
-    # tag_string = ", ".join(tags)
-    # tag_query = f"SELECT * FROM track_info \
-    #             WHERE tags IN ({tag_string})\
-    #             ORDER BY playcount \
-    #             LIMIT {N};"
-    # tag_tracks = pd.read_sql(tag_query, db_connect)
-    # print(tag_tracks)
+    # 이미 가입한 회원인지 확인
+    user_query = f"SELECT user_name FROM user_info WHERE user_name='{userInfo.user_name}';"
+    user_df = pd.read_sql(user_query, db_connect)
 
-    # 아티스트별 N개 트랙 inter에 넣기
-    artist_string = ", ".join(artists)
-    artist_query = f"SELECT * FROM track_info \
-                WHERE artist_name IN ({artist_string})\
-                ORDER BY playcount\
-                LIMIT {N};"
-    artist_tracks = pd.read_sql(artist_query, db_connect)
-    print(artist_tracks)
+    if (user_df.shape[0] == 0):
+        following = list2array(userInfo.following)
+        follower = list2array(userInfo.follower)
+        # user information : user_name, realname, password, age, gender, country, playcount, follower, following
+        user_query = f"INSERT INTO user_info (user_name, realname, password, age, gender, country, playcount, follower, following) \
+                VALUES ('{userInfo.user_name}', '{userInfo.realname}', '{userInfo.password}', \
+                    {userInfo.age}, {userInfo.gender}, '{userInfo.country}', \
+                    0, '{{{follower}}}','{{{following}}}') \
+                RETURNING user_name;"
+        response1 = pd.read_sql(user_query, db_connect).all()
 
-    timestamp = int(datetime.now().replace(tzinfo=timezone.utc).timestamp())
+        # interaction : user_name, track_name, album_name, artist_name, timestamp(uts), loved(int)
+        # tag, artist 별 N개 트랙 inter에 넣기
+        timestamp = int(datetime.now().replace(tzinfo=timezone.utc).timestamp())
+        user_tracks = getTopTracks(tags, artists)
+        print("usertrack\n", user_tracks)
 
-    # user_tracks = pd.concat(tag_tracks, artist_tracks)
-    user_tracks = artist_tracks
-    for ut in user_tracks:
-        inter_query = f"INSERT INTO user_info (user_name, track_name, album_name, artist_name, timestamp_uts, loved) \
-                VALUES ('{userInfo.user_name}', '{ut['track_name']}', '{ut['album_name']}', '{ut['artist_name']}', {timestamp}, 0)\
-                RETURNING success;"
-    response2 = pd.read_sql(inter_query, db_connect)
 
-    return response1 and response2
-
+        for idx, row in user_tracks.iterrows():
+            inter_query = f"INSERT INTO inter (user_name, track_name, album_name, artist_name, date_uts, loved) \
+                    VALUES ('{userInfo.user_name}', '{row['track_name']}', '{row['album_name']}', '{row['artist_name']}', {timestamp}, 0)\
+                    RETURNING user_name;"
+        response2 = pd.read_sql(inter_query, db_connect).all()
+        print(response1)
+        print(response2)
+        if response1['user_name'] == response2['user_name']:
+            db_connect.commit()
+            return "True"
+        else:
+            return "False"
+    # 해당 이름이 이미 존재하는 경우
+    else:   
+        return "False"
 
 @app.get("/users/{user_id}/profiles", description="사용자 정보")
 def get_profiles(user_id: str):
