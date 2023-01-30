@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class DioClient {
   final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: 'http://127.0.0.1:8001',
+      baseUrl: 'http://0.0.0.0:8001',
     ),
   )..interceptors.add(Logging());
 
@@ -59,6 +59,54 @@ class DioClient {
     }
   }
 
+  // 좋아요 리스트 불러오기
+  Future likesList({required String name}) async {
+    late Response response;
+    try {
+      response = await _dio.get('/users/' + name + '/likes');
+      debugPrint(response.toString());
+      List responseBody = response.data;
+      return responseBody;
+    } catch (e) {
+      debugPrint('Error creating user: $e');
+      return -1;
+    }
+  }
+
+  // 프로필 불러오기
+  Future profile({required String name}) async {
+    late Response response;
+    try {
+      response = await _dio.get('/users/' + name + '/profiles');
+      debugPrint(response.toString());
+      Map responseBody = response.data;
+      return responseBody;
+    } catch (e) {
+      debugPrint('Error creating user: $e');
+      return -1;
+    }
+  }
+}
+
+class DioModel {
+  final Dio _dio = Dio(
+    BaseOptions(
+      baseUrl: 'http://27.96.134.64:30001',
+    ),
+  )..interceptors.add(Logging());
+
+  Future profile({required String name}) async {
+    late Response response;
+    try {
+      response = await _dio.get('users/' + name + '/infer');
+      debugPrint(response.toString());
+      List responseBody = response.data;
+      return responseBody;
+    } catch (e) {
+      debugPrint('Error creating user: $e');
+      return -1;
+    }
+  }
   Future interactionClick({required String username, required Item itemInfo}) async {
 
     late Response response;
@@ -142,4 +190,5 @@ class DioClient {
   //     return -1;
   //   }
   // }
+
 }

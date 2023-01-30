@@ -39,7 +39,7 @@ UserInfo _$UserFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$UserToJson(UserInfo instance) => <String, dynamic>{
       'name': instance.name,
       'pwd': instance.pwd,
-      'realname': instance.name,
+      'realname': instance.realname,
       'image': instance.image,
       'country': instance.country,
       'age': instance.age,
