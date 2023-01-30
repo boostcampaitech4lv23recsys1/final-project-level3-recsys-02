@@ -9,6 +9,7 @@ import 'package:ui/widgets/custom_header.dart';
 import 'package:ui/widgets/custom_card.dart';
 import 'package:ui/widgets/titlebar.dart';
 import 'package:web_smooth_scroll/web_smooth_scroll.dart';
+import 'package:ui/utils/dio_client.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -22,10 +23,17 @@ class _MainPageState extends State<MainPage> {
   final fastSelectionController = ScrollController();
   final charController = ScrollController();
   final recController = ScrollController();
+  final DioClient dioClient = DioClient();
 
   List<Item> musicList = [];
   List<Item> recList = [];
-
+  
+  void addInteraction(Item item) async {
+    int code = await dioClient.interactionClick(username: username, itemInfo: item);
+    if (code == 200) {
+    } else {
+    }
+  }
   void getMusicList() {
     for (int i = 0; i < 20; i++) {
       musicList.add(Item(
@@ -72,6 +80,7 @@ class _MainPageState extends State<MainPage> {
             itemBuilder: (context, index) {
               return GestureDetector(
                   onTap: () {
+                    addInteraction(musicList[index]);
                     Navigator.of(context).push(
                       PageRouteBuilder(
                         opaque: false, // set to false
@@ -79,6 +88,7 @@ class _MainPageState extends State<MainPage> {
                             DetailPage(item: musicList[index]),
                       ),
                     );
+
                   },
                   child: trackCard(musicList[index],
                       isRank: true, index: index + 1));
@@ -103,11 +113,13 @@ class _MainPageState extends State<MainPage> {
             itemBuilder: (context, index) {
               return GestureDetector(
                   onTap: () {
+                    addInteraction(musicList[index]);
                     Navigator.of(context).push(
                       PageRouteBuilder(
                         opaque: false, // set to false
                         pageBuilder: (_, __, ___) =>
                             DetailPage(item: musicList[index]),
+
                       ),
                     );
                   },
@@ -138,6 +150,7 @@ class _MainPageState extends State<MainPage> {
             itemBuilder: (BuildContext context, int idx) {
               return GestureDetector(
                   onTap: () {
+                    addInteraction(recList[idx]);
                     Navigator.of(context).push(
                       PageRouteBuilder(
                         opaque: false, // set to false

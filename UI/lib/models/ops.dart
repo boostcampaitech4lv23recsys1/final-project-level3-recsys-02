@@ -1,19 +1,21 @@
-class Item {
-  final String image, name, albumName, artistName;
-  int duration;
-
-  Item({
-    required this.image,
-    required this.name,
-    required this.albumName,
-    required this.artistName,
-    required this.duration,
+class Ops {
+  final int ops;
+  Ops({
+    required this.ops
   });
+
+
+  factory Ops.fromJson(Map<String, dynamic> json) => _$OpsFromJson(json);
+  Map<String, dynamic> toJson() => _$OpsToJson(this);
 }
 
-String duration2String(duration) {
-  var seconds = (duration / 1000) % 60;
-  var minutes = ((duration / (1000 * 60)) % 60) * 10;
 
-  return '$minutes:$seconds';
+Ops _$OpsFromJson(Map<String, dynamic> json) {
+  return Ops(
+    ops: json['ops'] as int,
+  );
 }
+
+Map<String, dynamic> _$OpsToJson(Ops instance) => <String, dynamic>{
+      'option': instance.ops,
+};
