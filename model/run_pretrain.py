@@ -13,6 +13,7 @@ import argparse
 from datasets import PretrainDataset
 from trainers import PretrainTrainer
 from models import S3RecModel
+import preprocessing
 
 
 from utils import get_user_seqs_long, get_item2attribute_json, check_path, set_seed
@@ -21,8 +22,9 @@ def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--data_dir', default='./data/', type=str)
+    parser.add_argument('--data_dir2', default='LastFM', type=str)
     parser.add_argument('--output_dir', default='output/', type=str)
-    parser.add_argument('--data_name', default='Beauty', type=str)
+    parser.add_argument('--data_name', default='LastFM', type=str)
 
     # model args
     parser.add_argument("--model_name", default='Pretrain', type=str)
@@ -58,6 +60,7 @@ def main():
     parser.add_argument("--adam_beta1", type=float, default=0.9, help="adam first beta value")
     parser.add_argument("--adam_beta2", type=float, default=0.999, help="adam second beta value")
     parser.add_argument("--gpu_id", type=str, default="0", help="gpu_id")
+    parser.add_argument("--reprocess", type=bool, default=False)
 
 
     args = parser.parse_args()
@@ -67,16 +70,27 @@ def main():
 
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_id
     args.cuda_condition = torch.cuda.is_available() and not args.no_cuda
+    
+    # redo preprocessing
+    if args.reprocess : 
+        preprocessing.main(args)
 
-    args.data_file = args.data_dir + args.data_name + '.txt' # interaction data file
-    item2attribute_file = args.data_dir + args.data_name + '_item2attributes.json' # attribute data file
+    args.data_file = args.data_dir + args.data_dir2 + '/artifacts/interaction.txt' # interaction data file -> user, interaction만 있어야 함
+    # args.data_file = './data/bk100/interaction.txt' # interaction data file -> user, interaction만 있어야 함
+    item2attribute_file = args.data_dir + args.data_dir2 + '/artifacts/_item2attributes.json' # attribute data file
+    # item2attribute_file = './data/bk100/_item2attributes.json' # attribute data file
     # concat all user_seq get a long sequence, from which sample neg segment for SP
     user_seq, max_item, long_sequence = get_user_seqs_long(args.data_file) # user별 interaction item list, max(itemset), user 구분 없이 전체 interaction item list
     item2attribute, attribute_size = get_item2attribute_json(item2attribute_file) # return json, max(attribute_set)
 
-    args.item_size = max_item + 2 # mask_id 때문에 +2
-    args.mask_id = max_item + 1
-    args.attribute_size = attribute_size + 1
+    # args.item_size = max_item + 2 # mask_id 때문에 +2
+    # args.mask_id = max_item + 1
+    # args.attribute_size = attribute_size + 1
+    
+    args.item_size = max_item + 1 # mask_id 때문에 +2
+    args.mask_id = max_item 
+    args.attribute_size = attribute_size 
+    
     # save model args
     args_str = f'{args.model_name}-{args.data_name}'
     args.log_file = os.path.join(args.output_dir, args_str + '.txt')

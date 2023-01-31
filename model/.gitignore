@@ -1,4 +1,13 @@
+__pycache__
 *.ipynb
 .DS_Store
-sample_99.PNG
+*.PNG
 README.md
+*.csv
+nohup.out
+data/
+split
+table
+values
+output/
+sample_data/

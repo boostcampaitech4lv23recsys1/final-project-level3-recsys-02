@@ -20,7 +20,7 @@ def main():
 
     parser.add_argument('--data_dir', default='./data/', type=str)
     parser.add_argument('--output_dir', default='output/', type=str)
-    parser.add_argument('--data_name', default='Beauty', type=str)
+    parser.add_argument('--data_name', default='LasfFM', type=str)
     parser.add_argument('--do_eval', action='store_true')
     parser.add_argument('--ckp', default=10, type=int, help="pretrain epochs 10, 20, 30...")
 
@@ -58,17 +58,23 @@ def main():
     args.cuda_condition = torch.cuda.is_available() and not args.no_cuda
 
     args.data_file = args.data_dir + args.data_name + '.txt'
+    # args.data_file = './data/bk100/interaction.txt' # interaction data file -> user, interaction만 있어야 함
     args.sample_file = args.data_dir + args.data_name + '_sample.txt'
     item2attribute_file = args.data_dir + args.data_name + '_item2attributes.json'
+    # item2attribute_file = './data/bk100/_item2attributes.json' # attribute data file
 
     user_seq, max_item, sample_seq = \
         get_user_seqs_and_sample(args.data_file, args.sample_file)
 
     item2attribute, attribute_size = get_item2attribute_json(item2attribute_file)
 
-    args.item_size = max_item + 2
-    args.mask_id = max_item + 1
-    args.attribute_size = attribute_size + 1
+    # args.item_size = max_item + 2
+    # args.mask_id = max_item + 1
+    # args.attribute_size = attribute_size + 1
+    
+    args.item_size = max_item + 1 # mask_id 때문에 +2
+    args.mask_id = max_item
+    args.attribute_size = attribute_size
 
     # save model args
     args_str = f'{args.model_name}-{args.data_name}-{args.ckp}'

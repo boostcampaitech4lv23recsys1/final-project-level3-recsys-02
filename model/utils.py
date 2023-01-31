@@ -136,8 +136,10 @@ def get_user_seqs(data_file):
     user_seq = []
     item_set = set()
     for line in lines:
-        user, items = line.strip().split(' ', 1)
-        items = items.split(' ')
+        # user, items = line.strip().split(' ', 1)
+        user, items = line.strip().split(' ', 1) # 1번만 ' '을 기준으로 split -> user:str, items:List
+        # items = items.split(' ')
+        items = items[1:-1].split(',') # item split(changed)
         items = [int(item) for item in items]
         user_seq.append(items)
         item_set = item_set | set(items)
@@ -157,7 +159,8 @@ def get_user_seqs_long(data_file):
     item_set = set()
     for line in lines: # line(user)별로
         user, items = line.strip().split(' ', 1) # 1번만 ' '을 기준으로 split -> user:str, items:List
-        items = items.split(' ') # item split
+        # items = items.split(' ') # item split(original)
+        items = items[1:-1].split(',') # item split(changed)
         items = [int(item) for item in items] # change item type from str to int
         long_sequence.extend(items) # 后面的都是采的负例 / long_sequence에 한 user에 대한 items(item list) extend
         user_seq.append(items) # 한 user에 대한 items append
@@ -192,8 +195,10 @@ def get_user_seqs_and_sample(data_file, sample_file):
 
 def get_item2attribute_json(data_file):
     item2attribute = json.loads(open(data_file).readline()) # json file read
+    item2attribute = json.loads(item2attribute)
     attribute_set = set()
     for item, attributes in item2attribute.items():
+        attributes = map(lambda x:int(x), attributes)
         attribute_set = attribute_set | set(attributes)
     attribute_size = max(attribute_set) # 331
     return item2attribute, attribute_size

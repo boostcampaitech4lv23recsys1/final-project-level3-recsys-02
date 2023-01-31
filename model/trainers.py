@@ -6,12 +6,18 @@ import numpy as np
 import tqdm
 import random
 
+import mlflow
+import mlflow.sklearn
+
+import logging
+
 import torch
 import torch.nn as nn
 from torch.optim import Adam
 
 from utils import recall_at_k, ndcg_k, get_metric
 
+logging.basicConfig(level=logging.WARN)
 
 class Trainer:
     def __init__(self, model, train_dataloader,
@@ -21,6 +27,8 @@ class Trainer:
         self.args = args
         self.cuda_condition = torch.cuda.is_available() and not self.args.no_cuda
         self.device = torch.device("cuda" if self.cuda_condition else "cpu")
+        
+        self.logger = logging.getLogger(__name__)
 
         self.model = model
         if self.cuda_condition:
@@ -80,7 +88,7 @@ class Trainer:
         print(post_fix)
         with open(self.args.log_file, 'a') as f:
             f.write(str(post_fix) + '\n')
-        return [recall[0], ndcg[0], recall[1], ndcg[1], recall[3], ndcg[3]], str(post_fix)
+        return [recall[0], ndcg[0], recall[1], ndcg[1], recall[3], ndcg[3]], str(post_fix), pred_list
 
     def save(self, file_name):
         torch.save(self.model.cpu().state_dict(), file_name)
@@ -282,6 +290,8 @@ class FinetuneTrainer(Trainer):
                     else:
                         pred_list = np.append(pred_list, batch_pred_list, axis=0)
                         answer_list = np.append(answer_list, answers.cpu().data.numpy(), axis=0)
+                        
+                    # pred_list : inference 결과(index) / shape: (num_user x 20)
                 return self.get_full_sort_score(epoch, answer_list, pred_list)
 
             else:
@@ -295,6 +305,7 @@ class FinetuneTrainer(Trainer):
 
                     test_logits = self.predict_sample(recommend_output, test_neg_items)
                     test_logits = test_logits.cpu().detach().numpy().copy()
+                    print(test_logits)
                     if i == 0:
                         pred_list = test_logits
                     else:

@@ -14,17 +14,20 @@ from datasets import SASRecDataset
 from trainers import FinetuneTrainer
 from models import S3RecModel
 from utils import EarlyStopping, get_user_seqs, get_item2attribute_json, check_path, set_seed
+from datetime import datetime
+import label2track
 
 def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--data_dir', default='./data/', type=str)
+    parser.add_argument('--data_dir2', default='LastFM', type=str)
     parser.add_argument('--output_dir', default='output/', type=str)
-    parser.add_argument('--data_name', default='Beauty', type=str)
+    parser.add_argument('--data_name', default='LastFM', type=str)
     parser.add_argument('--do_eval', action='store_true')
     parser.add_argument('--ckp', default=10, type=int, help="pretrain epochs 10, 20, 30...")
 
-    # model args
+    #  args
     parser.add_argument("--model_name", default='Finetune_full', type=str)
     parser.add_argument("--hidden_size", type=int, default=64, help="hidden size of transformer model")
     parser.add_argument("--num_hidden_layers", type=int, default=2, help="number of layers")
@@ -57,17 +60,26 @@ def main():
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_id
     args.cuda_condition = torch.cuda.is_available() and not args.no_cuda
 
-    args.data_file = args.data_dir + args.data_name + '.txt'
-    item2attribute_file = args.data_dir + args.data_name + '_item2attributes.json'
+    args.data_file = args.data_dir + args.data_dir2 + '/artifacts/interaction.txt' # interaction data file -> user, interaction만 있어야 함
+    # args.data_file = './data/bk100/interaction.txt' # interaction data file -> user, interaction만 있어야 함
+    item2attribute_file = args.data_dir + args.data_name + '/artifacts/_item2attributes.json' # attribute data file
+    # args.data_file = args.data_dir + args.data_name + '.txt'
+    # args.data_file = './data/bk100/interaction.txt' # interaction data file -> user, interaction만 있어야 함
+    # item2attribute_file = args.data_dir + args.data_name + '_item2attributes.json'
+    # item2attribute_file = './data/bk100/_item2attributes.json' # attribute data file
 
     user_seq, max_item, valid_rating_matrix, test_rating_matrix = \
         get_user_seqs(args.data_file)
 
     item2attribute, attribute_size = get_item2attribute_json(item2attribute_file)
 
-    args.item_size = max_item + 2
-    args.mask_id = max_item + 1
-    args.attribute_size = attribute_size + 1
+    # args.item_size = max_item + 2
+    # args.mask_id = max_item + 1
+    # args.attribute_size = attribute_size + 1
+    
+    args.item_size = max_item + 1 # mask_id 때문에 +2
+    args.mask_id = max_item 
+    args.attribute_size = attribute_size
 
     # save model args
     args_str = f'{args.model_name}-{args.data_name}-{args.ckp}'
@@ -121,7 +133,7 @@ def main():
         for epoch in range(args.epochs):
             trainer.train(epoch)
             # evaluate on NDCG@20
-            scores, _ = trainer.valid(epoch, full_sort=True)
+            scores, _, _ = trainer.valid(epoch, full_sort=True)
             early_stopping(np.array(scores[-1:]), trainer.model)
             if early_stopping.early_stop:
                 print("Early stopping")
@@ -131,11 +143,27 @@ def main():
         print('---------------Change to test_rating_matrix!-------------------')
         # load the best model
         trainer.model.load_state_dict(torch.load(args.checkpoint_path))
-        scores, result_info = trainer.test(0, full_sort=True)
+        # scores, result_info = trainer.test(0, full_sort=True)
+        scores, result_info, pred_list = trainer.test(0, full_sort=True)
 
     print(args_str)
     print(result_info)
     with open(args.log_file, 'a') as f:
         f.write(args_str + '\n')
         f.write(result_info + '\n')
+    
+    
+    # save prediction results to "pred_list" folder
+    now = datetime.now()
+    month = now.strftime("%m")
+    day = now.strftime("%d")
+    hour = now.strftime("%H")
+    if not os.path.exists(os.path.join(args.output_dir, "pred_list/")) : 
+        os.mkdir(os.path.join(args.output_dir, "pred_list/"))
+    with open(os.path.join(args.output_dir, "pred_list/", f"LastFM_pred_list-{month}.{day}.{hour}.npy"), 'wb') as f:
+        np.save(f, pred_list)
+    track_pred_list = label2track.main(pred_list)
+    with open(os.path.join(args.output_dir, "pred_list/", f"LastFM_track_list-{month}.{day}.{hour}.npy"), 'wb') as f:
+        np.save(f, track_pred_list)
+    
 main()
