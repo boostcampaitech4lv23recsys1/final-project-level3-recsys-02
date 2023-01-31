@@ -191,7 +191,7 @@ def get_likes(user_name: str):
     album_info.image from track_info left outer join inter on 
     track_info.track_name = inter.track_name left outer 
     join album_info on inter.album_name = album_info.album_name 
-    where (inter.user_name = '{user_name}' and inter.loved = 0)
+    where (inter.user_name = '{user_name}' and inter.loved = 1)
     ;"""
     with db_connect.cursor() as cur:
         cur.execute(query)
