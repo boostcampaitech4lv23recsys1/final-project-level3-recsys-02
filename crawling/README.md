@@ -3,6 +3,8 @@
   - selenium
   - bs4
   - tqdm
+  - requests
+  - numpy
 
 2. run
   1. "crawling.py" 위치로 이동 후,
