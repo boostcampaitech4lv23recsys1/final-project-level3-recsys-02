@@ -241,8 +241,7 @@ def add_like(user_id: str, albumInfo: str, artistInfo: str, trackName: str):
 def add_delete(user_id: str, albumInfo: str, artistInfo: str, trackName: str):
     timestamp = int(datetime.now().replace(tzinfo=timezone.utc).timestamp())
     print(albumInfo, artistInfo, trackName)
-    query = f"INSERT INTO inter (track_name, loved, user_name, album_name, date_uts, artist_name)\
-             VALUES ('{change_str(trackName)}', 2, '{user_id}', '{albumInfo}', {timestamp}, '{artistInfo}');"
+    query = f"update inter set loved = 0 where user_name = '{user_id}' and album_name = '{albumInfo}' and track_name = '{trackName}' and artist_name = '{artistInfo}' and loved = 1"
     with db_connect.cursor() as cur:
         cur.execute(query)
         db_connect.commit()
