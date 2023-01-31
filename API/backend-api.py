@@ -143,7 +143,7 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
         print(response1)
         print(response2)
         if response1['user_name'] == response2['user_name']:
-            # db_connect.commit()
+            db_connect.commit()
             return "True"
         else:
             return "False"
