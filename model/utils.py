@@ -6,6 +6,7 @@ import numpy as np
 import math
 import random
 import os
+import ast
 import json
 import pickle
 from scipy.sparse import csr_matrix
@@ -138,8 +139,9 @@ def get_user_seqs(data_file):
     for line in lines:
         # user, items = line.strip().split(' ', 1)
         user, items = line.strip().split(' ', 1) # 1번만 ' '을 기준으로 split -> user:str, items:List
-        # items = items.split(' ')
-        items = items[1:-1].split(',') # item split(changed)
+        # items = items.split(',')
+        items = ast.literal_eval(items)
+        # items = items[1:-1].split(',') # item split(changed)
         items = [int(item) for item in items]
         user_seq.append(items)
         item_set = item_set | set(items)
@@ -159,8 +161,9 @@ def get_user_seqs_long(data_file):
     item_set = set()
     for line in lines: # line(user)별로
         user, items = line.strip().split(' ', 1) # 1번만 ' '을 기준으로 split -> user:str, items:List
-        # items = items.split(' ') # item split(original)
-        items = items[1:-1].split(',') # item split(changed)
+        items = ast.literal_eval(items)
+        # items = items.split(',') # item split(original)
+        # items = items[1:-1].split(',') # item split(changed)
         items = [int(item) for item in items] # change item type from str to int
         long_sequence.extend(items) # 后面的都是采的负例 / long_sequence에 한 user에 대한 items(item list) extend
         user_seq.append(items) # 한 user에 대한 items append

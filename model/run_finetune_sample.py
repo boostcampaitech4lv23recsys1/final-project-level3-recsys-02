@@ -57,10 +57,13 @@ def main():
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_id
     args.cuda_condition = torch.cuda.is_available() and not args.no_cuda
 
-    args.data_file = args.data_dir + args.data_name + '.txt'
+    args.data_file = args.data_dir + args.data_name + '/artifacts/interaction.txt' # interaction data file -> user, interaction만 있어야 함
+    # args.data_file = './data/bk100/interaction.txt' # interaction data file -> user, interaction만 있어야 함
+    item2attribute_file = args.data_dir + args.data_name + '/artifacts/_item2attributes.json' # attribute data file
+    # args.data_file = args.data_dir + args.data_name + '.txt'
     # args.data_file = './data/bk100/interaction.txt' # interaction data file -> user, interaction만 있어야 함
     args.sample_file = args.data_dir + args.data_name + '_sample.txt'
-    item2attribute_file = args.data_dir + args.data_name + '_item2attributes.json'
+    # item2attribute_file = args.data_dir + args.data_name + '_item2attributes.json'
     # item2attribute_file = './data/bk100/_item2attributes.json' # attribute data file
 
     user_seq, max_item, sample_seq = \

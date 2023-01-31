@@ -130,7 +130,7 @@ class SASRecDataset(Dataset):
         user_id = index
         items = self.user_seq[index]
 
-        assert self.data_type in {"train", "valid", "test"}
+        assert self.data_type in {"train", "valid", "test", "infer"}
 
         # [0, 1, 2, 3, 4, 5, 6]
         # train [0, 1, 2, 3]
@@ -149,51 +149,70 @@ class SASRecDataset(Dataset):
         elif self.data_type == 'valid':
             input_ids = items[:-2]
             target_pos = items[1:-1]
-            answer = [items[-2]]
+            try : 
+                answer = [items[-2]]
+            except IndexError : 
+                answer = [items[-1]]
 
-        else:
+        elif self.data_type == 'test':
             input_ids = items[:-1]
             target_pos = items[1:]
             answer = [items[-1]]
+            
+        elif self.data_type == 'infer' :
+            input_ids = items
 
 
         target_neg = []
         seq_set = set(items)
-        for _ in input_ids:
-            target_neg.append(neg_sample(seq_set, self.args.item_size))
+        if self.data_type != "infer" : 
+            for _ in input_ids:
+                target_neg.append(neg_sample(seq_set, self.args.item_size))
 
-        pad_len = self.max_len - len(input_ids)
-        input_ids = [0] * pad_len + input_ids
-        target_pos = [0] * pad_len + target_pos
-        target_neg = [0] * pad_len + target_neg
+            pad_len = self.max_len - len(input_ids)
+            input_ids = [0] * pad_len + input_ids
+            target_pos = [0] * pad_len + target_pos
+            target_neg = [0] * pad_len + target_neg
 
-        input_ids = input_ids[-self.max_len:]
-        target_pos = target_pos[-self.max_len:]
-        target_neg = target_neg[-self.max_len:]
+            input_ids = input_ids[-self.max_len:]
+            target_pos = target_pos[-self.max_len:]
+            target_neg = target_neg[-self.max_len:]
 
-        assert len(input_ids) == self.max_len
-        assert len(target_pos) == self.max_len
-        assert len(target_neg) == self.max_len
-
-        if self.test_neg_items is not None:
-            test_samples = self.test_neg_items[index]
-
+            assert len(input_ids) == self.max_len
+            assert len(target_pos) == self.max_len
+            assert len(target_neg) == self.max_len
+        else : 
+            pad_len = self.max_len - len(input_ids)
+            input_ids = [0] * pad_len + input_ids
+            input_ids = input_ids[-self.max_len:]
+            
+            assert len(input_ids) == self.max_len
+        
+        if self.data_type == 'infer' : 
             cur_tensors = (
-                torch.tensor(user_id, dtype=torch.long), # user_id for testing
+                torch.tensor(user_id, dtype=torch.long),
                 torch.tensor(input_ids, dtype=torch.long),
-                torch.tensor(target_pos, dtype=torch.long),
-                torch.tensor(target_neg, dtype=torch.long),
-                torch.tensor(answer, dtype=torch.long),
-                torch.tensor(test_samples, dtype=torch.long),
             )
-        else:
-            cur_tensors = (
-                torch.tensor(user_id, dtype=torch.long),  # user_id for testing
-                torch.tensor(input_ids, dtype=torch.long),
-                torch.tensor(target_pos, dtype=torch.long),
-                torch.tensor(target_neg, dtype=torch.long),
-                torch.tensor(answer, dtype=torch.long),
-            )
+        else : 
+            if self.test_neg_items is not None:
+                test_samples = self.test_neg_items[index]
+
+                cur_tensors = (
+                    torch.tensor(user_id, dtype=torch.long), # user_id for testing
+                    torch.tensor(input_ids, dtype=torch.long),
+                    torch.tensor(target_pos, dtype=torch.long),
+                    torch.tensor(target_neg, dtype=torch.long),
+                    torch.tensor(answer, dtype=torch.long),
+                    torch.tensor(test_samples, dtype=torch.long),
+                )
+            else:
+                cur_tensors = (
+                    torch.tensor(user_id, dtype=torch.long),  # user_id for testing
+                    torch.tensor(input_ids, dtype=torch.long),
+                    torch.tensor(target_pos, dtype=torch.long),
+                    torch.tensor(target_neg, dtype=torch.long),
+                    torch.tensor(answer, dtype=torch.long),
+                )
 
         return cur_tensors
 

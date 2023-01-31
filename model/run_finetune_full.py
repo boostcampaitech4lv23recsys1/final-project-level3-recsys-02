@@ -60,7 +60,7 @@ def main():
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_id
     args.cuda_condition = torch.cuda.is_available() and not args.no_cuda
 
-    args.data_file = args.data_dir + args.data_dir2 + '/artifacts/interaction.txt' # interaction data file -> user, interaction만 있어야 함
+    args.data_file = args.data_dir + args.data_name + '/artifacts/interaction.txt' # interaction data file -> user, interaction만 있어야 함
     # args.data_file = './data/bk100/interaction.txt' # interaction data file -> user, interaction만 있어야 함
     item2attribute_file = args.data_dir + args.data_name + '/artifacts/_item2attributes.json' # attribute data file
     # args.data_file = args.data_dir + args.data_name + '.txt'
@@ -73,13 +73,13 @@ def main():
 
     item2attribute, attribute_size = get_item2attribute_json(item2attribute_file)
 
-    # args.item_size = max_item + 2
-    # args.mask_id = max_item + 1
-    # args.attribute_size = attribute_size + 1
+    args.item_size = max_item + 2
+    args.mask_id = max_item + 1
+    args.attribute_size = attribute_size + 1
     
-    args.item_size = max_item + 1 # mask_id 때문에 +2
-    args.mask_id = max_item 
-    args.attribute_size = attribute_size
+    # args.item_size = max_item + 1 # mask_id 때문에 +2
+    # args.mask_id = max_item 
+    # args.attribute_size = attribute_size
 
     # save model args
     args_str = f'{args.model_name}-{args.data_name}-{args.ckp}'
@@ -118,7 +118,7 @@ def main():
     if args.do_eval:
         trainer.load(args.checkpoint_path)
         print(f'Load model from {args.checkpoint_path} for test!')
-        scores, result_info = trainer.test(0, full_sort=True)
+        scores, result_info, pred_list = trainer.test(0, full_sort=True)
 
     else:
         pretrained_path = os.path.join(args.output_dir, f'{args.data_name}-epochs-{args.ckp}.pt')
@@ -151,19 +151,5 @@ def main():
     with open(args.log_file, 'a') as f:
         f.write(args_str + '\n')
         f.write(result_info + '\n')
-    
-    
-    # save prediction results to "pred_list" folder
-    now = datetime.now()
-    month = now.strftime("%m")
-    day = now.strftime("%d")
-    hour = now.strftime("%H")
-    if not os.path.exists(os.path.join(args.output_dir, "pred_list/")) : 
-        os.mkdir(os.path.join(args.output_dir, "pred_list/"))
-    with open(os.path.join(args.output_dir, "pred_list/", f"LastFM_pred_list-{month}.{day}.{hour}.npy"), 'wb') as f:
-        np.save(f, pred_list)
-    track_pred_list = label2track.main(pred_list)
-    with open(os.path.join(args.output_dir, "pred_list/", f"LastFM_track_list-{month}.{day}.{hour}.npy"), 'wb') as f:
-        np.save(f, track_pred_list)
     
 main()

@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import json
+import csv
 import ast
 import pickle
 from sklearn.preprocessing import LabelEncoder
@@ -10,7 +11,7 @@ from sklearn.preprocessing import LabelEncoder
 def main(args) : 
     # load csv files
 
-    data_path = args.data_dir + args.data_dir2 # interaction data file -> user, interaction만 있어야 함
+    data_path = args.data_dir + args.data_name # interaction data file -> user, interaction만 있어야 함
     # data_path = "./data/bk100/raw/"
     data_lst = os.listdir(data_path+"/raw/")
 
@@ -106,8 +107,11 @@ def main(args) :
         dic = attributes_dict_list[i]
         keys = list(dic.keys())
         values = list(dic.values())
-        values = list(map(lambda x:x+offset, values))
+        values = list(map(lambda x:x+offset+1, values))
         attributes_dict_list[i] = dict(zip(keys, values))
+        
+    # save 'attributes_dict_list'
+    pickle.dump(attributes_dict_list, open(data_path+"/artifacts/attributes_dict_list.pkl", "wb"))
         
     # label encoding + offsets -> label 적용
     for i,col in enumerate(attributes[['album_name','artist_name','tag']]) : 
@@ -134,19 +138,28 @@ def main(args) :
     # label encoding(user)
     le = LabelEncoder()
     final_df['user2id'] = le.fit_transform(final_df['user_name'])
+    # id2user dictionary
+    user_classes = le.classes_
+    user_labels = sorted(final_df['user2id'].unique())
+    id2user_dict = dict(zip(user_labels, user_classes))
+    
+    # save id2track dictionary
+    if not os.path.exists(data_path+"/artifacts") : 
+        os.mkdir(data_path+"/artifacts")
+    with open(data_path+"/artifacts/id2track_dict.pkl", "wb") as f: 
+        pickle.dump(id2track_dict, f)
+    with open(data_path+"/artifacts/id2user_dict.pkl", "wb") as f: 
+        pickle.dump(id2user_dict, f)
+    
     # conver to json
     attributes_json = json.dumps(dict(zip(final_df['track2id'], final_df['attributes_id'])))
         
     final_df = final_df.sort_values(by=['user_name','date_uts']).reset_index(drop=True)
     interactions = final_df.groupby('user2id')['track2id'].apply(list)
-    interactions = interactions.apply(lambda x:str(x)[1:-1])
     
-    # save id2track dictionary
-    if not os.path.exists(data_path+"/artifacts") : 
-        os.mkdir(data_path+"/artifacts")
-    interactions.to_csv(data_path+"/artifacts/interaction.txt", sep=' ', header=False)
-    with open(data_path+"/artifacts/id2track_dict.pkl", "wb") as f: 
-        pickle.dump(id2track_dict, f)
+    # svae interactions.txt
+    interactions.to_csv(data_path+"/artifacts/interaction.txt", sep=' ', header=False, quoting=csv.QUOTE_NONE, escapechar=' ')
+    
     # save attributes
     with open(data_path+"/artifacts/_item2attributes.json", "w") as f : 
         json.dump(attributes_json, f)
