@@ -48,13 +48,6 @@ def run_bs(tag, mode) :
                 
         return tags
 
-    # mm = datetime.datetime.now().month
-    # dd = datetime.datetime.now().day
-    # hh = datetime.datetime.now().hour
-
-    # with open(f"./tag_list_{mm}-{dd}:{hh}.pkl", "wb") as f: 
-    #     pickle.dump(tags, f)
-
     ############################## artists ##############################
 
     def get_artists(tag, mode) : 
@@ -72,7 +65,6 @@ def run_bs(tag, mode) :
                 
             print("adding tag-artist dictionary ...")
             page = requests.get(f"https://www.last.fm/tag/{tag.lower()}/artists")
-            # page = requests.get(f"https://www.last.fm/tag/Electronic/artists")
             soup = bs(page.text, "html.parser")
             # len_pages = soup.find_all('li', {"class":"pagination-page"})[-1].text.strip()
             artist_lst = []
@@ -130,6 +122,7 @@ def next_page(driver) :
     except  : 
         return False
 
+
 def crawl(tag, mode) : 
     try:
         tag_artist_dict = run_bs(tag, mode)
@@ -149,11 +142,10 @@ def crawl(tag, mode) :
         pw_box = driver.find_element(By.CSS_SELECTOR, "#id_password")
 
         # login
-        id_box.send_keys("sdsf1225@gmail.com")
-        # id_box.send_keys("your id")
+
+        id_box.send_keys("your id")
         time.sleep(0.5)
-        pw_box.send_keys("qhrrl9651!")
-        # pw_box.send_keys("your password")
+        pw_box.send_keys("your password")
         submit = driver.find_element(By.CSS_SELECTOR, "#login > div:nth-child(5) > div > button")
         submit.click()
         time.sleep(1)
@@ -191,6 +183,7 @@ def crawl(tag, mode) :
 
 # tag list : [jazz, pop, dance, rock, electronic, rap, hip-hop, country, blues, classical, k-pop, metal,
 # rnb, reggae, acoustic, indie, alternative, punk, hardcore, soul]
+
 def get_listeners(arguments) : 
     print(arguments)
     mode = arguments[0]
@@ -276,8 +269,3 @@ if __name__ == '__main__' :
         print(f"start crawling...")
         print("tags to crawl: ",args.tags)
         main(args.tags)
-    
-    
- 
-
-
