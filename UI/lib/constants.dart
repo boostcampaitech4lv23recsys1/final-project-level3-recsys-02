@@ -52,7 +52,7 @@ BoxDecoration outerBorder = BoxDecoration(
     border: Border.all(color: Colors.white, width: 1.5),
     shape: BoxShape.rectangle,
     borderRadius: const BorderRadius.all(Radius.circular(8)));
-EdgeInsets outerPadding = const EdgeInsets.only(top: 40, left: 200, right: 200);
+EdgeInsets outerPadding = const EdgeInsets.only(top: 40, left: 160, right: 160);
 
 void enterSession() async {
   final pref = await SharedPreferences.getInstance();

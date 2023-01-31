@@ -195,14 +195,15 @@ Widget playlistCard(Item item) {
           ),
         ),
         defaultSpacer,
-        Text(
-          item.trackName,
-          style: contentsTextStyle,
-          textAlign: TextAlign.start,
+        Expanded(
+          child: Text(
+            overflow: TextOverflow.fade,
+            softWrap: true,
+            item.trackName,
+            style: contentsTextStyle,
+            textAlign: TextAlign.start,
+          ),
         ),
-
-        const Spacer(),
-
         // 재생시간e
         Text(duration2String(item.duration),
             style: defaultTextStyle, textAlign: TextAlign.start),
@@ -226,7 +227,6 @@ Widget playlistCard(Item item) {
                     Icons.favorite_outline_rounded,
                     color: kWhite,
                   )),
-        defaultSpacer,
       ],
     ),
   );

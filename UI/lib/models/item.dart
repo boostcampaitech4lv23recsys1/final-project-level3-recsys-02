@@ -12,8 +12,13 @@ class Item {
 }
 
 String duration2String(duration) {
-  var seconds = (duration / 1000) % 60;
-  var minutes = ((duration / (1000 * 60)) % 60) * 10;
-
-  return '$minutes:$seconds';
+  var mm = Duration(milliseconds: duration).inMinutes;
+  var ss = Duration(milliseconds: duration).inSeconds - mm * 60;
+  var time = '$mm:';
+  if (ss < 10) {
+    time += '0$ss';
+  } else {
+    time += '$ss';
+  }
+  return time;
 }
