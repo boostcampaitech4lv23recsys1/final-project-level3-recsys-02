@@ -41,9 +41,7 @@ class userInfo(BaseModel):
     password: str
     realname: str
     image: str
-    country: str
     age: int
-    gender: int
     playcount: int
     following: object
     follower: object
@@ -123,11 +121,10 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
     if (user_df.shape[0] == 0):
         following = list2array(userInfo.following)
         follower = list2array(userInfo.follower)
-        # user information : user_name, realname, password, age, gender, country, playcount, follower, following
-        user_query = f"INSERT INTO user_info (user_name, realname, password, age, gender, country, playcount, follower, following) \
+        # user information : user_name, realname, password, age, playcount, follower, following
+        user_query = f"INSERT INTO user_info (user_name, realname, password, age, playcount, follower, following) \
                 VALUES ('{userInfo.user_name}', '{userInfo.realname}', '{userInfo.password}', \
-                    {userInfo.age}, {userInfo.gender}, '{userInfo.country}', \
-                    0, '{{{follower}}}','{{{following}}}') \
+                    {userInfo.age}, 0, '{{{follower}}}','{{{following}}}') \
                 RETURNING user_name;"
         response1 = pd.read_sql(user_query, db_connect).all()
 
@@ -146,7 +143,7 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
         print(response1)
         print(response2)
         if response1['user_name'] == response2['user_name']:
-            db_connect.commit()
+            # db_connect.commit()
             return "True"
         else:
             return "False"
@@ -178,9 +175,7 @@ def get_profiles(user_id: str):
             password=values[17],
             realname =values[3],
             image =values[10],
-            country =values[12],
             age =values[1],
-            gender =values[13],
             playcount =values[5],
             following =values[15],
             follower =values[16],

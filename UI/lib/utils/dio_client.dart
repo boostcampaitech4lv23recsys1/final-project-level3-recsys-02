@@ -6,8 +6,6 @@ import 'package:ui/models/ops.dart';
 import 'package:ui/utils/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
-
 class DioClient {
   final Dio _dio = Dio(
     BaseOptions(
@@ -78,7 +76,7 @@ class DioClient {
       List responseBody = response.data;
       return responseBody;
     } catch (e) {
-      debugPrint('Error creating user: $e');
+      debugPrint('Error LikeList : $e');
       return -1;
     }
   }
@@ -92,49 +90,64 @@ class DioClient {
       Map responseBody = response.data;
       return responseBody;
     } catch (e) {
-      debugPrint('Error creating user: $e');
-      return -1;
-    }
-  }
-  Future interactionClick({required String username, required String albumName, required String artistName, required String trackName}) async {
-    late Response response;
-    try {
-      response = await _dio.get('/interaction/$username/$albumName/$artistName/$trackName/0');
-      debugPrint(response.toString());
-      List responseBody = response.data;
-      return responseBody;
-    } catch (e) {
-      debugPrint('Error creating user: $e');
+      debugPrint('Error Profile : $e');
       return -1;
     }
   }
 
-  Future interactionLike({required String username, required String albumName, required String artistName, required String trackName}) async {
+  Future interactionClick(
+      {required String username,
+      required String albumName,
+      required String artistName,
+      required String trackName}) async {
     late Response response;
     try {
-      response = await _dio.get('/interaction/$username/$albumName/$artistName/$trackName/1');
+      response = await _dio
+          .get('/interaction/$username/$albumName/$artistName/$trackName/0');
       debugPrint(response.toString());
       List responseBody = response.data;
       return responseBody;
     } catch (e) {
-      debugPrint('Error creating user: $e');
+      debugPrint('Error Interaction Click : $e');
       return -1;
     }
   }
 
-  Future interactionDelete({required String username, required String albumName, required String artistName, required String trackName}) async {
+  Future interactionLike(
+      {required String username,
+      required String albumName,
+      required String artistName,
+      required String trackName}) async {
     late Response response;
     try {
-      response = await _dio.get('/interaction/$username/$albumName/$artistName/$trackName/2');
+      response = await _dio
+          .get('/interaction/$username/$albumName/$artistName/$trackName/1');
       debugPrint(response.toString());
       List responseBody = response.data;
       return responseBody;
     } catch (e) {
-      debugPrint('Error creating user: $e');
+      debugPrint('Error interactionLike : $e');
       return -1;
     }
   }
 
+  Future interactionDelete(
+      {required String username,
+      required String albumName,
+      required String artistName,
+      required String trackName}) async {
+    late Response response;
+    try {
+      response = await _dio
+          .get('/interaction/$username/$albumName/$artistName/$trackName/2');
+      debugPrint(response.toString());
+      List responseBody = response.data;
+      return responseBody;
+    } catch (e) {
+      debugPrint('Error interactionDelete : $e');
+      return -1;
+    }
+  }
 }
 
 class DioModel {
@@ -156,5 +169,4 @@ class DioModel {
       return -1;
     }
   }
-
 }
