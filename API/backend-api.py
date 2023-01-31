@@ -205,15 +205,43 @@ def get_likes(user_name: str):
     return values
 
 
-@app.post("/users/interaction", description='click, like, delete interaction')
-def add_interaction(input_1: userInfo, input_2: trackInfo, option: ops):
+@app.get("/interaction/{user_id}/{albumInfo}/{artistInfo}/{trackName}/0", description='click interaction')
+def add_interaction(user_id: str, albumInfo: str, artistInfo: str, trackName: str):
     timestamp = int(datetime.now().replace(tzinfo=timezone.utc).timestamp())
-    print("hi")
+    print(albumInfo, artistInfo, trackName)
     query = f"INSERT INTO inter (track_name, loved, user_name, album_name, date_uts, artist_name)\
-             VALUES ('{change_str(input_2.track_name)}', {option.option}, '{input_1.user_name}', '{change_str(input_2.album_name)}', {timestamp}, '{input_2.artist_name}');"
+             VALUES ('{change_str(trackName)}', 0, '{user_id}', '{albumInfo}', {timestamp}, '{artistInfo}');"
     with db_connect.cursor() as cur:
         cur.execute(query)
         db_connect.commit()
+
+    return "Success"
+
+
+@app.get("/interaction/{user_id}/{albumInfo}/{artistInfo}/{trackName}/1", description='like interaction')
+def add_like(user_id: str, albumInfo: str, artistInfo: str, trackName: str):
+    timestamp = int(datetime.now().replace(tzinfo=timezone.utc).timestamp())
+    print(albumInfo, artistInfo, trackName)
+    query = f"INSERT INTO inter (track_name, loved, user_name, album_name, date_uts, artist_name)\
+             VALUES ('{change_str(trackName)}', 1, '{user_id}', '{albumInfo}', {timestamp}, '{artistInfo}');"
+    with db_connect.cursor() as cur:
+        cur.execute(query)
+        db_connect.commit()
+
+    return "Success"
+
+
+@app.get("/interaction/{user_id}/{albumInfo}/{artistInfo}/{trackName}/2", description='delete interaction')
+def add_delete(user_id: str, albumInfo: str, artistInfo: str, trackName: str):
+    timestamp = int(datetime.now().replace(tzinfo=timezone.utc).timestamp())
+    print(albumInfo, artistInfo, trackName)
+    query = f"INSERT INTO inter (track_name, loved, user_name, album_name, date_uts, artist_name)\
+             VALUES ('{change_str(trackName)}', 2, '{user_id}', '{albumInfo}', {timestamp}, '{artistInfo}');"
+    with db_connect.cursor() as cur:
+        cur.execute(query)
+        db_connect.commit()
+
+    return "Success"
 
 if __name__ == "__main__":
     db_connect = psycopg2.connect(

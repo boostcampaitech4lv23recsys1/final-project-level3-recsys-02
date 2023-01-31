@@ -27,10 +27,10 @@ class _DetailPageState extends State<DetailPage> {
     getAlbum(widget.item);
   }
   void addLike(Item item) async {
-    int code = await dioClient.interactionClick(username: username, itemInfo: item);
-    if (code == 200) {
-    } else {
-    }
+    await dioClient.interactionLike(username: username, albumName: item.albumName, artistName: item.artistName, trackName: item.trackName);
+  }
+  void addDelete(Item item) async {
+    await dioClient.interactionDelete(username: username, albumName: item.albumName, artistName: item.artistName, trackName: item.trackName);
   }
   @override
   Widget build(BuildContext context) {
@@ -69,10 +69,10 @@ class _DetailPageState extends State<DetailPage> {
                       IconButton(
                           onPressed: () {
                             if (isLike) {
-                              //yhw
+                              addDelete(widget.item);
                               isLike = false;
                             } else {
-                              //yhw
+                              addLike(widget.item);
                               isLike = true;
                             }
                           },

@@ -20,7 +20,6 @@ class UserInfo {
   factory UserInfo.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
-  Map<String, dynamic> toAPIJson() => _$UserToAPIJson(this);
 }
 
 UserInfo _$UserFromJson(Map<String, dynamic> json) {
@@ -49,19 +48,6 @@ Map<String, dynamic> _$UserToJson(UserInfo instance) => <String, dynamic>{
       'playcount': instance.playcount,
       'following': instance.following,
       'follower': instance.follower,
-    };
-
-Map<String, dynamic> _$UserToAPIJson(UserInfo instance) => <String, dynamic>{
-      'user_name': instance.name,
-      'password': instance.pwd,
-      'realname': instance.name,
-      'image': instance.image,
-      'country': instance.country,
-      'age': instance.age,
-      'gender': instance.gender,
-      'following': instance.following,
-      'followers': instance.followers,
-      'result': 'success'
     };
 class OtherUser {
   var image;
