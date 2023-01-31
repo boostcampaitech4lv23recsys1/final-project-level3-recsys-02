@@ -36,8 +36,8 @@ class _UserPageState extends State<UserPage> {
 
   String name = 'GUEST';
 
-  List follower = [];
-  List following = [];
+  List<String> follower = [];
+  List<String> following = [];
   int followerNum = 0;
   int followingNum = 0;
   int match = 85;
@@ -57,18 +57,22 @@ class _UserPageState extends State<UserPage> {
 
   Future getProfile() async {
     profile_info = await dio.profile(name: 'cynocauma');
-    return profile_info;
+
+    name = profile_info['user_name'];
+    follower = profile_info['follower'];
+    following = profile_info['following'];
+    followerNum = profile_info['follower'].length;
+    followingNum = profile_info['following'].length;
+
+    setState(() {});
   }
 
   Future getMyMusics() async {
     likelist = await dio.likesList(name: 'cynocauma');
-
     for (int i = 0; i < 10; i++) {
       if (likelist[i][4] == null) {
-        likelist[i][4] =
-            'https://fastly.picsum.photos/id/237/200/300.jpg?hmac=TmmQSbShHz9CdQm0NkEjx1Dyh_Y984R9LpNrpvH2D_U';
+        likelist[i][4] = 'assets/album.png';
       }
-
       myPlaylist.add(Item(
           image: likelist[i][4],
           trackName: likelist[i][0],
@@ -76,28 +80,15 @@ class _UserPageState extends State<UserPage> {
           artistName: likelist[i][2],
           duration: likelist[i][3]));
     }
-    return myPlaylist;
+    setState(() {});
   }
 
   @override
   void initState() {
-    getMyMusics();
     getUserRec();
+    getProfile();
+    getMyMusics();
     super.initState();
-    getProfile().then((value) {
-      setState(() {
-        name = value['user_name'];
-        follower = value['follower'];
-        following = value['following'];
-        followerNum = value['follower'].length;
-        followingNum = value['following'].length;
-      });
-    });
-    getMyMusics().then((value) {
-      setState(() {
-        myPlaylist = value;
-      });
-    });
   }
 
   Widget profile({isOther = true}) {
@@ -132,7 +123,7 @@ class _UserPageState extends State<UserPage> {
                         PageRouteBuilder(
                           opaque: false, // set to false
                           pageBuilder: (_, __, ___) => FollowListPage(
-                            itemList: ['a', 'b', 'c'], // following,
+                            itemList: following,
                             isFollowing: true,
                           ),
                         ),
@@ -150,7 +141,7 @@ class _UserPageState extends State<UserPage> {
                         PageRouteBuilder(
                           opaque: false, // set to false
                           pageBuilder: (_, __, ___) => FollowListPage(
-                            itemList: ['a', 'b', 'c'], // follower,
+                            itemList: follower,
                             isFollowing: false,
                           ),
                         ),
@@ -199,7 +190,7 @@ class _UserPageState extends State<UserPage> {
               controller: _playlistScrollController,
               crossAxisCount: 3,
               mainAxisSpacing: 4,
-              crossAxisSpacing: 4,
+              crossAxisSpacing: 3,
               itemCount: myPlaylist.length,
               itemBuilder: (context, index) {
                 return GestureDetector(

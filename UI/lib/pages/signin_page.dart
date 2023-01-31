@@ -35,37 +35,33 @@ class _SigninPageState extends State<SigninPage> {
   String msg = '';
 
   String selectedProfileImage = 'assets/profile.png';
+
   final List genreLists = [
-    ['electronic', false],
-    ['metal', false],
-    ['rock', false],
-    ['hip-hop', false],
-    ['indie', false],
     ['jazz', false],
-    ['reggae', false],
-    ['british', false],
-    ['punk', false],
-    ['80s', false],
+    ['pop', false],
     ['dance', false],
-    ['acoustic', false],
-    ['rnb', false],
-    ['hardcore', false],
+    ['rock', false],
+    ['electronic', false],
+    ['rap', false],
+    ['hip-hop', false],
     ['country', false],
     ['blues', false],
-    ['alternative', false],
     ['classical', false],
-    ['rap', false],
-    ['etc', false],
+    ['k-pop', false],
+    ['metal', false],
+    ['rnb', false],
+    ['reggae', false],
+    ['acoustic', false],
+    ['indie', false],
+    ['alternative', false],
+    ['punk', false],
+    ['hardcore', false],
+    ['soul', false],
   ];
   final List<String> selectedGenreLists = [];
 
   final List artistList = [];
   final List<String> selectedArtistList = [];
-
-  var selectedGender = '성별';
-  var genders = ['성별', '남성', '여성', '기타'];
-  var selectedCountry = '거주국가';
-  var countries = ['거주국가', '대한민국'];
 
   @override
   void initState() {
@@ -116,7 +112,7 @@ class _SigninPageState extends State<SigninPage> {
               height: 10,
             ),
             Container(
-                height: 135,
+                height: 180,
                 alignment: Alignment.center,
                 margin: const EdgeInsets.all(10),
                 // decoration: outerBorder,
@@ -238,97 +234,6 @@ class _SigninPageState extends State<SigninPage> {
                 controller: _ageController,
                 style: TextStyle(color: kWhite),
               ),
-            ),
-            defaultSpacer,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 성별 입력
-                    Text(
-                      '성별 (1: 남성, 2: 여성, 3: 기타)',
-                      style: subtitleTextStyle,
-                      textAlign: TextAlign.start,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      height: titleHeight,
-                      width: MediaQuery.of(context).size.width * 0.3,
-                      decoration: outerBorder,
-                      child: DropdownButton(
-                        value: selectedGender,
-                        icon: const Icon(Icons.keyboard_arrow_down),
-                        isExpanded: true,
-                        dropdownColor: kBlack,
-                        items: genders.map((String items) {
-                          return DropdownMenuItem(
-                            value: items,
-                            child: Text(
-                              items,
-                              style: TextStyle(color: kWhite),
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            selectedGender = newValue!;
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                defaultSpacer,
-                defaultSpacer,
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '거주국가',
-                      style: subtitleTextStyle,
-                      textAlign: TextAlign.start,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      height: titleHeight,
-                      width: MediaQuery.of(context).size.width * 0.3,
-                      decoration: outerBorder,
-                      child: DropdownButton(
-                        value: selectedCountry,
-                        icon: const Icon(Icons.keyboard_arrow_down),
-                        isExpanded: true,
-                        dropdownColor: kBlack,
-                        items: countries.map((String items) {
-                          return DropdownMenuItem(
-                            value: items,
-                            child: Text(
-                              items,
-                              style: TextStyle(color: kWhite),
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            selectedCountry = newValue!;
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                )
-              ],
             ),
           ],
         )
@@ -519,21 +424,19 @@ class _SigninPageState extends State<SigninPage> {
                                           // 비밀번호 - 6-10자 영문/숫자
 
                                           // 나이 - 숫자
-                                          if (_ageController.text is num) {}
+                                          // if (_ageController.text is num) {}
 
                                           userInfo = UserInfo(
                                             user_name: _nameController.text,
                                             password: _pwdController.text,
                                             realname: _realnameController.text,
                                             image: selectedProfileImage,
-                                            country: selectedCountry,
                                             age: int.parse(_ageController.text),
-                                            gender:
-                                                genders.indexOf(selectedGender),
                                             playcount: 0,
                                             follower: [''],
                                             following: [''],
                                           );
+
                                           isStart = false;
                                           setState(() {});
                                         },
