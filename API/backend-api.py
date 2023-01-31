@@ -127,10 +127,6 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
                     {userInfo.age}, 0, '{{{follower}}}','{{{following}}}') \
                 RETURNING user_name;"
 
-        # with db_connect.cursor() as cur:
-        #     cur.execute(user_query)
-        #     db_connect.commit()
-
         response1 = pd.read_sql(user_query, db_connect).all()
 
         # interaction : user_name, track_name, album_name, artist_name, timestamp(uts), loved(int)
@@ -145,11 +141,6 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
                     VALUES ('{userInfo.user_name}', '{row['track_name']}', '{row['album_name']}', '{row['artist_name']}', {timestamp}, 0)\
                     RETURNING user_name;"
 
-        # with db_connect.cursor() as cur:
-        #     cur.execute(inter_query)
-        #     db_connect.commit()
-
-        # return "True"
         response2 = pd.read_sql(inter_query, db_connect).all()
         print(response1)
         print(response2)
@@ -174,7 +165,7 @@ def get_profiles(user_id: str):
         values = list(cur.fetchall()[0])
     print(values)
     for index, i in enumerate(values):
-        if values[index] == None: #or values[index] == [""]:
+        if values[index] == None:
             if index == 0 or index == 3 or index == 6 or index == 8 or index == 10 or index == 13:
                 values[index] = 'None'
             elif index == 11 or index == 12:
@@ -197,7 +188,7 @@ def get_profiles(user_id: str):
 
 @app.get("/users/{user_name}/likes", description="좋아요 리스트")
 def get_likes(user_name: str):
-    query = f"""select inter.track_name,
+    query = f"""select distinct inter.track_name,
     inter.album_name, track_info.artist_name, track_info.duration, 
     album_info.image from track_info left outer join inter on 
     track_info.track_name = inter.track_name left outer 
