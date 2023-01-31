@@ -56,7 +56,10 @@ class _UserPageState extends State<UserPage> {
   }
 
   Future getProfile() async {
-    profile_info = await dio.profile(name: 'cynocauma');
+    final pref = await SharedPreferences.getInstance();
+    userName = pref.getString('user_name')!;
+
+    profile_info = await dio.profile(name: userName);
 
     name = profile_info['user_name'];
     if (profile_info['follower'].length != 0) {

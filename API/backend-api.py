@@ -121,11 +121,16 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
     if (user_df.shape[0] == 0):
         following = list2array(userInfo.following)
         follower = list2array(userInfo.follower)
-        # user information : user_name, realname, password, age, playcount, follower, following
+        #user information : user_name, realname, password, age, playcount, follower, following
         user_query = f"INSERT INTO user_info (user_name, realname, password, age, playcount, follower, following) \
                 VALUES ('{userInfo.user_name}', '{userInfo.realname}', '{userInfo.password}', \
                     {userInfo.age}, 0, '{{{follower}}}','{{{following}}}') \
                 RETURNING user_name;"
+
+        # with db_connect.cursor() as cur:
+        #     cur.execute(user_query)
+        #     db_connect.commit()
+
         response1 = pd.read_sql(user_query, db_connect).all()
 
         # interaction : user_name, track_name, album_name, artist_name, timestamp(uts), loved(int)
@@ -139,6 +144,12 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
             inter_query = f"INSERT INTO inter (user_name, track_name, album_name, artist_name, date_uts, loved) \
                     VALUES ('{userInfo.user_name}', '{row['track_name']}', '{row['album_name']}', '{row['artist_name']}', {timestamp}, 0)\
                     RETURNING user_name;"
+
+        # with db_connect.cursor() as cur:
+        #     cur.execute(inter_query)
+        #     db_connect.commit()
+
+        # return "True"
         response2 = pd.read_sql(inter_query, db_connect).all()
         print(response1)
         print(response2)
@@ -163,7 +174,7 @@ def get_profiles(user_id: str):
         values = list(cur.fetchall()[0])
     
     for index, i in enumerate(values):
-        if values[index] == None:
+        if values[index] == None: #or values[index] == [""]:
             if index == 0 or index == 3 or index == 10 or index == 12 or index == 14 or index == 17:
                 values[index] = 'None'
             elif index == 15 or index == 16:
