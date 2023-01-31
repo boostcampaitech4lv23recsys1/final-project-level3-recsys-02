@@ -172,24 +172,24 @@ def get_profiles(user_id: str):
     with db_connect.cursor() as cur:
         cur.execute(query)
         values = list(cur.fetchall()[0])
-    
+    print(values)
     for index, i in enumerate(values):
         if values[index] == None: #or values[index] == [""]:
-            if index == 0 or index == 3 or index == 10 or index == 12 or index == 14 or index == 17:
+            if index == 0 or index == 3 or index == 6 or index == 8 or index == 10 or index == 13:
                 values[index] = 'None'
-            elif index == 15 or index == 16:
+            elif index == 11 or index == 12:
                 values[index] = []
             else:
                 values[index] = -1
 
     info = userInfo(user_name=values[0],
-            password=values[17],
+            password=values[13],
             realname =values[3],
-            image =values[10],
+            image =values[6],
             age =values[1],
             playcount =values[5],
-            following =values[15],
-            follower =values[16],
+            following = values[11],
+            follower = values[12],
             result='success')
 
     return info
@@ -197,7 +197,7 @@ def get_profiles(user_id: str):
 
 @app.get("/users/{user_name}/likes", description="좋아요 리스트")
 def get_likes(user_name: str):
-    query = f"""select distinct inter.track_name, 
+    query = f"""select inter.track_name,
     inter.album_name, track_info.artist_name, track_info.duration, 
     album_info.image from track_info left outer join inter on 
     track_info.track_name = inter.track_name left outer 

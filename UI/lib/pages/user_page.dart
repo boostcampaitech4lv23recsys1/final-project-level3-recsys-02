@@ -62,12 +62,10 @@ class _UserPageState extends State<UserPage> {
     profile_info = await dio.profile(name: userName);
 
     name = profile_info['user_name'];
-    if (profile_info['follower'].length != 0) {
-      follower = profile_info['follower'];
-    }
-    if (profile_info['following'].length != 0) {
-      following = profile_info['following'];
-    }
+
+    follower = new List<String>.from(profile_info['follower']);
+    following = new List<String>.from(profile_info['following']);
+
     followerNum = profile_info['follower'].length;
     followingNum = profile_info['following'].length;
 
@@ -75,7 +73,10 @@ class _UserPageState extends State<UserPage> {
   }
 
   Future getMyMusics() async {
-    likelist = await dio.likesList(name: 'cynocauma');
+    final pref = await SharedPreferences.getInstance();
+    userName = pref.getString('user_name')!;
+
+    likelist = await dio.likesList(name: userName);
     for (int i = 0; i < likelist.length; i++) {
       if (likelist[i][4] == null) {
         likelist[i][4] = 'assets/album.png';
