@@ -208,8 +208,10 @@ def add_interaction(user_id: str, albumInfo: str, artistInfo: str, trackName: st
     print(albumInfo, artistInfo, trackName)
     query = f"INSERT INTO inter (track_name, loved, user_name, album_name, date_uts, artist_name)\
              VALUES ('{change_str(trackName)}', 0, '{user_id}', '{albumInfo}', {timestamp}, '{artistInfo}');"
+    query2 = f"update track_info set playcount = playcount+1 where album_name = '{albumInfo}' and track_name = '{trackName}' and artist_name = '{artistInfo}'"
     with db_connect.cursor() as cur:
         cur.execute(query)
+        cur.execute(query2)
         db_connect.commit()
 
     return "Success"
