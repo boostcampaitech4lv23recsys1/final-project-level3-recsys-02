@@ -84,29 +84,38 @@ def list2array(list_data):
         tmp += f'"{d}",'
     return tmp[:-1]
 
+@app.get("/topTracks", description='get top trakcs')
 def getTopTracks(tags, artists):
-    # 태그를 포함하는 top 10개 트랙 inter에 넣기
-    tag_string = list2array(tags)
-    tag_query = "SELECT * FROM track_info \
-                WHERE track_tag_list && '{"+ tag_string + "}' \
-                ORDER BY playcount \
-                LIMIT 10;"
-    # print(tag_query)
-    tag_tracks = pd.read_sql(tag_query, db_connect)
+    # 각 태그마다 top 10개 트랙 추출 inter에 넣기
+    # tags = ['indie', 'pop', 'jazz']
+    # artists = ['Coldplay']
+    inters = pd.DataFrame(columns=['track_name', 'url', 'duration','listeners', 'playcount', 'artist_name', 'artist_url', \
+                                    'track_tag_list', 'album_name', 'streamable_text', 'streamable_fulltrack'])
+    for t in tags:
+        tag = f'"{t}"'
+        tag_query = f"SELECT * FROM track_info WHERE track_tag_list && '{{{tag}}}' ORDER BY playcount LIMIT 10;"
+        print(tag_query)
+        tag_tracks = pd.read_sql(tag_query, db_connect)
+        pd.concat([inters,tag_tracks], ignore_index=True)
+  
+    # 각 태그마다 top 10개 트랙 추출 inter에 넣기
+    for a in artists:
+        artist = f"'{a}'"
+        artist_query = f"SELECT * FROM track_info WHERE artist_name={artist} ORDER BY playcount LIMIT 10;"
+        print(artist_query)
+        artist_tracks = pd.read_sql(artist_query, db_connect)
+        print(artist_tracks)
+        pd.concat([inters,artist_tracks], ignore_index=True)
 
-    #### 예상한 알고리즘대로 안됌 ### 
-    # print(tag_tracks)
-    ###############################
-    #  
-    # 아티스트별 top 10개 트랙 inter에 넣기
-    artist_string = "', '".join(artists)
-    artist_string = "'" + artist_string + "'"
-    artist_query = f"SELECT * FROM track_info WHERE artist_name IN ({artist_string})\
-                ORDER BY playcount;"
-    # print(artist_query)
-    artist_tracks = pd.read_sql(artist_query, db_connect)
-    # print(artist_tracks)
-    return pd.concat([tag_tracks, artist_tracks])
+    print(inters.shape)
+
+    # # 중복제거 -> shuffle
+    inters.drop_duplicates(inplace=True)
+    inters = inters.sample(frac=1)
+
+    print(inters)
+
+    return inters
 
 @app.post('/signin', description='회원가입')
 def signin_user(userInfo: userInfo, tags: list, artists: list):
@@ -134,17 +143,15 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
         timestamp = int(datetime.now().replace(tzinfo=timezone.utc).timestamp())
         user_tracks = getTopTracks(tags, artists)
         print("usertrack\n", user_tracks)
-
-
-        for idx, row in user_tracks.iterrows():
+        
+        for _, row in user_tracks.iterrows():
             inter_query = f"INSERT INTO inter (user_name, track_name, album_name, artist_name, date_uts, loved) \
                     VALUES ('{userInfo.user_name}', '{row['track_name']}', '{row['album_name']}', '{row['artist_name']}', {timestamp}, 0)\
                     RETURNING user_name;"
+            response2 = pd.read_sql(inter_query, db_connect)
+            print(response2['user_name'])
 
-        response2 = pd.read_sql(inter_query, db_connect).all()
-        print(response1)
-        print(response2)
-        if response1['user_name'] == response2['user_name']:
+        if response1['user_name']:
             db_connect.commit()
             return "True"
         else:
