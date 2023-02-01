@@ -101,7 +101,16 @@ class _MainPageState extends State<MainPage> {
   // 빠른 선곡
   Widget fastSelection() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      titleBar('빠른 선곡', isReset: true),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text("빠른선곡", style: titleTextStyle),
+          IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              color: kWhite,
+              onPressed: () {}),
+        ],
+      ),
       SizedBox(
           height: boxHeight,
           width: width * 0.8,
