@@ -10,7 +10,13 @@ import 'package:ui/widgets/custom_card.dart';
 import 'package:ui/widgets/titlebar.dart';
 import 'package:web_smooth_scroll/web_smooth_scroll.dart';
 import 'package:ui/utils/dio_client.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+Future<String> getUserName() async {
+  final pref = await SharedPreferences.getInstance();
+  userName = pref.getString('user_name')!;
+  return userName;
+}
 class MainPage extends StatefulWidget {
   @override
   _MainPageState createState() => _MainPageState();
@@ -30,7 +36,7 @@ class _MainPageState extends State<MainPage> {
 
   Future addInteraction(Item item) async {
     await dioClient.interactionClick(
-        username: username,
+        username: getUserName() as String,
         albumName: item.albumName,
         artistName: item.artistName,
         trackName: item.trackName);

@@ -72,6 +72,13 @@ class _UserPageState extends State<UserPage> {
     setState(() {});
   }
 
+  Future followUser(String usernameA, String usernameB) async {
+    dio.followUser(usernameA: usernameA, usernameB: usernameB);
+  }
+
+  Future unfollowUser(String usernameA, String usernameB) async {
+    dio.unfollowUser(usernameA: usernameA, usernameB: usernameB);
+  }
   Future getMyMusics() async {
     final pref = await SharedPreferences.getInstance();
     userName = pref.getString('user_name')!;
@@ -242,10 +249,11 @@ class _UserPageState extends State<UserPage> {
                 Positioned(
                   bottom: 10,
                   child: userList[index].isFollowing
-                      ? OutlinedButton(
+                      ? OutlinedButton( // following state user
                           onPressed: () {
                             userList[index].isFollowing = false;
                             setState(() {});
+                            // unfollowUser(usernameA, usernameB);
                           },
                           style: OutlinedButton.styleFrom(
                             elevation: 0,
@@ -255,10 +263,11 @@ class _UserPageState extends State<UserPage> {
                           child: Text('팔로잉',
                               style: TextStyle(color: kBlack, fontSize: 11.0),
                               textAlign: TextAlign.center))
-                      : OutlinedButton(
+                      : OutlinedButton( // not following user
                           onPressed: () {
                             userList[index].isFollowing = true;
                             setState(() {});
+                            // followUser(usernameA, usernameB);
                           },
                           style: OutlinedButton.styleFrom(
                             elevation: 0,
