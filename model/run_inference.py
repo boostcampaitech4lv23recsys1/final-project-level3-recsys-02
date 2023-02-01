@@ -108,17 +108,27 @@ def main():
         pred_list_tag.append(predictor.get_topk_tag(0, tag, full_sort=True))
     
     # predict top k(20) artist-tracks
-    ### 위와 동일 ###
+    artists = ['pop','jazz']
+    attributes_dict = pickle.load(open(args.data_dir+args.data_name+"/artifacts/attributes_dict_list.pkl", "rb"))
+    labeled_tags = list(map(lambda x:attributes_dict[-2][x], artists))
+    pred_list_artist = []
+    for tag in labeled_tags : 
+        pred_list_artist.append(predictor.get_topk_artist(0, tag, full_sort=True))
     
-    # print(args_str)
-    # with open(args.log_file, 'a') as f:
-    #     f.write(args_str + '\n')
-        
+    # predict top k(20) users
+    # target_user = 'bk'
+    # user to label
+    target_user_label = 10 # for test
+    pred_list_users = predictor.get_topk_users(0,target_user_label, pred_list)
+    
+    ################################################## save ##################################################
     # save prediction results to "pred_list" folder
     now = datetime.now()
     month = now.strftime("%m")
     day = now.strftime("%d")
     hour = now.strftime("%H")
+    
+    #### save pred_list(main) ###
     if not os.path.exists(os.path.join(args.output_dir+"inference/", "pred_list/")) : 
         os.mkdir(os.path.join(args.output_dir+"inference/", "pred_list/"))
     with open(os.path.join(args.output_dir+"inference/", "pred_list/", f"LastFM_pred_list-{month}.{day}.{hour}.npy"), 'wb') as f:
@@ -129,6 +139,8 @@ def main():
     # save track_name prediction list
     with open(os.path.join(args.output_dir+"inference/", "pred_list/", f"LastFM_track_list-{month}.{day}.{hour}.npy"), 'wb') as f:
         np.save(f, track_pred_list)
+        
+    #### save pred_list(tag) ###
     # save recommended tracks using tag
     for i, tag in enumerate(tags) :
         with open(os.path.join(args.output_dir+"inference/", "pred_list/", f"LastFM_pred_list_{tag}-{month}.{day}.{hour}.npy"), 'wb') as f:
@@ -137,6 +149,17 @@ def main():
         user_name_list_tag = label2string.user(pred_list_tag[i], args)
         with open(os.path.join(args.output_dir+"inference/", "pred_list/", f"LastFM_track_list_{tag}-{month}.{day}.{hour}.npy"), 'wb') as f:
             np.save(f, track_pred_list_tag)
+            
+    #### save pred_list(artist) ###
+    for i, tag in enumerate(artists) :
+        with open(os.path.join(args.output_dir+"inference/", "pred_list/", f"LastFM_pred_list_{tag}-{month}.{day}.{hour}.npy"), 'wb') as f:
+            np.save(f, pred_list_tag[i])
+        track_pred_list_tag = label2string.track(pred_list_tag[i], args)
+        user_name_list_tag = label2string.user(pred_list_tag[i], args)
+        with open(os.path.join(args.output_dir+"inference/", "pred_list/", f"LastFM_track_list_{tag}-{month}.{day}.{hour}.npy"), 'wb') as f:
+            np.save(f, track_pred_list_tag)
+    
+    #### save pred_list(user) ###
     
         
         

@@ -15,7 +15,6 @@ from trainers import FinetuneTrainer
 from models import S3RecModel
 from utils import EarlyStopping, get_user_seqs, get_item2attribute_json, check_path, set_seed
 from datetime import datetime
-import label2track
 
 def main():
     parser = argparse.ArgumentParser()
@@ -129,12 +128,13 @@ def main():
         except FileNotFoundError:
             print(f'{pretrained_path} Not Found! The Model is same as SASRec')
 
-        early_stopping = EarlyStopping(args.checkpoint_path, patience=10, verbose=True)
+        early_stopping = EarlyStopping(args.checkpoint_path, patience=100, verbose=True)
         for epoch in range(args.epochs):
             trainer.train(epoch)
             # evaluate on NDCG@20
             scores, _, _ = trainer.valid(epoch, full_sort=True)
-            early_stopping(np.array(scores[-1:]), trainer.model)
+            # early_stopping(np.array(scores[-1:]), trainer.model) # original(ndcg@20)
+            early_stopping(np.array(scores[-2:-1]), trainer.model) # recall@20
             if early_stopping.early_stop:
                 print("Early stopping")
                 break

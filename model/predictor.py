@@ -55,9 +55,9 @@ class Predictor:
         # rating_pred = torch.matmul(seq_out, test_item_emb.transpose(0, 1))
         return rating_pred
     
-    def predict_full_tag(self, seq_out, tag):
+    def predict_full_attribute(self, seq_out, attribute):
         # [item_num hidden_size]
-        tag_emb = self.model.attribute_embeddings.weight[tag]
+        tag_emb = self.model.attribute_embeddings.weight[attribute]
         test_item_emb = self.model.item_embeddings.weight + tag_emb
         # [batch hidden_size ]
         rating_pred = torch.matmul(seq_out, test_item_emb.transpose(0, 1))
@@ -75,15 +75,36 @@ class Predictor:
         print("Inferencing 'tag' ...")
         return self.iteration(epoch, self.infer_dataloader, int(tag), full_sort)
     
+    # interaction data -> matmul with embedding.weight+tag_embedding.weight -> sort 20 items by each user
+    def get_topk_artist(self, epoch, artist, full_sort=True): 
+        print("Inferencing 'artist' ...")
+        return self.iteration(epoch, self.infer_dataloader, int(artist), full_sort)
+    
     # target pred_list[20s] @ each pred_list[20s] -> embedding.weight -> matmul -> sort 10 users
-    def get_topk_users(self, target_index, pred_list):
-        self.target_index = target_index # target item index
+    def get_topk_users(self, target_user, pred_list):
+        self.target_user = target_user # target user index
         self.pred_list = pred_list # item index
+        self.item_embeddings = self.model.item_embeddings
+        # get item vectors
+        pred_emb = self.item_embeddings[self.pred_list]
+        # sum item vectors
+        pred_emb_sum = torch.sum(pred_emb, dim=1)
+        print(pred_emb_sum.shape) # n x hidden_size(64)
         # matmul
-        for lst in self.pred_list : 
-            self.predict_full(self.target_index,lst)
+        target_user_items = self.pred_list[self.target_user]
+        target_index = self.item_embeddings[target_user_items]
+        target_emb = torch.sum(target_index, dim=1)
+        user_sims = torch.matmul(target_emb, pred_emb_sum.T).view(1,-1)
+        print(user_sims.shape)
+        # pick top-k users
+        user_sims = user_sims.cpu().data.numpy().copy()
+        user_sims[self.target_user] = -10000 # exclude target user
+        result_ind = np.argpartition(user_sims)[-20:]
+        
+        return result_ind
+        
             
-    def iteration(self, epoch, dataloader, tag=None, full_sort=False):
+    def iteration(self, epoch, dataloader, attribute=None, full_sort=False):
 
         # Setting the tqdm progress bar
 
@@ -99,7 +120,7 @@ class Predictor:
         if full_sort:
             answer_list = None
             
-            if tag == None : 
+            if attribute == None : 
                 for i, batch in rec_data_iter:
                     # 0. batch_data will be sent into the device(GPU or cpu)
                     batch = tuple(t.to(self.device) for t in batch)
@@ -116,6 +137,7 @@ class Predictor:
                     # reference: https://stackoverflow.com/a/23734295, https://stackoverflow.com/a/20104162
                     # argpartition 时间复杂度O(n)  argsort O(nlogn) 只会做
                     # 加负号"-"表示取大的值
+                    print(np.argpartition(rating_pred,-20))
                     ind = np.argpartition(rating_pred, -20)[:, -20:] # train에 사용한 것 제외하고 상위 20개 인덱스
                     arr_ind = rating_pred[np.arange(len(rating_pred))[:, None], ind]
                     arr_ind_argsort = np.argsort(arr_ind)[np.arange(len(rating_pred)), ::-1]
@@ -134,7 +156,7 @@ class Predictor:
                     recommend_output = self.model.finetune(input_ids) # return hidden states
                     recommend_output = recommend_output[:, -1, :] # transformer의 마지막 Sequence값
 
-                    rating_pred = self.predict_full_tag(recommend_output, tag) # item embedding.weight+tag embedding.weight과 matmul
+                    rating_pred = self.predict_full_attribute(recommend_output, attribute) # item embedding.weight+attribute embedding.weight과 matmul
 
                     rating_pred = rating_pred.cpu().data.numpy().copy()
                     batch_user_index = user_ids.cpu().numpy()

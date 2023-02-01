@@ -13,7 +13,7 @@ import logging
 
 import torch
 import torch.nn as nn
-from torch.optim import Adam
+from torch.optim import Adam, lr_scheduler
 
 from utils import recall_at_k, ndcg_k, get_metric
 
@@ -42,6 +42,10 @@ class Trainer:
         # self.data_name = self.args.data_name
         betas = (self.args.adam_beta1, self.args.adam_beta2)
         self.optim = Adam(self.model.parameters(), lr=self.args.lr, betas=betas, weight_decay=self.args.weight_decay)
+        #scheduler
+        self.scheduler = lr_scheduler.LambdaLR(optimizer=self.optim,
+                                                lr_lambda=lambda epoch: epoch**0.95,
+                                                last_epoch=-1,)
 
         print("Total Parameters:", sum([p.nelement() for p in self.model.parameters()]))
         self.criterion = nn.BCELoss()
@@ -236,10 +240,15 @@ class FinetuneTrainer(Trainer):
                 self.optim.zero_grad()
                 loss.backward()
                 self.optim.step()
-
+            
                 rec_avg_loss += loss.item()
                 rec_cur_loss = loss.item()
-
+            
+            # if rec_cur_loss > rec_avg_loss/(i+1) : 
+            #     patience +=1
+            #     if patience > 10 : 
+            #         self.scheduler.step()
+            #         patience = 0
             post_fix = {
                 "epoch": epoch,
                 "rec_avg_loss": '{:.4f}'.format(rec_avg_loss / len(rec_data_iter)),

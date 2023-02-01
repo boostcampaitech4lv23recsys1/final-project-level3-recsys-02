@@ -11,3 +11,4 @@ table
 values
 output/
 sample_data/
+run_finetune_sample.py
