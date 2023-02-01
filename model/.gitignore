@@ -10,6 +10,5 @@ table
 values
 run_finetune_sample.py
 *.pt
-*.npy
 output/*.txt
 data/bk100/
