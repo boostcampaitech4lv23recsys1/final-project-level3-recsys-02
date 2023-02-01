@@ -21,7 +21,7 @@ parser.add_argument('--user_sampling', type=int)
 parser.add_argument('--phase', type=int)
 args = parser.parse_args()
 
-os.chdir('/opt/ml/final/API')
+os.chdir('/opt/ml/final/lastfm_api_crawl')
 dirname = f'ver_{args.ver}'
 if not os.path.isdir(dirname):
     os.makedirs(dirname)
