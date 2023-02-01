@@ -18,7 +18,6 @@ def track(pred_result, args) :
 
 def user(pred_result, args) : 
     
-    user_list = np.arange(len(pred_result))
     id2user_path = args.data_dir+args.data_name+"/artifacts/"
     # load prediction result(.npy)
     # with open(pred_list_dir, "rb") as f:
@@ -27,7 +26,7 @@ def user(pred_result, args) :
     with open(id2user_path+"id2user_dict.pkl", "rb") as f:
         id2user_dict = pickle.load(f)
         
-    user_name_list = np.vectorize(id2user_dict.get)(user_list)
+    user_name_list = np.vectorize(id2user_dict.get)(pred_result)
     
     return user_name_list
     

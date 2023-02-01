@@ -6,8 +6,8 @@ import numpy as np
 import tqdm
 import random
 
-import mlflow
-import mlflow.sklearn
+# import mlflow
+# import mlflow.sklearn
 
 import logging
 
@@ -43,14 +43,18 @@ class Trainer:
         betas = (self.args.adam_beta1, self.args.adam_beta2)
         self.optim = Adam(self.model.parameters(), lr=self.args.lr, betas=betas, weight_decay=self.args.weight_decay)
         #scheduler
-        self.scheduler = lr_scheduler.LambdaLR(optimizer=self.optim,
-                                                lr_lambda=lambda epoch: epoch**0.95,
-                                                last_epoch=-1,)
+        self.scheduler = lr_scheduler.ReduceLROnPlateau(optimizer=self.optim,
+                                                        mode='min',
+                                                        factor=0.95,
+                                                        patience=5,
+                                                        verbose=True
+                                                        )
+        self.patience = 0
 
         print("Total Parameters:", sum([p.nelement() for p in self.model.parameters()]))
         self.criterion = nn.BCELoss()
     def train(self, epoch):
-        self.iteration(epoch, self.train_dataloader)
+        return self.iteration(epoch, self.train_dataloader)
 
     def valid(self, epoch, full_sort=False):
         return self.iteration(epoch, self.eval_dataloader, full_sort, train=False)
@@ -244,11 +248,8 @@ class FinetuneTrainer(Trainer):
                 rec_avg_loss += loss.item()
                 rec_cur_loss = loss.item()
             
-            # if rec_cur_loss > rec_avg_loss/(i+1) : 
-            #     patience +=1
-            #     if patience > 10 : 
-            #         self.scheduler.step()
-            #         patience = 0
+            self.scheduler.step(rec_avg_loss/len(rec_data_iter))
+
             post_fix = {
                 "epoch": epoch,
                 "rec_avg_loss": '{:.4f}'.format(rec_avg_loss / len(rec_data_iter)),
@@ -260,6 +261,8 @@ class FinetuneTrainer(Trainer):
 
             with open(self.args.log_file, 'a') as f:
                 f.write(str(post_fix) + '\n')
+                
+
 
         else:
             self.model.eval()

@@ -86,20 +86,19 @@ class Predictor:
         self.pred_list = pred_list # item index
         self.item_embeddings = self.model.item_embeddings
         # get item vectors
-        pred_emb = self.item_embeddings[self.pred_list]
+        pred_tensor = torch.tensor([self.pred_list]).squeeze(0).to(self.device)
+        pred_emb = self.item_embeddings(pred_tensor) # n x seq_len x hidden_size(64)
         # sum item vectors
-        pred_emb_sum = torch.sum(pred_emb, dim=1)
-        print(pred_emb_sum.shape) # n x hidden_size(64)
+        pred_emb_sum = torch.sum(pred_emb, dim=-2) # n x hidden_size(64)
         # matmul
         target_user_items = self.pred_list[self.target_user]
-        target_index = self.item_embeddings[target_user_items]
-        target_emb = torch.sum(target_index, dim=1)
-        user_sims = torch.matmul(target_emb, pred_emb_sum.T).view(1,-1)
-        print(user_sims.shape)
+        target_emb = self.item_embeddings(torch.tensor([target_user_items]).squeeze(0).to(self.device)) # seq_len x hidden_size(64)
+        target_emb_sum = torch.sum(target_emb, dim=0)
+        user_sims = torch.matmul(target_emb_sum, pred_emb_sum.T).view(1,-1)
         # pick top-k users
-        user_sims = user_sims.cpu().data.numpy().copy()
+        user_sims = user_sims.cpu().data.numpy().copy().squeeze(0) # (962,)
         user_sims[self.target_user] = -10000 # exclude target user
-        result_ind = np.argpartition(user_sims)[-20:]
+        result_ind = np.argpartition(user_sims, -20)[-20:]
         
         return result_ind
         
@@ -137,7 +136,6 @@ class Predictor:
                     # reference: https://stackoverflow.com/a/23734295, https://stackoverflow.com/a/20104162
                     # argpartition 时间复杂度O(n)  argsort O(nlogn) 只会做
                     # 加负号"-"表示取大的值
-                    print(np.argpartition(rating_pred,-20))
                     ind = np.argpartition(rating_pred, -20)[:, -20:] # train에 사용한 것 제외하고 상위 20개 인덱스
                     arr_ind = rating_pred[np.arange(len(rating_pred))[:, None], ind]
                     arr_ind_argsort = np.argsort(arr_ind)[np.arange(len(rating_pred)), ::-1]

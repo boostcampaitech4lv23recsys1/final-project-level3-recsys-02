@@ -5,10 +5,11 @@ __pycache__
 README.md
 *.csv
 nohup.out
-data/
 split
 table
 values
-output/
-sample_data/
 run_finetune_sample.py
+*.pt
+*.npy
+output/*.txt
+data/bk100/

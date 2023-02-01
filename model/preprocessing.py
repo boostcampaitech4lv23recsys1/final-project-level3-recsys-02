@@ -157,7 +157,7 @@ def main(args) :
     final_df = final_df.sort_values(by=['user_name','date_uts']).reset_index(drop=True)
     interactions = final_df.groupby('user2id')['track2id'].apply(list)
     
-    # svae interactions.txt
+    # save interactions.txt
     interactions.to_csv(data_path+"/artifacts/interaction.txt", sep=' ', header=False, quoting=csv.QUOTE_NONE, escapechar=' ')
     
     # save attributes
