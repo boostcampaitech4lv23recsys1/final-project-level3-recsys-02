@@ -91,6 +91,7 @@ class _SigninPageState extends State<SigninPage> {
     for (var r in res) {
       artistList.add([r['artist_name'], false]);
     }
+    setState(() {});
   }
 
   Widget userInfoInput() {
