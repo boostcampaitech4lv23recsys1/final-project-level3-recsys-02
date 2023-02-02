@@ -96,14 +96,12 @@ class DioClient {
   }
 
   Future interactionClick(
-      {required String username,
-      required String albumName,
-      required String artistName,
-      required String trackName}) async {
+      {required int userId,
+      required int trackId}) async {
     late Response response;
     try {
       response = await _dio
-          .get('/interaction/$username/$albumName/$artistName/$trackName/0');
+          .get('/interaction/$userId/$trackId/0');
       debugPrint(response.toString());
       List responseBody = response.data;
       return responseBody;
@@ -114,14 +112,12 @@ class DioClient {
   }
 
   Future interactionLike(
-      {required String username,
-      required String albumName,
-      required String artistName,
-      required String trackName}) async {
+      {required int userId,
+      required int trackId}) async {
     late Response response;
     try {
       response = await _dio
-          .get('/interaction/$username/$albumName/$artistName/$trackName/1');
+          .get('/interaction/$userId/$trackId/1');
       debugPrint(response.toString());
       List responseBody = response.data;
       return responseBody;
@@ -132,14 +128,12 @@ class DioClient {
   }
 
   Future interactionDelete(
-      {required String username,
-      required String albumName,
-      required String artistName,
-      required String trackName}) async {
+      {required int userId,
+      required int trackId}) async {
     late Response response;
     try {
       response = await _dio
-          .get('/interaction/$username/$albumName/$artistName/$trackName/2');
+          .get('/interaction/$userId/$trackId/2');
       debugPrint(response.toString());
       List responseBody = response.data;
       return responseBody;

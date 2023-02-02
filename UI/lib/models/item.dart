@@ -1,8 +1,10 @@
 class Item {
+
   final String image, trackName, albumName, artistName;
-  int duration;
+  int duration, trackId;
 
   Item({
+    required this.trackId,
     required this.image,
     required this.trackName,
     required this.albumName,
