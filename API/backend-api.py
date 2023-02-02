@@ -91,9 +91,10 @@ def getTopTracks(tags, artists):
     # artists = ['Coldplay']
     inters = pd.DataFrame(columns=['track_name', 'url', 'duration','listeners', 'playcount', 'artist_name', 'artist_url', \
                                     'track_tag_list', 'album_name', 'streamable_text', 'streamable_fulltrack'])
+
     for t in tags:
         tag = f'"{t}"'
-        tag_query = f"SELECT * FROM track_info WHERE track_tag_list && '{{{tag}}}' ORDER BY playcount LIMIT 10;"
+        tag_query = f"SELECT * FROM track_info WHERE '{tag}' ANY(track_tag_list) ORDER BY playcount LIMIT 10;"
         print(tag_query)
         tag_tracks = pd.read_sql(tag_query, db_connect)
         pd.concat([inters,tag_tracks], ignore_index=True)
@@ -133,7 +134,7 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
         #user information : user_name, realname, password, age, playcount, follower, following
         user_query = f"INSERT INTO user_info (user_name, realname, password, age, playcount, follower, following) \
                 VALUES ('{userInfo.user_name}', '{userInfo.realname}', '{userInfo.password}', \
-                    {userInfo.age}, 0, '{{{follower}}}','{{{following}}}') \
+                    {userInfo.age}, 0, '{{}}', '{{}}') \
                 RETURNING user_name;"
 
         response1 = pd.read_sql(user_query, db_connect).all()

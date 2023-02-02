@@ -16,9 +16,11 @@ import 'package:web_smooth_scroll/web_smooth_scroll.dart';
 import 'package:ui/utils/dio_client.dart';
 
 class UserPage extends StatefulWidget {
-  const UserPage({super.key, this.isMyPage = true});
+  const UserPage({super.key, this.isMyPage = true, this.otherUser});
 
   final isMyPage;
+  final otherUser;
+
   @override
   _UserPageState createState() => _UserPageState();
 }
@@ -34,7 +36,8 @@ class _UserPageState extends State<UserPage> {
   late SharedPreferences pref;
   final DioClient dio = DioClient();
 
-  String name = 'GUEST';
+  String userName = '';
+  String realname = '';
 
   List<String> follower = [];
   List<String> following = [];
@@ -47,28 +50,38 @@ class _UserPageState extends State<UserPage> {
   List<OtherUser> userList = [];
   void getUserRec() {
     for (int i = 0; i < 10; i++) {
-      userList.add(OtherUser(
-        name: 'user $i',
-        followerNum: i,
-        isFollowing: false,
-      ));
+      userList.add(
+        OtherUser(
+            user_name: 'user$i',
+            realname: 'user$i',
+            image: 'assets/profile.png',
+            following: [],
+            follower: []),
+      );
     }
   }
 
   Future getProfile() async {
-    final pref = await SharedPreferences.getInstance();
-    userName = pref.getString('user_name')!;
+    if (widget.isMyPage) {
+      final pref = await SharedPreferences.getInstance();
+      userName = pref.getString('user_name')!;
 
-    profile_info = await dio.profile(name: userName);
+      profile_info = await dio.profile(name: userName);
 
-    name = profile_info['user_name'];
+      realname = profile_info['realname'];
+      follower = List<String>.from(profile_info['follower']);
+      following = List<String>.from(profile_info['following']);
 
-    follower = new List<String>.from(profile_info['follower']);
-    following = new List<String>.from(profile_info['following']);
+      followerNum = profile_info['follower'].length;
+      followingNum = profile_info['following'].length;
+    } else {
+      realname = widget.otherUser.realname;
+      follower = List<String>.from(widget.otherUser.follower);
+      following = List<String>.from(widget.otherUser.following);
 
-    followerNum = profile_info['follower'].length;
-    followingNum = profile_info['following'].length;
-
+      followerNum = follower.length;
+      followingNum = following.length;
+    }
     setState(() {});
   }
 
@@ -80,8 +93,13 @@ class _UserPageState extends State<UserPage> {
     dio.unfollowUser(usernameA: usernameA, usernameB: usernameB);
   }
   Future getMyMusics() async {
-    final pref = await SharedPreferences.getInstance();
-    userName = pref.getString('user_name')!;
+    if (widget.isMyPage) {
+      final pref = await SharedPreferences.getInstance();
+      userName = pref.getString('user_name')!;
+    } else {
+      userName = widget.otherUser.user_name;
+    }
+    setState(() {});
 
     likelist = await dio.likesList(name: userName);
     for (int i = 0; i < likelist.length; i++) {
@@ -100,19 +118,21 @@ class _UserPageState extends State<UserPage> {
 
   @override
   void initState() {
-    getUserRec();
+    if (widget.isMyPage) {
+      getUserRec();
+    }
     getProfile();
     getMyMusics();
     super.initState();
   }
 
-  Widget profile({isOther = true}) {
+  Widget profile() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         titleBar('내 정보'),
         Container(
-          width: width * 0.25,
+          width: 500,
           height: boxHeight,
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
           decoration: outerBorder,
@@ -131,14 +151,14 @@ class _UserPageState extends State<UserPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('$name 님', style: titleTextStyle),
+                Text('$realname 님', style: titleTextStyle),
                 ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(
                         PageRouteBuilder(
                           opaque: false, // set to false
                           pageBuilder: (_, __, ___) => FollowListPage(
-                            itemList: following,
+                            itemNameList: following,
                             isFollowing: true,
                           ),
                         ),
@@ -156,7 +176,7 @@ class _UserPageState extends State<UserPage> {
                         PageRouteBuilder(
                           opaque: false, // set to false
                           pageBuilder: (_, __, ___) => FollowListPage(
-                            itemList: follower,
+                            itemNameList: follower,
                             isFollowing: false,
                           ),
                         ),
@@ -168,23 +188,35 @@ class _UserPageState extends State<UserPage> {
                         padding: const EdgeInsets.all(16)),
                     child: Text('♥  팔로워         $followerNum 명',
                         style: contentsTextStyle)),
-                ElevatedButton(
-                    onPressed: () {},
-                    style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        elevation: 0,
-                        padding: const EdgeInsets.all(16)),
-                    child: Text('♥  취향매칭률      $match %',
-                        style: contentsTextStyle)),
-                // isOther
-                //     ? ElevatedButton(
-                //         onPressed: () {},
-                //         style: OutlinedButton.styleFrom(
-                //             backgroundColor: Colors.transparent,
-                //             side: whiteBorder,
-                //             padding: const EdgeInsets.all(16)),
-                //         child: Text('팔로우하기', style: contentsTextStyle))
-                //     : Container()
+                widget.isMyPage
+                    ? defaultSpacer
+                    : ElevatedButton(
+                        onPressed: () {},
+                        style: OutlinedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            elevation: 0,
+                            padding: const EdgeInsets.all(16)),
+                        child: Text('♥  취향매칭률      $match %',
+                            style: contentsTextStyle)),
+                Container(
+                    width: 180,
+                    child: widget.isMyPage
+                        ? ElevatedButton(
+                            style: OutlinedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                side: whiteBorder,
+                                padding: const EdgeInsets.all(12)),
+                            child:
+                                Text('선호도 조사 다시하기', style: contentsTextStyle),
+                            onPressed: () {},
+                          )
+                        : ElevatedButton(
+                            onPressed: () {},
+                            style: OutlinedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                side: whiteBorder,
+                                padding: const EdgeInsets.all(12)),
+                            child: Text('팔로우하기', style: contentsTextStyle)))
               ],
             )
           ]),
@@ -226,103 +258,66 @@ class _UserPageState extends State<UserPage> {
   }
 
   Widget userRecommendation() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      titleBar('$name와 취향이 비슷한 사용자'),
-      Container(
-          width: width,
-          decoration: outerBorder,
-          height: boxHeight + 15,
-          child: AlignedGridView.count(
-            crossAxisCount: 1,
-            mainAxisSpacing: 15,
-            controller: _userScrollController,
-            padding: defaultPadding,
-            scrollDirection: Axis.horizontal,
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: userList.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Stack(alignment: Alignment.bottomCenter, children: [
-                // Widget userCard(image, name, follower) {
-                userCoverCard(userList[index].image, userList[index].name,
-                    userList[index].followerNum),
-                Positioned(
-                  bottom: 10,
-                  child: userList[index].isFollowing
-                      ? OutlinedButton( // following state user
-                          onPressed: () {
-                            userList[index].isFollowing = false;
-                            setState(() {});
-                            // unfollowUser(usernameA, usernameB);
-                          },
-                          style: OutlinedButton.styleFrom(
-                            elevation: 0,
-                            backgroundColor: kWhite,
-                            side: whiteBorder,
-                          ),
-                          child: Text('팔로잉',
-                              style: TextStyle(color: kBlack, fontSize: 11.0),
-                              textAlign: TextAlign.center))
-                      : OutlinedButton( // not following user
-                          onPressed: () {
-                            userList[index].isFollowing = true;
-                            setState(() {});
-                            // followUser(usernameA, usernameB);
-                          },
-                          style: OutlinedButton.styleFrom(
-                            elevation: 0,
-                            backgroundColor: Colors.transparent,
-                            side: whiteBorder,
-                          ),
-                          child: Text('팔로우',
-                              style: TextStyle(color: kWhite, fontSize: 11.0),
-                              textAlign: TextAlign.center)),
-                )
-              ]);
-            },
-          ))
-    ]);
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          titleBar('$realname와 취향이 비슷한 사용자'),
+          Container(
+              width: width,
+              decoration: outerBorder,
+              height: boxHeight,
+              child: AlignedGridView.count(
+                crossAxisCount: 1,
+                mainAxisSpacing: 15,
+                controller: _userScrollController,
+                padding: defaultPadding,
+                scrollDirection: Axis.horizontal,
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: userList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => UserPage(
+                                  isMyPage: false,
+                                  otherUser: userList[index],
+                                )),
+                      );
+                    },
+                    child: userCoverCard(userList[index]),
+                  );
+                },
+              )),
+          defaultSpacer,
+        ]);
   }
 
   Widget userAnalyze() {
     return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          titleBar('$name님의 취향분석 결과'),
-          Stack(
-            alignment: Alignment.topRight,
-            children: [
-              Container(
-                  decoration: outerBorder,
-                  width: width,
-                  height: 590,
-                  child: Center(
-                      child: Text(
-                    '취향분석 결과',
-                    style: titleTextStyle,
-                  ))),
-              Container(
-                  width: buttonWidth * 2,
-                  padding:
-                      const EdgeInsets.only(top: 20, bottom: 20, right: 20),
-                  child: ElevatedButton(
-                    style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        side: whiteBorder,
-                        padding: const EdgeInsets.all(12)),
-                    child: Text('선호도 조사 다시하기', style: subtitleTextStyle),
-                    onPressed: () {},
-                  )),
-            ],
-          ),
-        ]);
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        titleBar('$realname님의 취향분석 결과'),
+        Container(
+            decoration: outerBorder,
+            width: width,
+            height: 590,
+            child: Center(
+                child: Text(
+              '취향분석 결과',
+              style: titleTextStyle,
+            )))
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
-
     return Scaffold(
         appBar: mypagenAppBar(context),
         body: Container(
@@ -356,9 +351,11 @@ class _UserPageState extends State<UserPage> {
                       ],
                     )),
                     defaultSpacer,
-                    // 나와 비슷한 유저 추천
-                    userRecommendation(),
-                    defaultSpacer,
+                    widget.isMyPage
+                        ?
+                        // 나와 비슷한 유저 추천
+                        userRecommendation()
+                        : defaultSpacer,
                     // 취향분석
                     userAnalyze(),
                     defaultSpacer,
