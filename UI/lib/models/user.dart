@@ -1,12 +1,13 @@
 class UserInfo {
 // final String country;
-  String password, realname, image;
+  String user_name, password, realname, image;
   int userId, age, playcount;
   List<String> follower;
   List<String> following;
 
   UserInfo({
     required this.userId,
+    required this.user_name,
     required this.password,
     required this.realname,
     required this.image,
@@ -23,6 +24,7 @@ class UserInfo {
 UserInfo _$UserFromJson(Map<String, dynamic> json) {
   return UserInfo(
     userId: json['user_id'] as int,
+    user_name: json['user_name'] as String,
     password: json['pwd'] as String,
     realname: json['realname'] as String,
     image: json['image'] as String,
@@ -35,6 +37,7 @@ UserInfo _$UserFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$UserToJson(UserInfo instance) => <String, dynamic>{
       'user_id': instance.userId,
+      'user_name': instance.user_name,
       'password': instance.password,
       'realname': instance.realname,
       'image': instance.image,
