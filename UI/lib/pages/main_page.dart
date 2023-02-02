@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:toast/toast.dart';
 import 'package:ui/constants.dart';
+import 'package:ui/main.dart';
 import 'package:ui/models/item.dart';
 import 'package:ui/widgets/track_detail.dart';
 import 'package:ui/widgets/footer.dart';
@@ -30,15 +31,16 @@ class _MainPageState extends State<MainPage> {
 
   Future addInteraction(Item item) async {
     await dioClient.interactionClick(
-        username: username,
-        albumName: item.albumName,
-        artistName: item.artistName,
-        trackName: item.trackName);
+
+        userId: userid,
+        trackId: item.trackId,
+        );
   }
 
   void getMusicList() {
     for (int i = 0; i < 20; i++) {
       musicList.add(Item(
+          trackId: i,
           image: 'assets/album.png',
           trackName: 'Track Name $i',
           albumName: 'Album Name $i',
@@ -50,6 +52,7 @@ class _MainPageState extends State<MainPage> {
   void getRecList() {
     for (int i = 0; i < 9; i++) {
       recList.add(Item(
+          trackId: i,
           image: 'assets/album.png',
           trackName: 'Track Name $i',
           albumName: 'Album Name $i',

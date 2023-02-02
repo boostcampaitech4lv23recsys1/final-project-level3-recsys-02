@@ -82,6 +82,7 @@ class _UserPageState extends State<UserPage> {
         likelist[i][4] = 'assets/album.png';
       }
       myPlaylist.add(Item(
+          trackId: likelist[i][3], // fix need
           image: likelist[i][4],
           trackName: likelist[i][0],
           albumName: likelist[i][1],
