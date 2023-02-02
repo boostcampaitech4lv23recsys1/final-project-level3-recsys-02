@@ -1,0 +1,14 @@
+__pycache__
+*.ipynb
+.DS_Store
+*.PNG
+README.md
+*.csv
+nohup.out
+split
+table
+values
+run_finetune_sample.py
+*.pt
+output/*.txt
+data/bk100/
