@@ -29,9 +29,7 @@ Widget signinItemCard(item) {
   );
 }
 
-Widget userCoverCard(image, name, follower) {
-  String image = 'assets/profile.png';
-
+Widget userCoverCard(OtherUser other) {
   return Container(
     width: 160,
     padding: const EdgeInsets.all(15),
@@ -42,14 +40,18 @@ Widget userCoverCard(image, name, follower) {
           width: 120,
           child: CircleAvatar(
             backgroundColor: Colors.transparent,
-            backgroundImage: AssetImage(image),
+            backgroundImage: AssetImage(other.image),
           ),
         ),
         SizedBox(
           height: 10,
         ),
-        Text(name, style: contentsTextStyle, textAlign: TextAlign.start),
-        Text('팔로워 $follower 명',
+        Text(other.realname,
+            style: contentsTextStyle, textAlign: TextAlign.start),
+        SizedBox(
+          height: 5,
+        ),
+        Text('팔로워 ${other.follower.length} 명',
             style: defaultTextStyle, textAlign: TextAlign.start),
       ],
     ),
@@ -57,8 +59,6 @@ Widget userCoverCard(image, name, follower) {
 }
 
 Widget userCard(OtherUser otherUser) {
-  String image = 'assets/profile.png';
-
   return Container(
     // decoration: outerBorder,
     height: titleHeight * (1.5),
@@ -69,30 +69,15 @@ Widget userCard(OtherUser otherUser) {
       children: [
         // image
         ClipRect(
-          child: Image.asset(image),
+          child: Image.asset(otherUser.image),
         ),
         defaultSpacer,
         defaultSpacer,
         Text(
-          otherUser.name,
+          otherUser.realname,
           style: contentsTextStyle,
           textAlign: TextAlign.start,
         ),
-        Spacer(),
-        TextButton(
-          onPressed: () {},
-          child: otherUser.isFollowing
-              ? Text(
-                  '팔로잉',
-                  style: contentsTextStyle,
-                  textAlign: TextAlign.start,
-                )
-              : Text(
-                  '팔로우',
-                  style: contentsTextStyle,
-                  textAlign: TextAlign.start,
-                ),
-        )
       ],
     ),
   );

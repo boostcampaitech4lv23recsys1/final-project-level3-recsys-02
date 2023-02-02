@@ -1,12 +1,12 @@
 class UserInfo {
 // final String country;
-  String user_name, password, realname, image;
-  int age, playcount;
+  String password, realname, image;
+  int userId, age, playcount;
   List<String> follower;
   List<String> following;
 
   UserInfo({
-    required this.user_name,
+    required this.userId,
     required this.password,
     required this.realname,
     required this.image,
@@ -22,7 +22,7 @@ class UserInfo {
 
 UserInfo _$UserFromJson(Map<String, dynamic> json) {
   return UserInfo(
-    user_name: json['name'] as String,
+    userId: json['user_id'] as int,
     password: json['pwd'] as String,
     realname: json['realname'] as String,
     image: json['image'] as String,
@@ -34,7 +34,7 @@ UserInfo _$UserFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$UserToJson(UserInfo instance) => <String, dynamic>{
-      'user_name': instance.user_name,
+      'user_id': instance.userId,
       'password': instance.password,
       'realname': instance.realname,
       'image': instance.image,
@@ -45,14 +45,17 @@ Map<String, dynamic> _$UserToJson(UserInfo instance) => <String, dynamic>{
     };
 
 class OtherUser {
-  var image;
-  String name;
-  int followerNum;
-  bool isFollowing;
+// final String country;
+  int user_id;
+  String realname, image;
+  List<String> follower;
+  List<String> following;
 
-  OtherUser(
-      {this.image = 'assets/profile.png',
-      required this.name,
-      required this.followerNum,
-      required this.isFollowing});
+  OtherUser({
+    required this.user_id,
+    required this.realname,
+    required this.image,
+    required this.following,
+    required this.follower,
+  });
 }

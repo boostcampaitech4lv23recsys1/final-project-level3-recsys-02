@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:toast/toast.dart';
 import 'package:ui/constants.dart';
 import 'package:ui/models/user.dart';
@@ -91,6 +90,7 @@ class _SigninPageState extends State<SigninPage> {
     for (var r in res) {
       artistList.add([r['artist_name'], false]);
     }
+    setState(() {});
   }
 
   Widget userInfoInput() {
@@ -427,7 +427,8 @@ class _SigninPageState extends State<SigninPage> {
                                           // if (_ageController.text is num) {}
 
                                           userInfo = UserInfo(
-                                            user_name: _nameController.text,
+                                            userId:
+                                                int.parse(_nameController.text),
                                             password: _pwdController.text,
                                             realname: _realnameController.text,
                                             image: selectedProfileImage,

@@ -3,6 +3,13 @@ import 'package:ui/constants.dart';
 import 'package:ui/main.dart';
 import 'package:ui/models/item.dart';
 import 'package:ui/utils/dio_client.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+Future<String> getUserName() async {
+  final pref = await SharedPreferences.getInstance();
+  var userName = pref.getString('user_name')!;
+  return userName;
+}
 
 class DetailPage extends StatefulWidget {
   const DetailPage({super.key, required this.item});
@@ -29,12 +36,15 @@ class _DetailPageState extends State<DetailPage> {
     _artistName = widget.item.artistName;
     getAlbum(widget.item);
   }
+
   void addLike(Item item) async {
-    await dioClient.interactionLike(userId: userid, trackId: item.trackId);
+    await dioClient.interactionLike(userId: getUserName(), trackId: item.trackId);
   }
+
   void addDelete(Item item) async {
-    await dioClient.interactionDelete(userId: userid, trackId: item.trackId);
+    await dioClient.interactionDelete(userId: getUserName(), trackId: item.trackId);
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

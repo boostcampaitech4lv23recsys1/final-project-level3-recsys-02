@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 bool isLogin = false;
-String userName = '';
 double boxHeight = 240.0;
 
 BorderRadius kBorder = BorderRadius.circular(12);
@@ -56,14 +55,14 @@ EdgeInsets outerPadding = const EdgeInsets.only(top: 40, left: 160, right: 160);
 
 void enterSession() async {
   final pref = await SharedPreferences.getInstance();
-  userName = pref.getString('user_name')!;
   isLogin = true;
-  debugPrint("session == $isLogin / $userName");
+  debugPrint("session == $isLogin");
 }
 
 void exitSession() async {
   final pref = await SharedPreferences.getInstance();
-  pref.setString('user_name', '');
+  pref.clear();
   isLogin = false;
   debugPrint("session == $isLogin");
 }
+
