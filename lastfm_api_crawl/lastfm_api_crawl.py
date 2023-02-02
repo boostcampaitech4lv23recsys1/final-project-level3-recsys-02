@@ -21,14 +21,17 @@ parser.add_argument('--user_sampling', type=int)
 parser.add_argument('--phase', type=int)
 args = parser.parse_args()
 
-os.chdir('/opt/ml/final/API')
+os.chdir('/opt/ml/final/lastfm_api_crawl')
 dirname = f'ver_{args.ver}'
 if not os.path.isdir(dirname):
     os.makedirs(dirname)
 
-with open('./listeners_1.pkl', 'rb') as f:
-	username_list = pickle.load(f)
+# with open('./listeners_20k.npy', 'rb') as f:
+# 	username_list = pickle.load(f)
 
+username_list = np.load('./listeners_20k.npy')
+
+print(len(username_list))
 username_list = username_list[:args.user_sampling]
 
 url = 'http://ws.audioscrobbler.com/2.0'
