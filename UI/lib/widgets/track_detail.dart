@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<String> getUserName() async {
   final pref = await SharedPreferences.getInstance();
-  userName = pref.getString('user_name')!;
+  var userName = pref.getString('user_name')!;
   return userName;
 }
 
@@ -33,12 +33,23 @@ class _DetailPageState extends State<DetailPage> {
     _artistName = widget.item.artistName;
     getAlbum(widget.item);
   }
+
   void addLike(Item item) async {
-    await dioClient.interactionLike(username: getUserName() as String, albumName: item.albumName, artistName: item.artistName, trackName: item.trackName);
+    await dioClient.interactionLike(
+        username: getUserName() as String,
+        albumName: item.albumName,
+        artistName: item.artistName,
+        trackName: item.trackName);
   }
+
   void addDelete(Item item) async {
-    await dioClient.interactionDelete(username: getUserName() as String, albumName: item.albumName, artistName: item.artistName, trackName: item.trackName);
+    await dioClient.interactionDelete(
+        username: getUserName() as String,
+        albumName: item.albumName,
+        artistName: item.artistName,
+        trackName: item.trackName);
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
