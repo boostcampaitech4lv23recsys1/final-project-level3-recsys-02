@@ -45,14 +45,16 @@ Map<String, dynamic> _$UserToJson(UserInfo instance) => <String, dynamic>{
     };
 
 class OtherUser {
-  var image;
-  String name;
-  int followerNum;
-  bool isFollowing;
+// final String country;
+  String user_name, realname, image;
+  List<String> follower;
+  List<String> following;
 
-  OtherUser(
-      {this.image = 'assets/profile.png',
-      required this.name,
-      required this.followerNum,
-      required this.isFollowing});
+  OtherUser({
+    required this.user_name,
+    required this.realname,
+    required this.image,
+    required this.following,
+    required this.follower,
+  });
 }
