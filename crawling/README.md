@@ -3,11 +3,13 @@
   - selenium
   - bs4
   - tqdm
+  - requests
+  - numpy
 
 2. run
-  1. "crawling.py" 위치로 이동 후,
+- "crawling.py" 위치로 이동 후,
+  1. 기존 수집된 tag 기반으로 listener 수집 : n개 가능
+
 `python crawling.py --tags genre1,genre2`
-
-
-
-    - tag list : [jazz, rnb, reggae, rock, Electronic, acoustic, dance, rap, metal, country, hip-hop, alternative, indie, hardcore, blues, classical, punk, Metal]
+  2. 새로운 Tag 수집 후, listener 수집 : 1개 가능
+`python crawling.py --new_tag new_genre`
