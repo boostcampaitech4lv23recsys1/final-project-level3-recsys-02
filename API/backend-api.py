@@ -249,6 +249,29 @@ def add_delete(user_id: str, albumInfo: str, artistInfo: str, trackName: str):
 
     return "Success"
 
+
+@app.get("/follow/{user_A}/{user_B}", description='user_A follows user_B')
+def add_delete(user_A: str, user_B: str):
+    query = f"update user_info set follower = array_append(follower, '{user_A}') where user_name = '{user_B}';"
+    query2= f"update user_info set following = array_append(following, '{user_B}') where user_name = '{user_A}';"
+    with db_connect.cursor() as cur:
+        cur.execute(query2)
+        cur.execute(query)
+        db_connect.commit()
+
+    return "Success"
+
+@app.get("/unfollow/{user_A}/{user_B}", description='user_A unfollows user_B')
+def add_delete(user_A: str, user_B: str):
+    query = f"update user_info set following = array_remove(following, '{user_B}') where user_name = '{user_A}';"
+    query2 = f"update user_info set following = array_remove(follower, '{user_A}') where user_name = '{user_B}';"
+    with db_connect.cursor() as cur:
+        cur.execute(query2)
+        cur.execute(query)
+        db_connect.commit()
+
+    return "Success"
+
 if __name__ == "__main__":
     db_connect = psycopg2.connect(
         user="myuser",

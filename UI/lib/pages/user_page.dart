@@ -85,6 +85,13 @@ class _UserPageState extends State<UserPage> {
     setState(() {});
   }
 
+  Future followUser(String usernameA, String usernameB) async {
+    dio.followUser(usernameA: usernameA, usernameB: usernameB);
+  }
+
+  Future unfollowUser(String usernameA, String usernameB) async {
+    dio.unfollowUser(usernameA: usernameA, usernameB: usernameB);
+  }
   Future getMyMusics() async {
     if (widget.isMyPage) {
       final pref = await SharedPreferences.getInstance();
