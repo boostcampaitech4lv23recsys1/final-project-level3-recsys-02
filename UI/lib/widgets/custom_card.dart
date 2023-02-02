@@ -19,7 +19,7 @@ Widget signinItemCard(item) {
   return Container(
     color: Colors.transparent,
     height: titleHeight,
-    width: 100,
+    width: 150,
     padding: EdgeInsets.symmetric(horizontal: 10),
     alignment: Alignment.centerLeft,
     child: Text(
