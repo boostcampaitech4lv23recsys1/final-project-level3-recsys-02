@@ -14,9 +14,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<String> getUserName() async {
   final pref = await SharedPreferences.getInstance();
-  userName = pref.getString('user_name')!;
-  return userName;
+  var userId = pref.getString('user_id')!;
+  return userId;
 }
+
 class MainPage extends StatefulWidget {
   @override
   _MainPageState createState() => _MainPageState();

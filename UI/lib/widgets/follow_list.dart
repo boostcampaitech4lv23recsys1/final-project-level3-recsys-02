@@ -27,14 +27,14 @@ class _FollowListPageState extends State<FollowListPage> {
     // Map value = await dio.profile(name: widget.itemNameList[i]);
     // // get itemLNameList Profiles
     // itemList.add(OtherUser(
-    //     user_name: value['user_name'] as String,
-    //     realname: value['user_name'] as String,
-    //     image: value['user_name'] as String,
+    //     user_name: value['user_id'] as int,
+    //     realname: value['realname'] as String,
+    //     image: value['image'] as String,
     //     following: List<String>.from(value['following']),
     //     follower: List<String>.from(value['follower'])));
     for (int i = 0; i < 10; i++) {
       itemList.add(OtherUser(
-          user_name: 'user$i',
+          user_id: i,
           realname: 'user$i',
           image: 'assets/profile.png',
           following: [],
@@ -97,7 +97,7 @@ class _FollowListPageState extends State<FollowListPage> {
                                 },
                                 child: userCard(
                                   OtherUser(
-                                    user_name: itemList[index].user_name,
+                                    user_id: itemList[index].user_id,
                                     realname: itemList[index].realname,
                                     image: itemList[index].image,
                                     following: itemList[index].following,

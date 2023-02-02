@@ -30,7 +30,7 @@ class DioClient {
       } else {
         // user_name만 전역적으로 저장
         final SharedPreferences pref = await SharedPreferences.getInstance();
-        pref.setString('user_name', response.data);
+        pref.setString('user_id', response.data.toString());
         return 'Success';
       }
     } catch (e) {
@@ -149,14 +149,13 @@ class DioClient {
     }
   }
 
-  Future followUser(
-      {required String usernameA,
-    required String usernameB,}
-      ) async {
+  Future followUser({
+    required String usernameA,
+    required String usernameB,
+  }) async {
     late Response response;
     try {
-      response = await _dio
-          .get('/follow/$usernameA/$usernameB');
+      response = await _dio.get('/follow/$usernameA/$usernameB');
       debugPrint(response.toString());
       List responseBody = response.data;
       return responseBody;
@@ -166,14 +165,13 @@ class DioClient {
     }
   }
 
-  Future unfollowUser(
-      {required String usernameA,
-      required String usernameB,}
-      ) async {
+  Future unfollowUser({
+    required String usernameA,
+    required String usernameB,
+  }) async {
     late Response response;
     try {
-      response = await _dio
-          .get('/unfollow/$usernameA/$usernameB');
+      response = await _dio.get('/unfollow/$usernameA/$usernameB');
       debugPrint(response.toString());
       List responseBody = response.data;
       return responseBody;

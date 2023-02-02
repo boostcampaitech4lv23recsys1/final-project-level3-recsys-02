@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,7 +34,7 @@ class _UserPageState extends State<UserPage> {
   late SharedPreferences pref;
   final DioClient dio = DioClient();
 
-  String userName = '';
+  String userId = '';
   String realname = '';
 
   List<String> follower = [];
@@ -52,7 +50,7 @@ class _UserPageState extends State<UserPage> {
     for (int i = 0; i < 10; i++) {
       userList.add(
         OtherUser(
-            user_name: 'user$i',
+            user_id: i,
             realname: 'user$i',
             image: 'assets/profile.png',
             following: [],
@@ -64,9 +62,9 @@ class _UserPageState extends State<UserPage> {
   Future getProfile() async {
     if (widget.isMyPage) {
       final pref = await SharedPreferences.getInstance();
-      userName = pref.getString('user_name')!;
+      userId = pref.getString('user_id')!;
 
-      profile_info = await dio.profile(name: userName);
+      profile_info = await dio.profile(name: userId.toString());
 
       realname = profile_info['realname'];
       follower = List<String>.from(profile_info['follower']);
@@ -92,16 +90,17 @@ class _UserPageState extends State<UserPage> {
   Future unfollowUser(String usernameA, String usernameB) async {
     dio.unfollowUser(usernameA: usernameA, usernameB: usernameB);
   }
+
   Future getMyMusics() async {
     if (widget.isMyPage) {
       final pref = await SharedPreferences.getInstance();
-      userName = pref.getString('user_name')!;
+      userId = pref.getString('user_id')!;
     } else {
-      userName = widget.otherUser.user_name;
+      userId = widget.otherUser.userId;
     }
     setState(() {});
 
-    likelist = await dio.likesList(name: userName);
+    likelist = await dio.likesList(name: userId.toString());
     for (int i = 0; i < likelist.length; i++) {
       if (likelist[i][4] == null) {
         likelist[i][4] = 'assets/album.png';
