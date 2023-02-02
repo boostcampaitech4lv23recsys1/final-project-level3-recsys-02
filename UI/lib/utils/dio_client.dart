@@ -148,6 +148,40 @@ class DioClient {
       return -1;
     }
   }
+
+  Future followUser(
+      {required String usernameA,
+    required String usernameB,}
+      ) async {
+    late Response response;
+    try {
+      response = await _dio
+          .get('/follow/$usernameA/$usernameB');
+      debugPrint(response.toString());
+      List responseBody = response.data;
+      return responseBody;
+    } catch (e) {
+      debugPrint('Error followingFollower : $e');
+      return -1;
+    }
+  }
+
+  Future unfollowUser(
+      {required String usernameA,
+      required String usernameB,}
+      ) async {
+    late Response response;
+    try {
+      response = await _dio
+          .get('/unfollow/$usernameA/$usernameB');
+      debugPrint(response.toString());
+      List responseBody = response.data;
+      return responseBody;
+    } catch (e) {
+      debugPrint('Error followingFollower : $e');
+      return -1;
+    }
+  }
 }
 
 class DioModel {
