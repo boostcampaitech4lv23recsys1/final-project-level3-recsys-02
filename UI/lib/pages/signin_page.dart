@@ -426,9 +426,11 @@ class _SigninPageState extends State<SigninPage> {
                                           // 나이 - 숫자
                                           // if (_ageController.text is num) {}
 
+                                          isStart = false;
+                                          setState(() {});
                                           userInfo = UserInfo(
-                                            userId:
-                                                int.parse(_nameController.text),
+                                            userId: -1,
+                                            user_name: _nameController.text,
                                             password: _pwdController.text,
                                             realname: _realnameController.text,
                                             image: selectedProfileImage,
@@ -437,9 +439,6 @@ class _SigninPageState extends State<SigninPage> {
                                             follower: [''],
                                             following: [''],
                                           );
-
-                                          isStart = false;
-                                          setState(() {});
                                         },
                                       )),
                                 ],

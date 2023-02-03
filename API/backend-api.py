@@ -42,6 +42,7 @@ class User(BaseModel):
 
 class userInfo(BaseModel):
     user_id: int
+    user_name: str
     password: str
     realname: str
     image: str
@@ -92,84 +93,54 @@ def list2array(list_data):
         tmp += f'"{d}",'
     return tmp[:-1]
 
-
-@app.get("/topTracks", description='get top trakcs')
+@app.get("/topTracks", description='get top tracks')
 def getTopTracks(tags, artists):
     # 각 태그마다 top 10개 트랙 추출 inter에 넣기
-    # tags = ['indie', 'pop', 'jazz']
-    # artists = ['Coldplay']
-
-    inters = pd.DataFrame(columns=['track_name', 'url', 'duration','listeners', 'playcount', 'artist_name', 'artist_url', \
+    inters = pd.DataFrame(columns=['track_id', 'track_name', 'url', 'duration','listeners', 'playcount', 'artist_name', 'artist_url', \
                                     'track_tag_list', 'album_name', 'streamable_text', 'streamable_fulltrack'])
 
-
     for t in tags:
-        tag = f'"{t}"'
-        tag_query = f"SELECT * FROM track_info WHERE '{tag}' ANY(track_tag_list) ORDER BY playcount LIMIT 10;"
-        print(tag_query)
+        tag_query = f"SELECT * FROM track_info WHERE '{t}' = ANY (track_tag_list) ORDER BY playcount LIMIT 10;"
         tag_tracks = pd.read_sql(tag_query, db_connect)
-        pd.concat([inters, tag_tracks], ignore_index=True)
+        inters = pd.concat([inters, tag_tracks])
 
-    # 각 태그마다 top 10개 트랙 추출 inter에 넣기
     for a in artists:
         artist = f"'{a}'"
         artist_query = f"SELECT * FROM track_info WHERE artist_name={artist} ORDER BY playcount LIMIT 10;"
-        print(artist_query)
         artist_tracks = pd.read_sql(artist_query, db_connect)
-        print(artist_tracks)
-        pd.concat([inters, artist_tracks], ignore_index=True)
-
-    print(inters.shape)
-
-    # # 중복제거 -> shuffle
-    inters.drop_duplicates(inplace=True)
-    inters = inters.sample(frac=1)
-
-    print(inters)
+        inters = pd.concat([inters, artist_tracks])
 
     return inters
 
 
 @app.post('/signin', description='회원가입')
 def signin_user(userInfo: userInfo, tags: list, artists: list):
-    # print(userInfo)
-    # print(tags)
-    # print(artists)
 
     # 이미 가입한 회원인지 확인
-
     user_query = f"SELECT user_id FROM user_info WHERE user_id={userInfo.user_id};"
-
     user_df = pd.read_sql(user_query, db_connect)
 
-    if (user_df.shape[0] == 0):
-        following = list2array(userInfo.following)
-        follower = list2array(userInfo.follower)
-
+    if (user_df.empty):
+        id_df = pd.read_sql('SELECT max(user_id) AS max_id FROM user_info;', db_connect).to_dict()
+        userInfo.user_id = id_df['max_id'][0] + 1
+        
         #user information : user_id, realname, password, age, playcount, follower, following
-        user_query = f"INSERT INTO user_info (user_id, realname, password, age, playcount, follower, following) \
-                VALUES ({userInfo.user_id}, '{userInfo.realname}', '{userInfo.password}', \
+        user_query = f"INSERT INTO user_info (user_id, user_name, realname, password, age, playcount, follower, following) \
+                VALUES ({userInfo.user_id}, '{userInfo.user_name}', '{userInfo.realname}', '{userInfo.password}', \
                     {userInfo.age}, 0, '{{}}', '{{}}') \
-
 
         response1 = pd.read_sql(user_query, db_connect).all()
 
-        # interaction : user_id, track_name, album_name, artist_name, timestamp(uts), loved(int)
         # tag, artist 별 N개 트랙 inter에 넣기
-
-        timestamp = int(datetime.now().replace(tzinfo=timezone.utc).timestamp())
         user_tracks = getTopTracks(tags, artists)
-        print("usertrack\n", user_tracks)
-
+        # print("usertrack\n", user_tracks)
+        
+        # def add_interaction(user_id: int, track_id: int):
         for _, row in user_tracks.iterrows():
-            inter_query = f"INSERT INTO inter (user_id, track_id, album_name, artist_name, date_uts, loved) \
-                    VALUES (userInfo.user_id, row['track_id'], '{row['album_name']}', '{row['artist_name']}', {timestamp}, 0)\
+            print(row)
+            res = add_interaction(user_id=userInfo.user_id, track_id=row['track_id'])
 
-                    RETURNING user_id;"
-            response2 = pd.read_sql(inter_query, db_connect)
-            print(response2['user_id'])
-
-        if response1['user_id']:
+        if response1['user_id'] and res == 'Success':
             db_connect.commit()
             return "True"
         else:
@@ -186,7 +157,9 @@ def get_profiles(user_id: int) -> userInfo:
     if (user_df.shape[0] == 0):
         return 'None'
     else:
-        info = userInfo(user_id=user_df['user_id'],
+        info = userInfo(
+                user_id=user_df['user_id'],                
+                user_name=user_df['user_name'],
                 password=user_df['password'],
                 realname =user_df['realname'],
                 image =user_df['image'],
