@@ -15,6 +15,7 @@ class SigninPage extends StatefulWidget {
 
 class _SigninPageState extends State<SigninPage> {
   bool isStart = true;
+
   late UserInfo userInfo;
   late TextEditingController _nameController;
   late TextEditingController _emailCheckController;
@@ -33,7 +34,7 @@ class _SigninPageState extends State<SigninPage> {
   ];
   String msg = '';
 
-  String selectedProfileImage = 'assets/profile.png';
+  String selectedProfileImage = '-1';
 
   final List genreLists = [
     ['jazz', false],
@@ -417,28 +418,71 @@ class _SigninPageState extends State<SigninPage> {
                                             )),
                                         onPressed: () async {
                                           // 입력 유효성 체크
-                                          // 사용자 이름 - 최대 5자
+                                          RegExp pattern =
+                                              RegExp(r'[a-z0-9]{6,10}');
 
-                                          // 아아디 - 6-10자 영문/숫자
+                                          String userInfoError = '';
 
-                                          // 비밀번호 - 6-10자 영문/숫자
+                                          // 0. 프로필 이미지
+                                          if (selectedProfileImage == '-1') {
+                                            userInfoError = '프로필 이미지를 선택해주세요.';
+                                          }
+                                          // 1. 프로필명 형식 판단
+                                          if (_realnameController
+                                                  .text.isEmpty &&
+                                              _nameController.text.length > 5) {
+                                            userInfoError =
+                                                '프로필 이름 입력형식을 다시 확인해주세요.';
+                                          }
 
-                                          // 나이 - 숫자
-                                          // if (_ageController.text is num) {}
+                                          // 2. 아이디 형식 판단
+                                          if (!(pattern.hasMatch(
+                                              _nameController.text))) {
+                                            userInfoError =
+                                                '아이디 입력형식을 다시 확인해주세요.';
+                                          }
 
-                                          isStart = false;
-                                          setState(() {});
-                                          userInfo = UserInfo(
-                                            userId: -1,
-                                            user_name: _nameController.text,
-                                            password: _pwdController.text,
-                                            realname: _realnameController.text,
-                                            image: selectedProfileImage,
-                                            age: int.parse(_ageController.text),
-                                            playcount: 0,
-                                            follower: [],
-                                            following: [],
-                                          );
+                                          // 3. 비밀번호 형식 판단
+                                          if (!(pattern
+                                              .hasMatch(_pwdController.text))) {
+                                            userInfoError =
+                                                '비밀번호 입력형식을 다시 확인해주세요.';
+                                          }
+
+                                          // 4. 나이 형식 판단
+                                          // 나이가 음수가 아니거나, 너무 크다거나 하는 등의 기준은 포함되어있지 않음
+                                          int ageParsed = 0;
+                                          try {
+                                            ageParsed =
+                                                int.parse(_ageController.text);
+                                          } catch (e) {
+                                            userInfoError =
+                                                '나이 입력형식을 다시 확인해주세요.';
+                                          }
+
+                                          if (userInfoError == '') {
+                                            isStart = false;
+                                            setState(() {});
+                                            userInfo = UserInfo(
+                                              userId: -1,
+                                              user_name: _nameController.text,
+                                              password: _pwdController.text,
+                                              realname:
+                                                  _realnameController.text,
+                                              image: selectedProfileImage,
+                                              age: ageParsed,
+                                              playcount: 0,
+                                              follower: [],
+                                              following: [],
+                                            );
+                                          } else {
+                                            Toast.show(userInfoError,
+                                                backgroundColor: kWhite,
+                                                textStyle:
+                                                    TextStyle(color: kBlack),
+                                                gravity: Toast.top,
+                                                duration: Toast.lengthLong);
+                                          }
                                         },
                                       )),
                                 ],
