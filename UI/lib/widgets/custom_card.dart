@@ -116,6 +116,32 @@ Widget trackCoverCard(Item item) {
   );
 }
 
+Widget searchCard(searchItem item) {
+  return Container(
+    // decoration: outerBorder,
+    height: titleHeight * (1.5),
+    padding: kPadding,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // track name
+        Expanded(
+          child: Text(
+            item.trackName,
+            style: contentsTextStyle,
+            textAlign: TextAlign.start,
+            overflow: TextOverflow.fade,
+            softWrap: true,
+          ),
+        ),
+        Text(item.artistName,
+            style: contentsTextStyle, textAlign: TextAlign.start),
+      ],
+    ),
+  );
+}
+
 Widget trackCard(Item item, {bool isRank = false, int index = 1}) {
   return Container(
     // decoration: outerBorder,

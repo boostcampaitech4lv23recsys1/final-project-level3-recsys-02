@@ -59,11 +59,22 @@ def get_user_table():
     print(test)
     return test.to_string()
 
+@app.get('/get_search_track/{track}', description='트랙 검색 리스트 생성')
+def get_search_track(track: str):
+    query = ''
+    if track == '-1':
+        query = f"SELECT track_id, track_name, artist_name FROM track_info LIMIT 10;"
+    else:
+        query = f"SELECT track_id, track_name, artist_name FROM track_info WHERE track_name LIKE'%{track}%';"
+    track_df = pd.read_sql(query, db_connect)
+    return track_df.to_dict('records')  
 
-@app.get('/track')
-def get_track_table():
-    query = f"SELECT * FROM track_info;"
-    return pd.read_sql(query, db_connect)
+# 특정 트랙 정보 가져오기
+@app.get('/get_track_detail/{track_id}', description='트랙 정보 가져오기')
+def get_track_detail(track_id: int):
+    query = f"SELECT * FROM track_info WHERE track_id={track_id};"
+    track_df = pd.read_sql(query, db_connect)
+    return track_df.to_dict('records')  
 
 
 @app.post('/login', description='로그인')
@@ -251,6 +262,8 @@ def add_unfollow(user_A: int, user_B: int):
         db_connect.commit()
 
     return "Success"
+
+
 
 
 if __name__ == "__main__":
