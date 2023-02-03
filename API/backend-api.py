@@ -141,9 +141,9 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
             values = cur.fetchall()[0][0]
 
         userInfo.user_id = values + 1
-        user_query = f"INSERT INTO user_info (user_id, user_name, realname, password, age) \
+        user_query = f"INSERT INTO user_info (user_id, user_name, realname, password, age, image) \
          VALUES ({int(userInfo.user_id)}, '{userInfo.user_name}', '{userInfo.realname}', '{userInfo.password}', \
-             {int(userInfo.age)});"
+             {int(userInfo.age)}, '{userInfo.image}');"
 
         with db_connect.cursor() as cur:
             cur.execute(user_query)
