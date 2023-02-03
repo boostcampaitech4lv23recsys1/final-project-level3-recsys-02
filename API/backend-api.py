@@ -93,8 +93,8 @@ def list2array(list_data):
         tmp += f'"{d}",'
     return tmp[:-1]
 
-@app.get("/topTracks", description='get top tracks')
-def get_top_tracks(tags, artists):
+@app.get("/signin/inters", description='get new interaction tracks')
+def get_new_inters(tags, artists):
     # 각 태그마다 top 10개 트랙 추출 inter에 넣기
     inters = pd.DataFrame(columns=['track_id', 'track_name', 'url', 'duration','listeners', 'playcount', 'artist_name', 'artist_url', \
                                     'track_tag_list', 'album_name', 'streamable_text', 'streamable_fulltrack'])
@@ -136,18 +136,16 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
 
         with db_connect.cursor() as cur:
             cur.execute(user_query)
-        print('get query')
+        
         # tag, artist 별 N개 트랙 inter에 넣기
-        user_tracks = get_top_tracks(tags, artists)
+        user_tracks = get_new_inters(tags, artists)
 
         for _, row in user_tracks.iterrows():
             print(row)
             add_interaction(user_id=userInfo.user_id, track_id=row['track_id'])
 
-            db_connect.commit()
-            return "True"
-        else:
-            return "False"
+        db_connect.commit()
+        return "True"
     # 해당 이름이 이미 존재하는 경우
     else:
         return "False"
@@ -155,21 +153,22 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
 
 @app.get("/users/{user_id}/profiles", description="사용자 정보")
 def get_profiles(user_id: int) -> userInfo:
-    user_query = f"SELECT user_id FROM user_info WHERE user_id={user_id};"
-    user_df = pd.read_sql(user_query, db_connect)
-    if (user_df.shape[0] == 0):
+    user_query = f"SELECT * FROM user_info WHERE user_id={user_id};"
+    user_df = pd.read_sql(user_query, db_connect).to_dict()
+    print(user_df)
+    if (len(user_df) == 0):
         return 'None'
     else:
         info = userInfo(
-                user_id=user_df['user_id'],                
-                user_name=user_df['user_name'],
-                password=user_df['password'],
-                realname =user_df['realname'],
-                image =user_df['image'],
-                age =user_df['age'],
-                playcount =user_df['playcount'],
-                following = user_df['following'],
-                follower = user_df['follower'])
+                user_id=user_df['user_id'][0],                
+                user_name=user_df['user_name'][0],  
+                password=user_df['password'][0], 
+                realname =user_df['realname'][0],  
+                image =user_df['image'][0],  
+                age =user_df['age'][0],  
+                playcount =user_df['playcount'][0],  
+                following = user_df['following'][0],  
+                follower = user_df['follower'][0] )
 
     return info
 

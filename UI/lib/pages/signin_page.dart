@@ -436,8 +436,8 @@ class _SigninPageState extends State<SigninPage> {
                                             image: selectedProfileImage,
                                             age: int.parse(_ageController.text),
                                             playcount: 0,
-                                            follower: [''],
-                                            following: [''],
+                                            follower: [],
+                                            following: [],
                                           );
                                         },
                                       )),
