@@ -256,7 +256,8 @@ def add_delete(user_id: int, track_id: int):
 
 
 @app.get("/follow/{user_A}/{user_B}", description='user_A follows user_B')
-def add_delete(user_A: int, user_B: int):
+    else:
+def add_follow(user_A: int, user_B: int):
     query = f"update user_info set follower = array_append(follower, {user_A}) where user_id = {user_B};"
     query2= f"update user_info set following = array_append(following, {user_B}) where user_id = {user_A};"
     with db_connect.cursor() as cur:
@@ -267,7 +268,7 @@ def add_delete(user_A: int, user_B: int):
     return "Success"
 
 @app.get("/unfollow/{user_A}/{user_B}", description='user_A unfollows user_B')
-def add_delete(user_A: int, user_B: int):
+def add_unfollow(user_A: int, user_B: int):
     query = f"update user_info set following = array_remove(following, {user_B}) where user_id = {user_A};"
     query2 = f"update user_info set following = array_remove(follower, {user_A}) where user_id = {user_B};"
     with db_connect.cursor() as cur:
