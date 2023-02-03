@@ -91,7 +91,8 @@ class DioClient {
     try {
       response = await _dio.get('/users/' + name + '/profiles');
       debugPrint(response.toString());
-      Map responseBody = response.data;
+      var responseBody = response.data;
+
       return responseBody;
     } catch (e) {
       debugPrint('Error Profile : $e');
