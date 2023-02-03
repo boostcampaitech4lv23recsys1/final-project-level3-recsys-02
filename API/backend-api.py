@@ -117,30 +117,33 @@ def get_top_tracks(tags, artists):
 def signin_user(userInfo: userInfo, tags: list, artists: list):
 
     # 이미 가입한 회원인지 확인
-    user_query = f"SELECT user_id FROM user_info WHERE user_id={userInfo.user_id};"
-    user_df = pd.read_sql(user_query, db_connect)
+    user_query = f"SELECT user_name FROM user_info WHERE user_name='{userInfo.user_name}';"
+    #user_df = pd.read_sql(user_query, db_connect)
+    with db_connect.cursor() as cur:
+        cur.execute(user_query)
+        values = cur.fetchall()
+    
+    if (len(values)== 0):
+        query = 'SELECT max(user_id) AS max_id FROM user_info;'
+        with db_connect.cursor() as cur:
+            cur.execute(query)
+            values = cur.fetchall()[0][0]
 
-    if (user_df.empty):
-        id_df = pd.read_sql('SELECT max(user_id) AS max_id FROM user_info;', db_connect).to_dict()
-        userInfo.user_id = id_df['max_id'][0] + 1
-        
-        #user information : user_id, realname, password, age, playcount, follower, following
-        user_query = f"INSERT INTO user_info (user_id, user_name, realname, password, age, playcount, follower, following) \
-                VALUES ({userInfo.user_id}, '{userInfo.user_name}', '{userInfo.realname}', '{userInfo.password}', \
-                    {userInfo.age}, 0, '{{}}', '{{}}')";\
+        userInfo.user_id = values + 1
+        user_query = f"INSERT INTO user_info (user_id, user_name, realname, password, age) \
+         VALUES ({int(userInfo.user_id)}, '{userInfo.user_name}', '{userInfo.realname}', '{userInfo.password}', \
+             {int(userInfo.age)});"
 
-        response1 = pd.read_sql(user_query, db_connect).all()
-
+        with db_connect.cursor() as cur:
+            cur.execute(user_query)
+        print('get query')
         # tag, artist 별 N개 트랙 inter에 넣기
-        user_tracks = getTopTracks(tags, artists)
-        # print("usertrack\n", user_tracks)
-        
-        # def add_interaction(user_id: int, track_id: int):
+        user_tracks = get_top_tracks(tags, artists)
+
         for _, row in user_tracks.iterrows():
             print(row)
-            res = add_interaction(user_id=userInfo.user_id, track_id=row['track_id'])
+            add_interaction(user_id=userInfo.user_id, track_id=row['track_id'])
 
-        if response1['user_id'] and res == 'Success':
             db_connect.commit()
             return "True"
         else:
@@ -177,7 +180,7 @@ def get_likes(user_id: int):  # -> track name
     query = f"""select distinct track_info.track_name,
     track_info.album_name, track_info.artist_name, track_info.duration, 
     album_info.image from track_info left outer join inter on 
-    track_info.track_name = inter.track_name left outer 
+    track_info.track_id = inter.track_id left outer 
     join album_info on inter.album_name = album_info.album_name 
     where (inter.user_id = {user_id} and inter.loved = 1);
     """
@@ -195,7 +198,7 @@ def add_interaction(user_id: int, track_id: int):
 
     query = f"INSERT INTO inter (track_id, loved, user_id, date_uts)\
              VALUES ({track_id}, 0, {user_id}, {timestamp});"
-    query2 = f"update track_info set playcount = playcount+1 where track_id = {track_id} and user_id = {user_id};"
+    query2 = f"update track_info set playcount = playcount+1 where track_id = {track_id};"
     with db_connect.cursor() as cur:
         cur.execute(query)
         cur.execute(query2)
