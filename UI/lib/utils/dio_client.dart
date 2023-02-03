@@ -39,8 +39,12 @@ class DioClient {
   }
 
   Future getArtists() async {
-    Response response = await _dio.get('/signin/artists');
-    return response.data;
+    try {
+      Response response = await _dio.get('/signin/artists');
+      return response.data;
+    } catch (e) {
+      debugPrint('Error get ARtist : $e');
+    }
   }
 
   Future signinUser(
