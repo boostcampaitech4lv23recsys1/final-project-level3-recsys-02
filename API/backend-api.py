@@ -68,8 +68,8 @@ def get_track_table():
 
 @app.post('/login', description='로그인')
 def login_user(user: User) -> str:
-    user_query = f"SELECT user_id, password FROM user_info WHERE user_id='{user.id}';"
-    user_df = pd.read_sql(user_query, db_connect)
+    user_query = f"SELECT user_id, password FROM user_info WHERE user_name='{user.id}';"
+    user_df = pd.read_sql(user_query, db_connect).to_dict()
     print(user_df)
     if (len(user_df) == 0):
         return 'Empty'
