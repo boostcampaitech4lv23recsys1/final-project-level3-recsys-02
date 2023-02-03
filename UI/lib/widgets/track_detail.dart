@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ui/constants.dart';
+import 'package:ui/main.dart';
 import 'package:ui/models/item.dart';
 import 'package:ui/utils/dio_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,6 +20,7 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   late String _image, _name, _albumName, _artistName;
+  late int _trackId;
   var isLike = false;
   var url = 'https://www.naver.com';
   final DioClient dioClient = DioClient();
@@ -27,6 +29,7 @@ class _DetailPageState extends State<DetailPage> {
   @override
   void initState() {
     super.initState();
+    _trackId = widget.item.trackId;
     _image = widget.item.image;
     _name = widget.item.trackName;
     _albumName = widget.item.albumName;
@@ -35,19 +38,11 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   void addLike(Item item) async {
-    await dioClient.interactionLike(
-        username: getUserName() as String,
-        albumName: item.albumName,
-        artistName: item.artistName,
-        trackName: item.trackName);
+    await dioClient.interactionLike(userId: getUserName(), trackId: item.trackId);
   }
 
   void addDelete(Item item) async {
-    await dioClient.interactionDelete(
-        username: getUserName() as String,
-        albumName: item.albumName,
-        artistName: item.artistName,
-        trackName: item.trackName);
+    await dioClient.interactionDelete(userId: getUserName(), trackId: item.trackId);
   }
 
   @override

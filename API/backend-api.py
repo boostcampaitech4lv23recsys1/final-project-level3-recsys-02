@@ -14,17 +14,21 @@ NAME_NOT_FOUND = HTTPException(status_code=400, detail="Name not found.")
 TRACK_NOT_FOUND = HTTPException(status_code=400, detail="Track not found.")
 AuthError = HTTPException(status_code=400, detail="not auth user")
 
+
 def change_str(a):
     return a.replace('\'', '')
 
-# class trackInfo(BaseModel):
-#     user_id: int
-#     track_name: str
-#     album_name: str
-#     artist_name: str
-#     duration: int
-#     date_uts: int
-#     loved: int
+
+
+class trackInfo(BaseModel):
+    # username: str
+    track_id: int
+    track_name: str
+    album_name: str
+    artist_name: str
+    duration: int
+    date_uts: int
+    loved: int
 
 
 class ops(BaseModel):
@@ -47,6 +51,7 @@ class userInfo(BaseModel):
     following: object
     follower: object
 
+
 @app.get('/user')
 def get_user_table():
     query = f"SELECT * FROM user_info;"
@@ -63,21 +68,24 @@ def get_track_table():
 
 @app.post('/login', description='로그인')
 def login_user(user: User) -> str:
-    user_query = f"SELECT user_name, password FROM user_info WHERE user_name='{user.id}';"
+    user_query = f"SELECT user_id, password FROM user_info WHERE user_id='{user.id}';"
     user_df = pd.read_sql(user_query, db_connect)
-    print (user_df)
+    print(user_df)
     if (len(user_df) == 0):
         return 'Empty'
+
     elif user.pwd == user_df['password'][0]: 
         return user_df['user_id'][0]
     else:
         return 'Empty'
+
 
 @app.get('/signin/artists')
 def get_artists():
     artist_query = f"SELECT DISTINCT artist_name, artist_url FROM track_info ORDER BY artist_name;"
     artist_df = pd.read_sql(artist_query, db_connect)
     return artist_df.to_dict('records')
+
 
 def list2array(list_data):
     tmp = ''
@@ -87,18 +95,15 @@ def list2array(list_data):
 
 @app.get("/topTracks", description='get top tracks')
 def getTopTracks(tags, artists):
-
     # 각 태그마다 top 10개 트랙 추출 inter에 넣기
     inters = pd.DataFrame(columns=['track_id', 'track_name', 'url', 'duration','listeners', 'playcount', 'artist_name', 'artist_url', \
                                     'track_tag_list', 'album_name', 'streamable_text', 'streamable_fulltrack'])
 
     for t in tags:
-        # tag = f'"{t}"'
         tag_query = f"SELECT * FROM track_info WHERE '{t}' = ANY (track_tag_list) ORDER BY playcount LIMIT 10;"
         tag_tracks = pd.read_sql(tag_query, db_connect)
         inters = pd.concat([inters, tag_tracks])
 
-    # 각 아티스트마다 top 10개 트랙 추출 inter에 넣기
     for a in artists:
         artist = f"'{a}'"
         artist_query = f"SELECT * FROM track_info WHERE artist_name={artist} ORDER BY playcount LIMIT 10;"
@@ -107,6 +112,7 @@ def getTopTracks(tags, artists):
 
     return inters
 
+
 @app.post('/signin', description='회원가입')
 def signin_user(userInfo: userInfo, tags: list, artists: list):
 
@@ -114,35 +120,35 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
     user_query = f"SELECT user_id FROM user_info WHERE user_id={userInfo.user_id};"
     user_df = pd.read_sql(user_query, db_connect)
 
-    id_df = pd.read_sql('SELECT max(user_id) AS max_id FROM user_info;', db_connect).to_dict()
-    userInfo.user_id = id_df['max_id'][0] + 1
-
-    if (user_df.shape[0] == 0):
+    if (user_df.empty):
+        id_df = pd.read_sql('SELECT max(user_id) AS max_id FROM user_info;', db_connect).to_dict()
+        userInfo.user_id = id_df['max_id'][0] + 1
+        
         #user information : user_id, realname, password, age, playcount, follower, following
         user_query = f"INSERT INTO user_info (user_id, user_name, realname, password, age, playcount, follower, following) \
                 VALUES ({userInfo.user_id}, '{userInfo.user_name}', '{userInfo.realname}', '{userInfo.password}', \
                     {userInfo.age}, 0, '{{}}', '{{}}') \
-                RETURNING user_id;"
 
         response1 = pd.read_sql(user_query, db_connect).all()
 
-        # interaction : user_id, track_name, album_name, artist_name, timestamp(uts), loved(int)
         # tag, artist 별 N개 트랙 inter에 넣기
         user_tracks = getTopTracks(tags, artists)
-        print("usertrack\n", user_tracks)
+        # print("usertrack\n", user_tracks)
+        
         # def add_interaction(user_id: int, track_id: int):
         for _, row in user_tracks.iterrows():
             print(row)
             res = add_interaction(user_id=userInfo.user_id, track_id=row['track_id'])
 
         if response1['user_id'] and res == 'Success':
-            # db_connect.commit()
+            db_connect.commit()
             return "True"
         else:
             return "False"
     # 해당 이름이 이미 존재하는 경우
-    else:   
+    else:
         return "False"
+
 
 @app.get("/users/{user_id}/profiles", description="사용자 정보")
 def get_profiles(user_id: int) -> userInfo:
@@ -165,15 +171,16 @@ def get_profiles(user_id: int) -> userInfo:
     return info
 
 
+
 @app.get("/users/{user_id}/likes", description="좋아요 리스트")
-def get_likes(user_id: int):
-    query = f"""select distinct inter.track_name,
-    inter.album_name, track_info.artist_name, track_info.duration, 
+def get_likes(user_id: int):  # -> track name
+    query = f"""select distinct track_info.track_name,
+    track_info.album_name, track_info.artist_name, track_info.duration, 
     album_info.image from track_info left outer join inter on 
     track_info.track_name = inter.track_name left outer 
     join album_info on inter.album_name = album_info.album_name 
-    where (inter.user_id = {user_id} and inter.loved = 1)
-    ;"""
+    where (inter.user_id = {user_id} and inter.loved = 1);
+    """
     with db_connect.cursor() as cur:
         cur.execute(query)
         values = cur.fetchall()
@@ -181,13 +188,14 @@ def get_likes(user_id: int):
     return values
 
 
-@app.get("/interaction/{user_id}/{albumInfo}/{artistInfo}/{trackName}/0", description='click interaction')
-def add_interaction(user_id: int, albumInfo: str, artistInfo: str, trackName: str):
+
+@app.get("/interaction/{user_id}/{track_id}/0", description='click interaction')
+def add_interaction(user_id: int, track_id: int):
     timestamp = int(datetime.now().replace(tzinfo=timezone.utc).timestamp())
-    print(albumInfo, artistInfo, trackName)
-    query = f"INSERT INTO inter (track_name, loved, user_id, album_name, date_uts, artist_name)\
-             VALUES ('{change_str(trackName)}', 0, {user_id}, '{albumInfo}', {timestamp}, '{artistInfo}');"
-    query2 = f"update track_info set playcount = playcount+1 where album_name = '{albumInfo}' and track_name = '{trackName}' and artist_name = '{artistInfo}'"
+
+    query = f"INSERT INTO inter (track_id, loved, user_id, date_uts)\
+             VALUES ({track_id}, 0, {user_id}, {timestamp});"
+    query2 = f"update track_info set playcount = playcount+1 where track_id = {track_id} and user_id = {user_id};"
     with db_connect.cursor() as cur:
         cur.execute(query)
         cur.execute(query2)
@@ -196,24 +204,23 @@ def add_interaction(user_id: int, albumInfo: str, artistInfo: str, trackName: st
     return "Success"
 
 
-@app.get("/interaction/{user_id}/{albumInfo}/{artistInfo}/{trackName}/1", description='like interaction')
-def add_like(user_id: int, albumInfo: str, artistInfo: str, trackName: str):
+@app.get("/interaction/{user_id}/{track_id}/1", description='like interaction')
+def add_like(user_id: int, track_id: int):
     timestamp = int(datetime.now().replace(tzinfo=timezone.utc).timestamp())
-    print(albumInfo, artistInfo, trackName)
-    query = f"INSERT INTO inter (track_name, loved, user_id, album_name, date_uts, artist_name)\
-             VALUES ('{change_str(trackName)}', 1, {user_id}, '{albumInfo}', {timestamp}, '{artistInfo}');"
+
+    query = f"INSERT INTO inter (track_id, loved, user_id, date_uts)\
+             VALUES ({track_id}, 1, {user_id}, {timestamp});"
     with db_connect.cursor() as cur:
         cur.execute(query)
         db_connect.commit()
 
     return "Success"
 
-
-@app.get("/interaction/{user_id}/{albumInfo}/{artistInfo}/{trackName}/2", description='delete interaction')
-def add_delete(user_id: int, albumInfo: str, artistInfo: str, trackName: str):
+@app.get("/interaction/{user_id}/{track_id}/2", description='delete interaction')
+def add_delete(user_id: int, track_id: int):
     timestamp = int(datetime.now().replace(tzinfo=timezone.utc).timestamp())
-    print(albumInfo, artistInfo, trackName)
-    query = f"update inter set loved = 0 where user_id ={user_id} and album_name = '{albumInfo}' and track_name = '{trackName}' and artist_name = '{artistInfo}' and loved = 1"
+
+    query = f"update inter set loved = 0 where user_id = {user_id} and track_id = {track_id};"
     with db_connect.cursor() as cur:
         cur.execute(query)
         db_connect.commit()
@@ -222,7 +229,8 @@ def add_delete(user_id: int, albumInfo: str, artistInfo: str, trackName: str):
 
 
 @app.get("/follow/{user_A}/{user_B}", description='user_A follows user_B')
-def add_delete(user_A: int, user_B: int):
+    else:
+def add_follow(user_A: int, user_B: int):
     query = f"update user_info set follower = array_append(follower, {user_A}) where user_id = {user_B};"
     query2= f"update user_info set following = array_append(following, {user_B}) where user_id = {user_A};"
     with db_connect.cursor() as cur:
@@ -233,7 +241,7 @@ def add_delete(user_A: int, user_B: int):
     return "Success"
 
 @app.get("/unfollow/{user_A}/{user_B}", description='user_A unfollows user_B')
-def add_delete(user_A: int, user_B: int):
+def add_unfollow(user_A: int, user_B: int):
     query = f"update user_info set following = array_remove(following, {user_B}) where user_id = {user_A};"
     query2 = f"update user_info set following = array_remove(follower, {user_A}) where user_id = {user_B};"
     with db_connect.cursor() as cur:
@@ -242,6 +250,7 @@ def add_delete(user_A: int, user_B: int):
         db_connect.commit()
 
     return "Success"
+
 
 if __name__ == "__main__":
     db_connect = psycopg2.connect(
