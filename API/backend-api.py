@@ -152,21 +152,22 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
 
 @app.get("/users/{user_id}/profiles", description="사용자 정보")
 def get_profiles(user_id: int) -> userInfo:
-    user_query = f"SELECT user_id FROM user_info WHERE user_id={user_id};"
-    user_df = pd.read_sql(user_query, db_connect)
-    if (user_df.shape[0] == 0):
+    user_query = f"SELECT * FROM user_info WHERE user_id={user_id};"
+    user_df = pd.read_sql(user_query, db_connect).to_dict()
+    print(user_df)
+    if (len(user_df) == 0):
         return 'None'
     else:
         info = userInfo(
-                user_id=user_df['user_id'],                
-                user_name=user_df['user_name'],
-                password=user_df['password'],
-                realname =user_df['realname'],
-                image =user_df['image'],
-                age =user_df['age'],
-                playcount =user_df['playcount'],
-                following = user_df['following'],
-                follower = user_df['follower'])
+                user_id=user_df['user_id'][0],                
+                user_name=user_df['user_name'][0],  
+                password=user_df['password'][0], 
+                realname =user_df['realname'][0],  
+                image =user_df['image'][0],  
+                age =user_df['age'][0],  
+                playcount =user_df['playcount'][0],  
+                following = user_df['following'][0],  
+                follower = user_df['follower'][0] )
 
     return info
 
