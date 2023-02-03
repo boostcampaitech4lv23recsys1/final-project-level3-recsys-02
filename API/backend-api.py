@@ -93,8 +93,8 @@ def list2array(list_data):
         tmp += f'"{d}",'
     return tmp[:-1]
 
-@app.get("/topTracks", description='get top tracks')
-def get_top_tracks(tags, artists):
+@app.get("/signin/inters", description='get new interaction tracks')
+def get_new_inters(tags, artists):
     # 각 태그마다 top 10개 트랙 추출 inter에 넣기
     inters = pd.DataFrame(columns=['track_id', 'track_name', 'url', 'duration','listeners', 'playcount', 'artist_name', 'artist_url', \
                                     'track_tag_list', 'album_name', 'streamable_text', 'streamable_fulltrack'])
@@ -132,7 +132,7 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
         response1 = pd.read_sql(user_query, db_connect).all()
 
         # tag, artist 별 N개 트랙 inter에 넣기
-        user_tracks = getTopTracks(tags, artists)
+        user_tracks = get_new_inters(tags, artists)
         # print("usertrack\n", user_tracks)
         
         # def add_interaction(user_id: int, track_id: int):
