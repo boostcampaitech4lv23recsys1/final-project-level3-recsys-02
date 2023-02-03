@@ -18,6 +18,7 @@ class _StartPageState extends State<StartPage> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {});
     var width = MediaQuery.of(context).size.width;
 
     Widget startHeader() {
