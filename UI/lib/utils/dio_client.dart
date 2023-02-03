@@ -183,9 +183,9 @@ class DioModel {
   Future profile({required String name}) async {
     late Response response;
     try {
-      response = await _dio.get('users/' + name + '/infer');
-      debugPrint(response.toString());
-      List responseBody = response.data;
+      response = await _dio.post('/predict_user', data: '0');
+      // debugPrint(response.toString());
+      Map responseBody = response.data;
       return responseBody;
     } catch (e) {
       debugPrint('Error creating user: $e');

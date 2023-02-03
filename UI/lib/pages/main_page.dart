@@ -33,8 +33,19 @@ class _MainPageState extends State<MainPage> {
   final recController = ScrollController();
   final DioClient dioClient = DioClient();
 
+  String userId = '';
+
   List<Item> musicList = [];
+  List<Item> tagList = [];
+  List<Item> artistList = [];
   List<Item> recList = [];
+
+  List recMainList = [];
+  List recTagList = [];
+  List recArtList = [];
+  List user = [];
+
+  final DioModel dio = DioModel();
 
   Future addInteraction(Item item) async {
     await dioClient.interactionClick(
@@ -43,16 +54,65 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  void getMusicList() {
+  void getMusicList() async {
+    final pref = await SharedPreferences.getInstance();
+    userId = pref.getString('user_id')!;
+
+    Map recomlist = await dio.profile(name: userId);
+
+    List temp = [recomlist['main'], recomlist['tag'], recomlist['artist']];
+    for (int i = 0; i < temp.length; i++) {
+      for (int j = 0; j < temp[i].length; j++) {
+        if (temp[i][j][1] == null) {
+          temp[i][j][1] = 'assets/album.png';
+        }
+        for (int k = 2; k < 6; k++) {
+          if (temp[i][j][k] == null) {
+            temp[i][j][k] = 'No data';
+          }
+        }
+      }
+    }
+
+    recMainList = temp[0];
+    recTagList = temp[1];
+    recArtList = temp[2];
+    user = recomlist['user'];
+
+    recMainList.shuffle();
+    recTagList.shuffle();
+    recArtList.shuffle();
+
+    musicList.clear();
+    tagList.clear();
+    artistList.clear();
+
     for (int i = 0; i < 20; i++) {
       musicList.add(Item(
-          trackId: i,
-          image: 'assets/album.png',
-          trackName: 'Track Name $i',
-          albumName: 'Album Name $i',
-          artistName: 'Artist Name $i',
-          duration: 24000));
+          trackId: recMainList[i][0],
+          image: recMainList[i][1],
+          trackName: recMainList[i][2],
+          albumName: recMainList[i][3],
+          artistName: recMainList[i][4],
+          duration: recMainList[i][5]));
+
+      tagList.add(Item(
+          trackId: recTagList[i][0],
+          image: recTagList[i][1],
+          trackName: recTagList[i][2],
+          albumName: recTagList[i][3],
+          artistName: recTagList[i][4],
+          duration: recTagList[i][5]));
+
+      artistList.add(Item(
+          trackId: recArtList[i][0],
+          image: recArtList[i][1],
+          trackName: recArtList[i][2],
+          albumName: recArtList[i][3],
+          artistName: recArtList[i][4],
+          duration: recArtList[i][5]));
     }
+    setState(() {});
   }
 
   void getRecList() {
@@ -117,7 +177,9 @@ class _MainPageState extends State<MainPage> {
           IconButton(
               icon: const Icon(Icons.refresh_rounded),
               color: kWhite,
-              onPressed: () {}),
+              onPressed: () {
+                getMusicList();
+              }),
         ],
       ),
       SizedBox(
@@ -147,7 +209,7 @@ class _MainPageState extends State<MainPage> {
     ]);
   }
 
-  Widget recommendation(String title) {
+  Widget recommendation(String title, List<Item> items) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       titleBar(
         title,
@@ -164,20 +226,20 @@ class _MainPageState extends State<MainPage> {
             scrollDirection: Axis.horizontal,
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            itemCount: recList.length,
+            itemCount: items.length,
             itemBuilder: (BuildContext context, int idx) {
               return GestureDetector(
                   onTap: () {
-                    addInteraction(recList[idx]);
+                    addInteraction(items[idx]);
                     Navigator.of(context).push(
                       PageRouteBuilder(
                         opaque: false, // set to false
                         pageBuilder: (_, __, ___) =>
-                            DetailPage(item: recList[idx]),
+                            DetailPage(item: items[idx]),
                       ),
                     );
                   },
-                  child: trackCoverCard(recList[idx]));
+                  child: trackCoverCard(items[idx]));
             },
           ))
     ]);
@@ -208,11 +270,11 @@ class _MainPageState extends State<MainPage> {
                     defaultSpacer,
                     musicRank(),
                     defaultSpacer,
-                    recommendation('00 장르를 좋아한다면'),
+                    recommendation('00 장르를 좋아한다면', tagList),
                     defaultSpacer,
-                    recommendation('00 아티스트를 좋아한다면'),
+                    recommendation('00 아티스트를 좋아한다면', artistList),
                     defaultSpacer,
-                    recommendation('00 노래를 좋아한다면'),
+                    recommendation('00 노래를 좋아한다면', recList),
                     defaultSpacer,
                     footer(),
                     defaultSpacer,

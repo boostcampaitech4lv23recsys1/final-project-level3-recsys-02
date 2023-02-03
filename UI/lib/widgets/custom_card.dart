@@ -94,7 +94,7 @@ Widget trackCoverCard(Item item) {
         // image
         ClipRRect(
           borderRadius: kBorder,
-          child: Image.asset(
+          child: Image.network(
             item.image,
             fit: BoxFit.cover,
           ),
@@ -127,7 +127,7 @@ Widget trackCard(Item item, {bool isRank = false, int index = 1}) {
       children: [
         // image
         ClipRect(
-          child: Image.asset(
+          child: Image.network(
             item.image,
           ),
         ),
