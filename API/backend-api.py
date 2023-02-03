@@ -5,7 +5,7 @@ import psycopg2
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from datetime import datetime, timezone
-import json
+from typing import Optional
 
 app = FastAPI()
 
@@ -23,9 +23,9 @@ def change_str(a):
 class trackInfo(BaseModel):
     # username: str
     track_id: int
-    track_name: str
-    album_name: str
-    artist_name: str
+    track_name: Optional[str]
+    album_name: Optional[str]
+    artist_name: Optional[str]
     duration: int
     date_uts: int
     loved: int
@@ -42,15 +42,14 @@ class User(BaseModel):
 
 class userInfo(BaseModel):
     user_id: int
-    user_name: str
-    password: str
-    realname: str
-    image: str
-    age: int
-    playcount: int
+    user_name: Optional[str]
+    password: Optional[str]
+    realname: Optional[str]
+    image: Optional[str]
+    age: Optional[int]
+    playcount: Optional[int]
     following: object
     follower: object
-
 
 @app.get('/user')
 def get_user_table():
@@ -130,9 +129,9 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
             values = cur.fetchall()[0][0]
 
         userInfo.user_id = values + 1
-        user_query = f"INSERT INTO user_info (user_id, user_name, realname, password, age, following, follower) \
+        user_query = f"INSERT INTO user_info (user_id, user_name, realname, password, age, following, follower, playcount) \
          VALUES ({userInfo.user_id}, '{userInfo.user_name}', '{userInfo.realname}', '{userInfo.password}', \
-             {userInfo.age}, '{{}}', '{{}}');"
+             {userInfo.age}, '{{}}', '{{}}', 0);"
 
         with db_connect.cursor() as cur:
             cur.execute(user_query)
@@ -168,7 +167,7 @@ def get_profiles(user_id: int) -> userInfo:
                 age =user_df['age'][0],  
                 playcount =user_df['playcount'][0],  
                 following = user_df['following'][0],  
-                follower = user_df['follower'][0] )
+                follower = user_df['follower'][0])
 
     return info
 
