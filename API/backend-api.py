@@ -130,10 +130,10 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
         # tag, artist 별 N개 트랙 inter에 넣기
         user_tracks = getTopTracks(tags, artists)
         print("usertrack\n", user_tracks)
-        # def add_interaction(user_id: int, albumInfo: str, artistInfo: str, trackName: str):
+        # def add_interaction(user_id: int, track_id: int):
         for _, row in user_tracks.iterrows():
             print(row)
-            res = add_interaction(user_id=userInfo.user_id, albumInfo=row['album_name'], artistInfo=row['artist_name'], trackName=row['track_name'])
+            res = add_interaction(user_id=userInfo.user_id, track_id=row['track_id'])
 
         if response1['user_id'] and res == 'Success':
             # db_connect.commit()
