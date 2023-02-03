@@ -2,8 +2,8 @@ class UserInfo {
 // final String country;
   String user_name, password, realname, image;
   int userId, age, playcount;
-  List<String> follower;
-  List<String> following;
+  List<int> follower;
+  List<int> following;
 
   UserInfo({
     required this.userId,
@@ -30,8 +30,8 @@ UserInfo _$UserFromJson(Map<String, dynamic> json) {
     image: json['image'] as String,
     age: json['age'] as int,
     playcount: json['playcount'] as int,
-    following: json['following'] as List<String>,
-    follower: json['followers'] as List<String>,
+    following: json['following'] as List<int>,
+    follower: json['followers'] as List<int>,
   );
 }
 
@@ -51,8 +51,8 @@ class OtherUser {
 // final String country;
   int user_id;
   String realname, image;
-  List<String> follower;
-  List<String> following;
+  List<int> follower;
+  List<int> following;
 
   OtherUser({
     required this.user_id,
