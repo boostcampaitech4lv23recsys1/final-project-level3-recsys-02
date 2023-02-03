@@ -170,13 +170,21 @@ def get_profiles(user_id: int) -> userInfo:
     if (len(user_df) == 0):
         return 'None'
     else:
+        if(user_df['playcount'][0] == None):
+            user_df['playcount'][0] = 0
+        if(user_df['image'][0] == None):
+            user_df['image'][0] = 'assets/profile2.png'
+        if(user_df['following'][0] == None):
+            user_df['following'][0] = []
+        if(user_df['follower'][0] == None):
+            user_df['follower'][0] = []
         info = userInfo(
                 user_id=user_df['user_id'][0],                
                 user_name=user_df['user_name'][0],  
                 password=user_df['password'][0], 
                 realname =user_df['realname'][0],  
                 image =user_df['image'][0],  
-                age =user_df['age'][0],  
+                age =user_df['age'][0],
                 playcount =user_df['playcount'][0],  
                 following = user_df['following'][0],  
                 follower = user_df['follower'][0] )
