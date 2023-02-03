@@ -94,7 +94,7 @@ def list2array(list_data):
     return tmp[:-1]
 
 @app.get("/topTracks", description='get top tracks')
-def getTopTracks(tags, artists):
+def get_top_tracks(tags, artists):
     # 각 태그마다 top 10개 트랙 추출 inter에 넣기
     inters = pd.DataFrame(columns=['track_id', 'track_name', 'url', 'duration','listeners', 'playcount', 'artist_name', 'artist_url', \
                                     'track_tag_list', 'album_name', 'streamable_text', 'streamable_fulltrack'])
@@ -127,7 +127,7 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
         #user information : user_id, realname, password, age, playcount, follower, following
         user_query = f"INSERT INTO user_info (user_id, user_name, realname, password, age, playcount, follower, following) \
                 VALUES ({userInfo.user_id}, '{userInfo.user_name}', '{userInfo.realname}', '{userInfo.password}', \
-                    {userInfo.age}, 0, '{{}}', '{{}}') \
+                    {userInfo.age}, 0, '{{}}', '{{}}')";\
 
         response1 = pd.read_sql(user_query, db_connect).all()
 
@@ -229,7 +229,6 @@ def add_delete(user_id: int, track_id: int):
 
 
 @app.get("/follow/{user_A}/{user_B}", description='user_A follows user_B')
-    else:
 def add_follow(user_A: int, user_B: int):
     query = f"update user_info set follower = array_append(follower, {user_A}) where user_id = {user_B};"
     query2= f"update user_info set following = array_append(following, {user_B}) where user_id = {user_A};"

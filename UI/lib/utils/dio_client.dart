@@ -96,12 +96,10 @@ class DioClient {
   }
 
   Future interactionClick(
-      {required int userId,
-      required int trackId}) async {
+      {required String userId, required int trackId}) async {
     late Response response;
     try {
-      response = await _dio
-          .get('/interaction/$userId/$trackId/0');
+      response = await _dio.get('/interaction/$userId/$trackId/0');
       debugPrint(response.toString());
       List responseBody = response.data;
       return responseBody;
@@ -111,13 +109,10 @@ class DioClient {
     }
   }
 
-  Future interactionLike(
-      {required int userId,
-      required int trackId}) async {
+  Future interactionLike({required String userId, required int trackId}) async {
     late Response response;
     try {
-      response = await _dio
-          .get('/interaction/$userId/$trackId/1');
+      response = await _dio.get('/interaction/$userId/$trackId/1');
       debugPrint(response.toString());
       List responseBody = response.data;
       return responseBody;
@@ -128,12 +123,10 @@ class DioClient {
   }
 
   Future interactionDelete(
-      {required int userId,
-      required int trackId}) async {
+      {required String userId, required int trackId}) async {
     late Response response;
     try {
-      response = await _dio
-          .get('/interaction/$userId/$trackId/2');
+      response = await _dio.get('/interaction/$userId/$trackId/2');
       debugPrint(response.toString());
       List responseBody = response.data;
       return responseBody;

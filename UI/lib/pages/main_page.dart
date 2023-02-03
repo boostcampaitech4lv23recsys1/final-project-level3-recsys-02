@@ -38,10 +38,9 @@ class _MainPageState extends State<MainPage> {
 
   Future addInteraction(Item item) async {
     await dioClient.interactionClick(
-        userId: getUserName(),
-        trackId: item.trackId,
-        );
-
+      userId: getUserName() as String,
+      trackId: item.trackId,
+    );
   }
 
   void getMusicList() {
