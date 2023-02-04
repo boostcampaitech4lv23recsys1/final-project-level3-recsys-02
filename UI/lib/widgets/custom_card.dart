@@ -40,7 +40,7 @@ Widget userCoverCard(OtherUser other) {
           width: 120,
           child: CircleAvatar(
             backgroundColor: Colors.transparent,
-            backgroundImage: AssetImage(other.image),
+            backgroundImage: NetworkImage(other.image),
           ),
         ),
         SizedBox(
@@ -69,7 +69,7 @@ Widget userCard(OtherUser otherUser) {
       children: [
         // image
         ClipRect(
-          child: Image.asset(otherUser.image),
+          child: Image.network(otherUser.image),
         ),
         defaultSpacer,
         defaultSpacer,
@@ -94,7 +94,7 @@ Widget trackCoverCard(Item item) {
         // image
         ClipRRect(
           borderRadius: kBorder,
-          child: Image.asset(
+          child: Image.network(
             item.image,
             fit: BoxFit.cover,
           ),
@@ -153,7 +153,7 @@ Widget trackCard(Item item, {bool isRank = false, int index = 1}) {
       children: [
         // image
         ClipRect(
-          child: Image.asset(
+          child: Image.network(
             item.image,
           ),
         ),

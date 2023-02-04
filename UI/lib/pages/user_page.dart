@@ -32,6 +32,7 @@ class _UserPageState extends State<UserPage> {
   late List<Item> myPlaylist = [];
   late SharedPreferences pref;
   final DioClient dio = DioClient();
+  final DioModel dioModel = DioModel();
 
   String userId = '';
   String realname = '';
@@ -45,20 +46,41 @@ class _UserPageState extends State<UserPage> {
   List likelist = [];
 
   List<OtherUser> userList = [];
-  void getUserRec() {
+  List recUser = [];
+
+  void getUserRec() async {
+    final pref = await SharedPreferences.getInstance();
+    userId = pref.getString('user_id')!;
+
+    recUser = await dioModel.recUser(name: userId.toString());
+
+    for (int i = 0; i < recUser.length; i++) {
+      for (int j = 0; j < 5; j++) {
+        if (recUser[i][j] == null) {
+          if (j < 3) {
+            if (j == 1) {
+              recUser[i][j] = recUser[i][5];
+            } else {
+              recUser[i][j] = '';
+            }
+          } else {
+            recUser[i][j] = [];
+          }
+        }
+      }
+    }
+
     for (int i = 0; i < 10; i++) {
-      userList.add(
-        OtherUser(
-            user_id: i,
-            realname: 'user$i',
-            image: 'assets/profile.png',
-            following: [],
-            follower: []),
-      );
+      userList.add(OtherUser(
+          user_id: recUser[i][0],
+          realname: recUser[i][1],
+          image: recUser[i][2],
+          following: recUser[i][3],
+          follower: recUser[i][4]));
     }
   }
 
-  Future getProfile() async {
+  void getProfile() async {
     if (widget.isMyPage) {
       final pref = await SharedPreferences.getInstance();
       userId = pref.getString('user_id')!;

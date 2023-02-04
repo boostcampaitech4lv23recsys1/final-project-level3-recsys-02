@@ -91,7 +91,8 @@ class DioClient {
     try {
       response = await _dio.get('/users/' + name + '/profiles');
       debugPrint(response.toString());
-      Map responseBody = response.data;
+      var responseBody = response.data;
+
       return responseBody;
     } catch (e) {
       debugPrint('Error Profile : $e');
@@ -203,11 +204,24 @@ class DioModel {
     ),
   )..interceptors.add(Logging());
 
-  Future profile({required String name}) async {
+  Future recMusic({required String name}) async {
     late Response response;
     try {
-      response = await _dio.get('users/' + name + '/infer');
-      debugPrint(response.toString());
+      response = await _dio.post('/recomendation_music', data: '0');
+      // debugPrint(response.toString());
+      Map responseBody = response.data;
+      return responseBody;
+    } catch (e) {
+      debugPrint('Error creating user: $e');
+      return -1;
+    }
+  }
+
+  Future recUser({required String name}) async {
+    late Response response;
+    try {
+      response = await _dio.post('/recomendation_user', data: '0');
+      // debugPrint(response.toString());
       List responseBody = response.data;
       return responseBody;
     } catch (e) {
