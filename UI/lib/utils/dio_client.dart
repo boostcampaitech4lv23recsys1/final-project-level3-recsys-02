@@ -181,6 +181,7 @@ class DioClient {
       debugPrint('Error LikeList : $e');
     }
   }
+
   Future getSearchTrack({required String track}) async {
     late Response response;
     try {
@@ -192,13 +193,25 @@ class DioClient {
     }
   }
 
-
   Future getTrackDetail(int trackId) async {
     late Response response;
     try {
       response = await _dio.get('/get_track_detail/$trackId');
       // debugPrint(response.toString());
       return response.data[0];
+    } catch (e) {
+      debugPrint('Error getTrackDetail : $e');
+      return -1;
+    }
+  }
+
+  Future get_usertasts(String user_id) async {
+    late Response response;
+    try {
+      response = await _dio.get('/$user_id/tasts');
+      // debugPrint(response.toString());
+      List responseBody = response.data;
+      return responseBody;
     } catch (e) {
       debugPrint('Error getTrackDetail : $e');
       return -1;
@@ -226,7 +239,6 @@ class DioModel {
     }
   }
 
-
   Future recUser({required String name}) async {
     late Response response;
     try {
@@ -240,4 +252,3 @@ class DioModel {
     }
   }
 }
-

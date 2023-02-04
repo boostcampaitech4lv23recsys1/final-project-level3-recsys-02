@@ -11,6 +11,7 @@ import 'package:ui/widgets/titlebar.dart';
 import 'package:web_smooth_scroll/web_smooth_scroll.dart';
 import 'package:ui/utils/dio_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:math';
 
 Future<String> getUserName() async {
   final pref = await SharedPreferences.getInstance();
@@ -34,6 +35,8 @@ class _MainPageState extends State<MainPage> {
   final DioModel dioModel = DioModel();
 
   String userId = '';
+  String tag = '';
+  String artist = '';
 
   List<Item> musicList = [];
   List<Item> tagList = [];
@@ -41,7 +44,7 @@ class _MainPageState extends State<MainPage> {
   List<Item> recList = [];
 
   List<Item> chartList = [];
-  List interChartList= [];
+  List interChartList = [];
 
   List recMainList = [];
   List recTagList = [];
@@ -55,9 +58,9 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  void getChartList() async{
+  void getChartList() async {
     List interChartList = await dioClient.getDailyChart();
-    for(int i = 0; i < interChartList.length ; i ++){
+    for (int i = 0; i < interChartList.length; i++) {
       chartList.add(Item(
           trackId: interChartList[i][0],
           image: interChartList[i][6],
@@ -65,11 +68,73 @@ class _MainPageState extends State<MainPage> {
           albumName: interChartList[i][2],
           artistName: interChartList[i][3],
           duration: interChartList[i][4],
-          url: interChartList[i][5]
-      ));
+          url: interChartList[i][5]));
     }
     setState(() {});
   }
+
+  void getTasts() async {
+    final pref = await SharedPreferences.getInstance();
+    userId = pref.getString('user_id')!;
+
+    List tasts = await dioClient.get_usertasts(userId);
+    List tag_list = [
+      'acoustic',
+      'alternative',
+      'blues',
+      'classical',
+      'country',
+      'dance',
+      'electronic',
+      'hardcore',
+      'hip-hop',
+      'indie',
+      'jazz',
+      'k-pop',
+      'metal',
+      'pop',
+      'punk',
+      'rap',
+      'reggae',
+      'rnb',
+      'rock',
+      'soul'
+    ];
+    List art_list = [
+      '10 Years',
+      '100 gecs',
+      '1000 Clowns',
+      '10cc',
+      '112',
+      '12 Rods',
+      '12 Stones',
+      '1208',
+      '123'
+    ];
+    int min = 0;
+    int max = 19;
+
+    Random random = new Random();
+    int randomInt = min + random.nextInt(max - min + 1);
+
+    if (tasts[0] == null) {
+      tag = tag_list[randomInt];
+    } else {
+      tag = tasts[0][0];
+    }
+    min = 0;
+    max = 8;
+
+    randomInt = min + random.nextInt(max - min + 1);
+    if (tasts[1] == null) {
+      artist = art_list[randomInt];
+    } else {
+      artist = tasts[1];
+    }
+
+    setState(() {});
+  }
+
   void getMusicList() async {
     final pref = await SharedPreferences.getInstance();
     userId = pref.getString('user_id')!;
@@ -151,6 +216,7 @@ class _MainPageState extends State<MainPage> {
     getMusicList();
     getRecList();
     getChartList();
+    getTasts();
     super.initState();
   }
 
@@ -377,9 +443,9 @@ class _MainPageState extends State<MainPage> {
                     defaultSpacer,
                     musicRank(),
                     defaultSpacer,
-                    recommendation('00 장르를 좋아한다면', tagList),
+                    recommendation('$tag 장르를 좋아한다면', tagList),
                     defaultSpacer,
-                    recommendation('00 아티스트를 좋아한다면', artistList),
+                    recommendation('$artist 아티스트를 좋아한다면', artistList),
                     defaultSpacer,
                     footer(),
                     defaultSpacer,
