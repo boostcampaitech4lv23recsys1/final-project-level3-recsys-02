@@ -18,7 +18,6 @@ class _StartPageState extends State<StartPage> {
 
   @override
   Widget build(BuildContext context) {
-    setState(() {});
     var width = MediaQuery.of(context).size.width;
 
     Widget startHeader() {
@@ -49,13 +48,12 @@ class _StartPageState extends State<StartPage> {
                       )),
                   defaultSpacer,
                   Container(
-                      height: titleHeight,
                       width: buttonWidth,
                       child: ElevatedButton(
                         style: OutlinedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            side: whiteBorder,
-                            padding: const EdgeInsets.all(16)),
+                            backgroundColor: kBlack,
+                            elevation: 0,
+                            padding: const EdgeInsets.all(12)),
                         child: Text('로그아웃', style: subtitleTextStyle),
                         onPressed: () {
                           exitSession();
@@ -63,7 +61,7 @@ class _StartPageState extends State<StartPage> {
                           Navigator.popUntil(
                               context, ModalRoute.withName('/home'));
                         },
-                      ))
+                      )),
                 ])
               : Row(
                   children: [

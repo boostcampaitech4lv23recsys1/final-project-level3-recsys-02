@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:toast/toast.dart';
 import 'package:ui/constants.dart';
-import 'package:ui/main.dart';
 import 'package:ui/models/item.dart';
+import 'package:ui/widgets/search_popup.dart';
 import 'package:ui/widgets/track_detail.dart';
 import 'package:ui/widgets/footer.dart';
-import 'package:ui/widgets/custom_header.dart';
 import 'package:ui/widgets/custom_card.dart';
 import 'package:ui/widgets/titlebar.dart';
 import 'package:web_smooth_scroll/web_smooth_scroll.dart';
@@ -241,6 +240,93 @@ class _MainPageState extends State<MainPage> {
             },
           ))
     ]);
+  }
+
+  AppBar mainAppBar(context) {
+    return AppBar(
+      toolbarHeight: 80,
+      backgroundColor: kBlack,
+      elevation: 0,
+      leading: ElevatedButton(
+        style: OutlinedButton.styleFrom(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            padding: const EdgeInsets.all(12)),
+        child: Image.asset(
+          'assets/logo.png',
+        ),
+        onPressed: () {
+          Navigator.pushNamed(context, '/main');
+        },
+      ),
+      leadingWidth: 200,
+      centerTitle: true,
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: buttonWidth,
+            margin: const EdgeInsets.only(right: 10),
+            child: ElevatedButton(
+              style: OutlinedButton.styleFrom(
+                  backgroundColor: kBlack,
+                  // side: whiteBorder,
+                  padding: const EdgeInsets.all(12)),
+              child: Text('홈', style: subtitleTextStyle),
+              onPressed: () {
+                Navigator.pushNamed(context, '/home');
+              },
+            ),
+          ),
+          Container(
+            width: buttonWidth,
+            child: ElevatedButton(
+              style: OutlinedButton.styleFrom(
+                  backgroundColor: kBlack,
+                  elevation: 0,
+                  padding: const EdgeInsets.all(12)),
+              child: Text('마이페이지', style: subtitleTextStyle),
+              onPressed: () {
+                Navigator.pushNamed(context, '/mypage');
+              },
+            ),
+          ),
+          Container(
+            width: buttonWidth,
+            child: ElevatedButton(
+              style: OutlinedButton.styleFrom(
+                  backgroundColor: kBlack,
+                  elevation: 0,
+                  padding: const EdgeInsets.all(12)),
+              child: Text('검색하기', style: subtitleTextStyle),
+              onPressed: () {
+                Navigator.of(context).push(
+                  PageRouteBuilder(
+                      opaque: false, // set to false
+                      pageBuilder: (_, __, ___) => SearchBar()),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        Container(
+            width: buttonWidth,
+            child: ElevatedButton(
+              style: OutlinedButton.styleFrom(
+                  backgroundColor: kBlack,
+                  elevation: 0,
+                  padding: const EdgeInsets.all(12)),
+              child: Text('로그아웃', style: subtitleTextStyle),
+              onPressed: () {
+                exitSession();
+                setState(() {});
+                Navigator.popUntil(context, ModalRoute.withName('/home'));
+              },
+            )),
+      ],
+    );
   }
 
   @override

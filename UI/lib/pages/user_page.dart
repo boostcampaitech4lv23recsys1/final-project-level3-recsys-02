@@ -6,7 +6,6 @@ import 'package:ui/models/item.dart';
 import 'package:ui/models/user.dart';
 import 'package:ui/widgets/follow_list.dart';
 import 'package:ui/widgets/footer.dart';
-import 'package:ui/widgets/custom_header.dart';
 import 'package:ui/widgets/custom_card.dart';
 import 'package:ui/widgets/titlebar.dart';
 import 'package:ui/widgets/track_detail.dart';
@@ -333,6 +332,43 @@ class _UserPageState extends State<UserPage> {
               '취향분석 결과',
               style: titleTextStyle,
             )))
+      ],
+    );
+  }
+
+  AppBar mypagenAppBar(context) {
+    return AppBar(
+      toolbarHeight: 80,
+      elevation: 0,
+      backgroundColor: kBlack,
+      leading: ElevatedButton(
+        style: OutlinedButton.styleFrom(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            padding: const EdgeInsets.all(12)),
+        child: Image.asset(
+          'assets/logo.png',
+        ),
+        onPressed: () {
+          Navigator.pushNamed(context, '/main');
+        },
+      ),
+      leadingWidth: 200,
+      actions: [
+        Container(
+            width: buttonWidth,
+            child: ElevatedButton(
+              style: OutlinedButton.styleFrom(
+                  backgroundColor: kBlack,
+                  elevation: 0,
+                  padding: const EdgeInsets.all(12)),
+              child: Text('로그아웃', style: subtitleTextStyle),
+              onPressed: () {
+                exitSession();
+                setState(() {});
+                Navigator.popUntil(context, ModalRoute.withName('/home'));
+              },
+            )),
       ],
     );
   }

@@ -1,5 +1,4 @@
 class Item {
-
   final String image, trackName, albumName, artistName;
   int duration, trackId;
 
@@ -23,4 +22,14 @@ String duration2String(duration) {
     time += '$ss';
   }
   return time;
+}
+
+class searchItem {
+  final String trackName, artistName;
+  final int trackId;
+  searchItem({
+    required this.trackId,
+    required this.trackName,
+    required this.artistName,
+  });
 }

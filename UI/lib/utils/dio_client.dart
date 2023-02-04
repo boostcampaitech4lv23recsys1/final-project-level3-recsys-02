@@ -172,6 +172,29 @@ class DioClient {
       return -1;
     }
   }
+
+  Future getSearchTrack({required String track}) async {
+    late Response response;
+    try {
+      response = await _dio.get('/get_search_track/$track');
+      return response.data;
+    } catch (e) {
+      debugPrint('Error getSearchTrack : $e');
+      return -1;
+    }
+  }
+
+  Future getTrackDetail(int trackId) async {
+    late Response response;
+    try {
+      response = await _dio.get('/get_track_detail/$trackId');
+      // debugPrint(response.toString());
+      return response.data[0];
+    } catch (e) {
+      debugPrint('Error getTrackDetail : $e');
+      return -1;
+    }
+  }
 }
 
 class DioModel {
