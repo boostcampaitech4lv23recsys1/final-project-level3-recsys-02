@@ -12,6 +12,7 @@ import tqdm
 from torch.optim import Adam, lr_scheduler
 
 from utils import get_metric, ndcg_k, recall_at_k
+from datetime import datetime, timezone
 
 # import mlflow
 # import mlflow.sklearn
@@ -113,7 +114,7 @@ class Trainer:
         )
 
     def save(self, file_name):
-        torch.save(self.model.cpu().state_dict(), file_name)
+        torch.save(self.model.cpu().state_dict(), args.checkpoint_path)
         self.model.to(self.device)
 
     def load(self, file_name):

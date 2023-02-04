@@ -1,0 +1,27 @@
+[2023-02-04 18:49:48,054] {taskinstance.py:1035} INFO - Dependencies all met for <TaskInstance: Train.Shell manual__2023-02-04T18:49:25.694601+00:00 [queued]>
+[2023-02-04 18:49:48,059] {taskinstance.py:1035} INFO - Dependencies all met for <TaskInstance: Train.Shell manual__2023-02-04T18:49:25.694601+00:00 [queued]>
+[2023-02-04 18:49:48,059] {taskinstance.py:1241} INFO - 
+--------------------------------------------------------------------------------
+[2023-02-04 18:49:48,060] {taskinstance.py:1242} INFO - Starting attempt 1 of 3
+[2023-02-04 18:49:48,060] {taskinstance.py:1243} INFO - 
+--------------------------------------------------------------------------------
+[2023-02-04 18:49:48,070] {taskinstance.py:1262} INFO - Executing <Task(BashOperator): Shell> on 2023-02-04 18:49:25.694601+00:00
+[2023-02-04 18:49:48,072] {standard_task_runner.py:52} INFO - Started process 68394 to run task
+[2023-02-04 18:49:48,075] {standard_task_runner.py:76} INFO - Running: ['airflow', 'tasks', 'run', 'Train', 'Shell', 'manual__2023-02-04T18:49:25.694601+00:00', '--job-id', '13', '--raw', '--subdir', '/opt/ml/git/final-project-level3-recsys-02/Airflow/dags/RecSys_02.py', '--cfg-path', '/tmp/tmpkq74phvi', '--error-file', '/tmp/tmpfdveaqe_']
+[2023-02-04 18:49:48,075] {standard_task_runner.py:77} INFO - Job 13: Subtask Shell
+[2023-02-04 18:49:48,099] {logging_mixin.py:109} INFO - Running <TaskInstance: Train.Shell manual__2023-02-04T18:49:25.694601+00:00 [running]> on host 3ab801c1e2ef
+[2023-02-04 18:49:48,122] {taskinstance.py:1412} INFO - Exporting the following env vars:
+AIRFLOW_CTX_DAG_OWNER=RecSys-02
+AIRFLOW_CTX_DAG_ID=Train
+AIRFLOW_CTX_TASK_ID=Shell
+AIRFLOW_CTX_EXECUTION_DATE=2023-02-04T18:49:25.694601+00:00
+AIRFLOW_CTX_DAG_RUN_ID=manual__2023-02-04T18:49:25.694601+00:00
+[2023-02-04 18:49:48,123] {subprocess.py:62} INFO - Tmp dir root location: 
+ /tmp
+[2023-02-04 18:49:48,123] {subprocess.py:74} INFO - Running command: ['bash', '-c', 'cd /opt/ml/git/final-project-level3-recsys-02/bentoml && poetry shell && pkill -9 bentoml']
+[2023-02-04 18:49:48,129] {subprocess.py:85} INFO - Output:
+[2023-02-04 18:49:48,615] {subprocess.py:89} INFO - Virtual environment already activated: /opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8
+[2023-02-04 18:49:48,665] {subprocess.py:93} INFO - Command exited with return code 0
+[2023-02-04 18:49:48,679] {taskinstance.py:1270} INFO - Marking task as SUCCESS. dag_id=Train, task_id=Shell, execution_date=20230204T184925, start_date=20230204T184948, end_date=20230204T184948
+[2023-02-04 18:49:48,728] {local_task_job.py:154} INFO - Task exited with return code 0
+[2023-02-04 18:49:48,752] {local_task_job.py:264} INFO - 1 downstream tasks scheduled from follow-on schedule check

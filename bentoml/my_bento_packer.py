@@ -91,8 +91,8 @@ def main():
     predictor = Predictor(model, infer_dataloader, args)
     pred_list = predictor.get_topk_main(0, full_sort=True)
 
-    model.load_state_dict(torch.load('model.pt'))
-    with open('attributes_dict_list.pkl', 'rb') as f:
+    model.load_state_dict(torch.load('/opt/ml/git/final-project-level3-recsys-02/bentoml/output/Finetune_full-LastFM-10.pt'))
+    with open('/opt/ml/git/final-project-level3-recsys-02/bentoml/attributes_dict_list.pkl', 'rb') as f:
         data = pickle.load(f)
     return model, args, pred_list, data
 

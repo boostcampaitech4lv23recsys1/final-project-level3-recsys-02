@@ -1,0 +1,78 @@
+[2023-02-04 18:49:50,544] {taskinstance.py:1035} INFO - Dependencies all met for <TaskInstance: Train.Pakage manual__2023-02-04T18:49:25.694601+00:00 [queued]>
+[2023-02-04 18:49:50,550] {taskinstance.py:1035} INFO - Dependencies all met for <TaskInstance: Train.Pakage manual__2023-02-04T18:49:25.694601+00:00 [queued]>
+[2023-02-04 18:49:50,550] {taskinstance.py:1241} INFO - 
+--------------------------------------------------------------------------------
+[2023-02-04 18:49:50,550] {taskinstance.py:1242} INFO - Starting attempt 1 of 3
+[2023-02-04 18:49:50,550] {taskinstance.py:1243} INFO - 
+--------------------------------------------------------------------------------
+[2023-02-04 18:49:50,559] {taskinstance.py:1262} INFO - Executing <Task(BashOperator): Pakage> on 2023-02-04 18:49:25.694601+00:00
+[2023-02-04 18:49:50,561] {standard_task_runner.py:52} INFO - Started process 68423 to run task
+[2023-02-04 18:49:50,564] {standard_task_runner.py:76} INFO - Running: ['airflow', 'tasks', 'run', 'Train', 'Pakage', 'manual__2023-02-04T18:49:25.694601+00:00', '--job-id', '14', '--raw', '--subdir', '/opt/ml/git/final-project-level3-recsys-02/Airflow/dags/RecSys_02.py', '--cfg-path', '/tmp/tmptiqne1yj', '--error-file', '/tmp/tmphoc7axw1']
+[2023-02-04 18:49:50,565] {standard_task_runner.py:77} INFO - Job 14: Subtask Pakage
+[2023-02-04 18:49:50,588] {logging_mixin.py:109} INFO - Running <TaskInstance: Train.Pakage manual__2023-02-04T18:49:25.694601+00:00 [running]> on host 3ab801c1e2ef
+[2023-02-04 18:49:50,611] {taskinstance.py:1412} INFO - Exporting the following env vars:
+AIRFLOW_CTX_DAG_OWNER=RecSys-02
+AIRFLOW_CTX_DAG_ID=Train
+AIRFLOW_CTX_TASK_ID=Pakage
+AIRFLOW_CTX_EXECUTION_DATE=2023-02-04T18:49:25.694601+00:00
+AIRFLOW_CTX_DAG_RUN_ID=manual__2023-02-04T18:49:25.694601+00:00
+[2023-02-04 18:49:50,612] {subprocess.py:62} INFO - Tmp dir root location: 
+ /tmp
+[2023-02-04 18:49:50,613] {subprocess.py:74} INFO - Running command: ['bash', '-c', 'python /opt/ml/git/final-project-level3-recsys-02/bentoml/my_bento_packer.py']
+[2023-02-04 18:49:50,619] {subprocess.py:85} INFO - Output:
+[2023-02-04 18:49:58,112] {subprocess.py:89} INFO - output/ created
+[2023-02-04 18:49:58,112] {subprocess.py:89} INFO - Total Parameters: 7143360
+[2023-02-04 18:49:58,112] {subprocess.py:89} INFO - Inferencing 'main' ...
+[2023-02-04 18:50:00,088] {subprocess.py:89} INFO - Recommendation EP:0:   0%|| 0/62 [00:00<?, ?it/s]Recommendation EP:0:   5%|| 3/62 [00:00<00:02, 23.70it/s]Recommendation EP:0:  11%|| 7/62 [00:00<00:01, 27.64it/s]Recommendation EP:0:  18%|| 11/62 [00:00<00:01, 29.30it/s]Recommendation EP:0:  24%|| 15/62 [00:00<00:01, 30.37it/s]Recommendation EP:0:  31%|| 19/62 [00:00<00:01, 30.89it/s]Recommendation EP:0:  37%|| 23/62 [00:00<00:01, 31.22it/s]Recommendation EP:0:  44%|| 27/62 [00:00<00:01, 31.54it/s]Recommendation EP:0:  50%|| 31/62 [00:01<00:00, 31.01it/s]Recommendation EP:0:  56%|| 35/62 [00:01<00:00, 31.51it/s]Recommendation EP:0:  63%|| 39/62 [00:01<00:00, 31.74it/s]Recommendation EP:0:  69%|| 43/62 [00:01<00:00, 31.32it/s]Recommendation EP:0:  76%|| 47/62 [00:01<00:00, 31.49it/s]Recommendation EP:0:  82%|| 51/62 [00:01<00:00, 31.66it/s]Recommendation EP:0:  89%|| 55/62 [00:01<00:00, 31.72it/s]Recommendation EP:0:  95%|| 59/62 [00:01<00:00, 31.77it/s]Recommendation EP:0: 100%|| 62/62 [00:01<00:00, 31.38it/s]
+[2023-02-04 18:50:00,088] {subprocess.py:89} INFO - Traceback (most recent call last):
+[2023-02-04 18:50:00,088] {subprocess.py:89} INFO -   File "/opt/ml/git/final-project-level3-recsys-02/bentoml/my_bento_packer.py", line 111, in <module>
+[2023-02-04 18:50:00,088] {subprocess.py:89} INFO -     model, args, pred_list, data = main()
+[2023-02-04 18:50:00,089] {subprocess.py:89} INFO -   File "/opt/ml/git/final-project-level3-recsys-02/bentoml/my_bento_packer.py", line 94, in main
+[2023-02-04 18:50:00,089] {subprocess.py:89} INFO -     model.load_state_dict(torch.load('output/Finetune_full-LastFM-10.pt'))
+[2023-02-04 18:50:00,089] {subprocess.py:89} INFO -   File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/torch/serialization.py", line 594, in load
+[2023-02-04 18:50:00,089] {subprocess.py:89} INFO -     with _open_file_like(f, 'rb') as opened_file:
+[2023-02-04 18:50:00,089] {subprocess.py:89} INFO -   File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/torch/serialization.py", line 230, in _open_file_like
+[2023-02-04 18:50:00,089] {subprocess.py:89} INFO -     return _open_file(name_or_buffer, mode)
+[2023-02-04 18:50:00,089] {subprocess.py:89} INFO -   File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/torch/serialization.py", line 211, in __init__
+[2023-02-04 18:50:00,089] {subprocess.py:89} INFO -     super(_open_file, self).__init__(open(name, mode))
+[2023-02-04 18:50:00,089] {subprocess.py:89} INFO - FileNotFoundError: [Errno 2] No such file or directory: 'output/Finetune_full-LastFM-10.pt'
+[2023-02-04 18:50:00,763] {subprocess.py:93} INFO - Command exited with return code 1
+[2023-02-04 18:50:00,764] {taskinstance.py:1686} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 1324, in _run_raw_task
+    self._execute_task_with_callbacks(context)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 1443, in _execute_task_with_callbacks
+    result = self._execute_task(context, self.task)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 1499, in _execute_task
+    result = execute_callable(context=context)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/operators/bash.py", line 187, in execute
+    raise AirflowException(
+airflow.exceptions.AirflowException: Bash command failed. The command returned a non-zero exit code 1.
+[2023-02-04 18:50:00,771] {taskinstance.py:1270} INFO - Marking task as UP_FOR_RETRY. dag_id=Train, task_id=Pakage, execution_date=20230204T184925, start_date=20230204T184950, end_date=20230204T185000
+[2023-02-04 18:50:00,781] {standard_task_runner.py:88} ERROR - Failed to execute job 14 for task Pakage
+Traceback (most recent call last):
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/task/task_runner/standard_task_runner.py", line 85, in _start_by_fork
+    args.func(args, dag=self.dag)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/cli/cli_parser.py", line 48, in command
+    return func(*args, **kwargs)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/utils/cli.py", line 92, in wrapper
+    return f(*args, **kwargs)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/cli/commands/task_command.py", line 292, in task_run
+    _run_task_by_selected_method(args, dag, ti)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/cli/commands/task_command.py", line 107, in _run_task_by_selected_method
+    _run_raw_task(args, ti)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/cli/commands/task_command.py", line 180, in _run_raw_task
+    ti._run_raw_task(
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/utils/session.py", line 70, in wrapper
+    return func(*args, session=session, **kwargs)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 1324, in _run_raw_task
+    self._execute_task_with_callbacks(context)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 1443, in _execute_task_with_callbacks
+    result = self._execute_task(context, self.task)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 1499, in _execute_task
+    result = execute_callable(context=context)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/operators/bash.py", line 187, in execute
+    raise AirflowException(
+airflow.exceptions.AirflowException: Bash command failed. The command returned a non-zero exit code 1.
+[2023-02-04 18:50:00,813] {local_task_job.py:154} INFO - Task exited with return code 1
+[2023-02-04 18:50:00,827] {local_task_job.py:264} INFO - 0 downstream tasks scheduled from follow-on schedule check

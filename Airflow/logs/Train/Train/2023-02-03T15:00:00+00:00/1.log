@@ -1,0 +1,76 @@
+[2023-02-04 19:21:55,383] {taskinstance.py:1035} INFO - Dependencies all met for <TaskInstance: Train.Train scheduled__2023-02-03T15:00:00+00:00 [queued]>
+[2023-02-04 19:21:55,388] {taskinstance.py:1035} INFO - Dependencies all met for <TaskInstance: Train.Train scheduled__2023-02-03T15:00:00+00:00 [queued]>
+[2023-02-04 19:21:55,388] {taskinstance.py:1241} INFO - 
+--------------------------------------------------------------------------------
+[2023-02-04 19:21:55,388] {taskinstance.py:1242} INFO - Starting attempt 1 of 1
+[2023-02-04 19:21:55,388] {taskinstance.py:1243} INFO - 
+--------------------------------------------------------------------------------
+[2023-02-04 19:21:55,398] {taskinstance.py:1262} INFO - Executing <Task(BashOperator): Train> on 2023-02-03 15:00:00+00:00
+[2023-02-04 19:21:55,400] {standard_task_runner.py:52} INFO - Started process 83976 to run task
+[2023-02-04 19:21:55,404] {standard_task_runner.py:76} INFO - Running: ['airflow', 'tasks', 'run', 'Train', 'Train', 'scheduled__2023-02-03T15:00:00+00:00', '--job-id', '40', '--raw', '--subdir', '/opt/ml/git/final-project-level3-recsys-02/Airflow/dags/RecSys_02.py', '--cfg-path', '/tmp/tmp1f5861y8', '--error-file', '/tmp/tmpxs3l2kpl']
+[2023-02-04 19:21:55,405] {standard_task_runner.py:77} INFO - Job 40: Subtask Train
+[2023-02-04 19:21:55,429] {logging_mixin.py:109} INFO - Running <TaskInstance: Train.Train scheduled__2023-02-03T15:00:00+00:00 [running]> on host 3ab801c1e2ef
+[2023-02-04 19:21:55,454] {taskinstance.py:1412} INFO - Exporting the following env vars:
+AIRFLOW_CTX_DAG_OWNER=RecSys-02
+AIRFLOW_CTX_DAG_ID=Train
+AIRFLOW_CTX_TASK_ID=Train
+AIRFLOW_CTX_EXECUTION_DATE=2023-02-03T15:00:00+00:00
+AIRFLOW_CTX_DAG_RUN_ID=scheduled__2023-02-03T15:00:00+00:00
+[2023-02-04 19:21:55,455] {subprocess.py:62} INFO - Tmp dir root location: 
+ /tmp
+[2023-02-04 19:21:55,456] {subprocess.py:74} INFO - Running command: ['bash', '-c', 'python /opt/ml/git/final-project-level3-recsys-02/bentoml/run_finetune_full.py']
+[2023-02-04 19:21:55,461] {subprocess.py:85} INFO - Output:
+[2023-02-04 19:22:08,644] {subprocess.py:89} INFO - Total Parameters: 7143360
+[2023-02-04 19:22:08,644] {subprocess.py:89} INFO - /opt/ml/git/final-project-level3-recsys-02/bentoml/output/LastFM-epochs-10.pt Not Found! The Model is same as SASRec
+[2023-02-04 19:22:09,010] {subprocess.py:89} INFO - Recommendation EP_train:0:   0%|| 0/4 [00:00<?, ?it/s]Recommendation EP_train:0:  25%|| 1/4 [00:00<00:00,  9.26it/s]Recommendation EP_train:0:  75%|| 3/4 [00:00<00:00, 10.56it/s]Recommendation EP_train:0: 100%|| 4/4 [00:00<00:00, 10.94it/s]
+[2023-02-04 19:22:09,010] {subprocess.py:89} INFO - {'epoch': 0, 'rec_avg_loss': '1.3726', 'rec_cur_loss': '1.3745'}
+[2023-02-04 19:22:11,623] {subprocess.py:89} INFO - Recommendation EP_test:0:   0%|| 0/4 [00:00<?, ?it/s]Recommendation EP_test:0:  25%|| 1/4 [00:00<00:01,  1.62it/s]Recommendation EP_test:0:  50%|| 2/4 [00:01<00:01,  1.69it/s]Recommendation EP_test:0:  75%|| 3/4 [00:01<00:00,  1.65it/s]Recommendation EP_test:0: 100%|| 4/4 [00:02<00:00,  1.76it/s]Recommendation EP_test:0: 100%|| 4/4 [00:02<00:00,  1.72it/s]
+[2023-02-04 19:22:11,624] {subprocess.py:89} INFO - {'Epoch': 0, 'HIT@5': '0.0000', 'NDCG@5': '0.0000', 'HIT@10': '0.0000', 'NDCG@10': '0.0000', 'HIT@20': '0.0010', 'NDCG@20': '0.0002'}
+[2023-02-04 19:22:11,624] {subprocess.py:89} INFO - Validation score increased.  Saving model ...
+[2023-02-04 19:22:11,624] {subprocess.py:89} INFO - ---------------Change to test_rating_matrix!-------------------
+[2023-02-04 19:22:14,022] {subprocess.py:89} INFO - Recommendation EP_test:0:   0%|| 0/4 [00:00<?, ?it/s]Recommendation EP_test:0:  25%|| 1/4 [00:00<00:01,  1.73it/s]Recommendation EP_test:0:  50%|| 2/4 [00:01<00:01,  1.72it/s]Recommendation EP_test:0:  75%|| 3/4 [00:01<00:00,  1.71it/s]Recommendation EP_test:0: 100%|| 4/4 [00:02<00:00,  1.83it/s]Recommendation EP_test:0: 100%|| 4/4 [00:02<00:00,  1.79it/s]
+[2023-02-04 19:22:14,023] {subprocess.py:89} INFO - {'Epoch': 0, 'HIT@5': '0.0000', 'NDCG@5': '0.0000', 'HIT@10': '0.0010', 'NDCG@10': '0.0003', 'HIT@20': '0.0010', 'NDCG@20': '0.0003'}
+[2023-02-04 19:22:14,023] {subprocess.py:89} INFO - Finetune_full-LastFM-10
+[2023-02-04 19:22:14,023] {subprocess.py:89} INFO - {'Epoch': 0, 'HIT@5': '0.0000', 'NDCG@5': '0.0000', 'HIT@10': '0.0010', 'NDCG@10': '0.0003', 'HIT@20': '0.0010', 'NDCG@20': '0.0003'}
+[2023-02-04 19:22:14,638] {subprocess.py:93} INFO - Command exited with return code 0
+[2023-02-04 19:22:14,653] {taskinstance.py:1270} INFO - Marking task as SUCCESS. dag_id=Train, task_id=Train, execution_date=20230203T150000, start_date=20230204T192155, end_date=20230204T192214
+[2023-02-04 19:22:14,690] {local_task_job.py:154} INFO - Task exited with return code 0
+[2023-02-04 19:22:14,711] {local_task_job.py:264} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2023-02-04 19:22:33,614] {taskinstance.py:1035} INFO - Dependencies all met for <TaskInstance: Train.Train manual__2023-02-04T19:21:54.589957+00:00 [queued]>
+[2023-02-04 19:22:33,620] {taskinstance.py:1035} INFO - Dependencies all met for <TaskInstance: Train.Train manual__2023-02-04T19:21:54.589957+00:00 [queued]>
+[2023-02-04 19:22:33,620] {taskinstance.py:1241} INFO - 
+--------------------------------------------------------------------------------
+[2023-02-04 19:22:33,620] {taskinstance.py:1242} INFO - Starting attempt 1 of 1
+[2023-02-04 19:22:33,620] {taskinstance.py:1243} INFO - 
+--------------------------------------------------------------------------------
+[2023-02-04 19:22:33,631] {taskinstance.py:1262} INFO - Executing <Task(BashOperator): Train> on 2023-02-04 19:21:54.589957+00:00
+[2023-02-04 19:22:33,634] {standard_task_runner.py:52} INFO - Started process 84241 to run task
+[2023-02-04 19:22:33,637] {standard_task_runner.py:76} INFO - Running: ['airflow', 'tasks', 'run', 'Train', 'Train', 'manual__2023-02-04T19:21:54.589957+00:00', '--job-id', '43', '--raw', '--subdir', '/opt/ml/git/final-project-level3-recsys-02/Airflow/dags/RecSys_02.py', '--cfg-path', '/tmp/tmpitb3vxg_', '--error-file', '/tmp/tmp4etwp6bs']
+[2023-02-04 19:22:33,638] {standard_task_runner.py:77} INFO - Job 43: Subtask Train
+[2023-02-04 19:22:33,662] {logging_mixin.py:109} INFO - Running <TaskInstance: Train.Train manual__2023-02-04T19:21:54.589957+00:00 [running]> on host 3ab801c1e2ef
+[2023-02-04 19:22:33,686] {taskinstance.py:1412} INFO - Exporting the following env vars:
+AIRFLOW_CTX_DAG_OWNER=RecSys-02
+AIRFLOW_CTX_DAG_ID=Train
+AIRFLOW_CTX_TASK_ID=Train
+AIRFLOW_CTX_EXECUTION_DATE=2023-02-04T19:21:54.589957+00:00
+AIRFLOW_CTX_DAG_RUN_ID=manual__2023-02-04T19:21:54.589957+00:00
+[2023-02-04 19:22:33,686] {subprocess.py:62} INFO - Tmp dir root location: 
+ /tmp
+[2023-02-04 19:22:33,687] {subprocess.py:74} INFO - Running command: ['bash', '-c', 'python /opt/ml/git/final-project-level3-recsys-02/bentoml/run_finetune_full.py']
+[2023-02-04 19:22:33,693] {subprocess.py:85} INFO - Output:
+[2023-02-04 19:22:46,409] {subprocess.py:89} INFO - Total Parameters: 7143360
+[2023-02-04 19:22:46,409] {subprocess.py:89} INFO - /opt/ml/git/final-project-level3-recsys-02/bentoml/output/LastFM-epochs-10.pt Not Found! The Model is same as SASRec
+[2023-02-04 19:22:46,770] {subprocess.py:89} INFO - Recommendation EP_train:0:   0%|| 0/4 [00:00<?, ?it/s]Recommendation EP_train:0:  25%|| 1/4 [00:00<00:00,  9.15it/s]Recommendation EP_train:0:  75%|| 3/4 [00:00<00:00, 10.74it/s]Recommendation EP_train:0: 100%|| 4/4 [00:00<00:00, 11.10it/s]
+[2023-02-04 19:22:46,770] {subprocess.py:89} INFO - {'epoch': 0, 'rec_avg_loss': '1.3726', 'rec_cur_loss': '1.3745'}
+[2023-02-04 19:22:49,335] {subprocess.py:89} INFO - Recommendation EP_test:0:   0%|| 0/4 [00:00<?, ?it/s]Recommendation EP_test:0:  25%|| 1/4 [00:00<00:01,  1.68it/s]Recommendation EP_test:0:  50%|| 2/4 [00:01<00:01,  1.70it/s]Recommendation EP_test:0:  75%|| 3/4 [00:01<00:00,  1.69it/s]Recommendation EP_test:0: 100%|| 4/4 [00:02<00:00,  1.81it/s]Recommendation EP_test:0: 100%|| 4/4 [00:02<00:00,  1.76it/s]
+[2023-02-04 19:22:49,335] {subprocess.py:89} INFO - {'Epoch': 0, 'HIT@5': '0.0000', 'NDCG@5': '0.0000', 'HIT@10': '0.0000', 'NDCG@10': '0.0000', 'HIT@20': '0.0010', 'NDCG@20': '0.0002'}
+[2023-02-04 19:22:49,335] {subprocess.py:89} INFO - Validation score increased.  Saving model ...
+[2023-02-04 19:22:49,335] {subprocess.py:89} INFO - ---------------Change to test_rating_matrix!-------------------
+[2023-02-04 19:22:51,757] {subprocess.py:89} INFO - Recommendation EP_test:0:   0%|| 0/4 [00:00<?, ?it/s]Recommendation EP_test:0:  25%|| 1/4 [00:00<00:01,  1.71it/s]Recommendation EP_test:0:  50%|| 2/4 [00:01<00:01,  1.70it/s]Recommendation EP_test:0:  75%|| 3/4 [00:01<00:00,  1.71it/s]Recommendation EP_test:0: 100%|| 4/4 [00:02<00:00,  1.81it/s]Recommendation EP_test:0: 100%|| 4/4 [00:02<00:00,  1.77it/s]
+[2023-02-04 19:22:51,757] {subprocess.py:89} INFO - {'Epoch': 0, 'HIT@5': '0.0000', 'NDCG@5': '0.0000', 'HIT@10': '0.0010', 'NDCG@10': '0.0003', 'HIT@20': '0.0010', 'NDCG@20': '0.0003'}
+[2023-02-04 19:22:51,757] {subprocess.py:89} INFO - Finetune_full-LastFM-10
+[2023-02-04 19:22:51,758] {subprocess.py:89} INFO - {'Epoch': 0, 'HIT@5': '0.0000', 'NDCG@5': '0.0000', 'HIT@10': '0.0010', 'NDCG@10': '0.0003', 'HIT@20': '0.0010', 'NDCG@20': '0.0003'}
+[2023-02-04 19:22:52,072] {subprocess.py:93} INFO - Command exited with return code 0
+[2023-02-04 19:22:52,087] {taskinstance.py:1270} INFO - Marking task as SUCCESS. dag_id=Train, task_id=Train, execution_date=20230204T192154, start_date=20230204T192233, end_date=20230204T192252
+[2023-02-04 19:22:52,123] {local_task_job.py:154} INFO - Task exited with return code 0
+[2023-02-04 19:22:52,144] {local_task_job.py:264} INFO - 1 downstream tasks scheduled from follow-on schedule check

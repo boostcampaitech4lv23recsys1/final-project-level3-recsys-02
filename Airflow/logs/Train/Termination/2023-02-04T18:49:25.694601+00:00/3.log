@@ -1,0 +1,62 @@
+[2023-02-04 18:56:58,949] {taskinstance.py:1035} INFO - Dependencies all met for <TaskInstance: Train.Termination manual__2023-02-04T18:49:25.694601+00:00 [queued]>
+[2023-02-04 18:56:58,954] {taskinstance.py:1035} INFO - Dependencies all met for <TaskInstance: Train.Termination manual__2023-02-04T18:49:25.694601+00:00 [queued]>
+[2023-02-04 18:56:58,954] {taskinstance.py:1241} INFO - 
+--------------------------------------------------------------------------------
+[2023-02-04 18:56:58,954] {taskinstance.py:1242} INFO - Starting attempt 3 of 5
+[2023-02-04 18:56:58,954] {taskinstance.py:1243} INFO - 
+--------------------------------------------------------------------------------
+[2023-02-04 18:56:58,964] {taskinstance.py:1262} INFO - Executing <Task(BashOperator): Termination> on 2023-02-04 18:49:25.694601+00:00
+[2023-02-04 18:56:58,966] {standard_task_runner.py:52} INFO - Started process 71532 to run task
+[2023-02-04 18:56:58,969] {standard_task_runner.py:76} INFO - Running: ['airflow', 'tasks', 'run', 'Train', 'Termination', 'manual__2023-02-04T18:49:25.694601+00:00', '--job-id', '20', '--raw', '--subdir', '/opt/ml/git/final-project-level3-recsys-02/Airflow/dags/RecSys_02.py', '--cfg-path', '/tmp/tmpgy700qcj', '--error-file', '/tmp/tmpbtv86i0o']
+[2023-02-04 18:56:58,969] {standard_task_runner.py:77} INFO - Job 20: Subtask Termination
+[2023-02-04 18:56:58,992] {logging_mixin.py:109} INFO - Running <TaskInstance: Train.Termination manual__2023-02-04T18:49:25.694601+00:00 [running]> on host 3ab801c1e2ef
+[2023-02-04 18:56:59,013] {taskinstance.py:1412} INFO - Exporting the following env vars:
+AIRFLOW_CTX_DAG_OWNER=RecSys-02
+AIRFLOW_CTX_DAG_ID=Train
+AIRFLOW_CTX_TASK_ID=Termination
+AIRFLOW_CTX_EXECUTION_DATE=2023-02-04T18:49:25.694601+00:00
+AIRFLOW_CTX_DAG_RUN_ID=manual__2023-02-04T18:49:25.694601+00:00
+[2023-02-04 18:56:59,013] {subprocess.py:62} INFO - Tmp dir root location: 
+ /tmp
+[2023-02-04 18:56:59,014] {subprocess.py:74} INFO - Running command: ['bash', '-c', 'pkill -9 bentoml']
+[2023-02-04 18:56:59,020] {subprocess.py:85} INFO - Output:
+[2023-02-04 18:56:59,023] {subprocess.py:93} INFO - Command exited with return code 1
+[2023-02-04 18:56:59,024] {taskinstance.py:1686} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 1324, in _run_raw_task
+    self._execute_task_with_callbacks(context)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 1443, in _execute_task_with_callbacks
+    result = self._execute_task(context, self.task)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 1499, in _execute_task
+    result = execute_callable(context=context)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/operators/bash.py", line 187, in execute
+    raise AirflowException(
+airflow.exceptions.AirflowException: Bash command failed. The command returned a non-zero exit code 1.
+[2023-02-04 18:56:59,030] {taskinstance.py:1270} INFO - Marking task as UP_FOR_RETRY. dag_id=Train, task_id=Termination, execution_date=20230204T184925, start_date=20230204T185658, end_date=20230204T185659
+[2023-02-04 18:56:59,040] {standard_task_runner.py:88} ERROR - Failed to execute job 20 for task Termination
+Traceback (most recent call last):
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/task/task_runner/standard_task_runner.py", line 85, in _start_by_fork
+    args.func(args, dag=self.dag)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/cli/cli_parser.py", line 48, in command
+    return func(*args, **kwargs)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/utils/cli.py", line 92, in wrapper
+    return f(*args, **kwargs)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/cli/commands/task_command.py", line 292, in task_run
+    _run_task_by_selected_method(args, dag, ti)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/cli/commands/task_command.py", line 107, in _run_task_by_selected_method
+    _run_raw_task(args, ti)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/cli/commands/task_command.py", line 180, in _run_raw_task
+    ti._run_raw_task(
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/utils/session.py", line 70, in wrapper
+    return func(*args, session=session, **kwargs)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 1324, in _run_raw_task
+    self._execute_task_with_callbacks(context)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 1443, in _execute_task_with_callbacks
+    result = self._execute_task(context, self.task)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 1499, in _execute_task
+    result = execute_callable(context=context)
+  File "/opt/ml/.cache/pypoetry/virtualenvs/01-bentoml-kzmRLtjI-py3.8/lib/python3.8/site-packages/airflow/operators/bash.py", line 187, in execute
+    raise AirflowException(
+airflow.exceptions.AirflowException: Bash command failed. The command returned a non-zero exit code 1.
+[2023-02-04 18:56:59,060] {local_task_job.py:154} INFO - Task exited with return code 1
+[2023-02-04 18:56:59,076] {local_task_job.py:264} INFO - 0 downstream tasks scheduled from follow-on schedule check

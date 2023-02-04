@@ -17,13 +17,15 @@ from trainers import FinetuneTrainer
 from utils import (EarlyStopping, check_path, get_item2attribute_json,
                    get_user_seqs, set_seed)
 
+import psycopg2
+import pandas as pd
 
 def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--data_dir", default="./data/", type=str)
     parser.add_argument("--data_dir2", default="LastFM", type=str)
-    parser.add_argument("--output_dir", default="output/", type=str)
+    parser.add_argument("--output_dir", default="/opt/ml/git/final-project-level3-recsys-02/bentoml/output/", type=str)
     parser.add_argument("--data_name", default="LastFM", type=str)
     parser.add_argument("--do_eval", action="store_true")
     parser.add_argument(
@@ -57,7 +59,7 @@ def main():
     parser.add_argument(
         "--batch_size", type=int, default=256, help="number of batch_size"
     )
-    parser.add_argument("--epochs", type=int, default=200, help="number of epochs")
+    parser.add_argument("--epochs", type=int, default=1, help="number of epochs")
     parser.add_argument("--no_cuda", action="store_true")
     parser.add_argument("--log_freq", type=int, default=1, help="per epoch print res")
     parser.add_argument("--seed", default=42, type=int)
@@ -74,28 +76,26 @@ def main():
     parser.add_argument("--gpu_id", type=str, default="0", help="gpu_id")
 
     args = parser.parse_args()
-
+    args.base = '/opt/ml/git/final-project-level3-recsys-02/bentoml/'
     set_seed(args.seed)
     check_path(args.output_dir)
 
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_id
     args.cuda_condition = torch.cuda.is_available() and not args.no_cuda
 
-    args.data_file = (
-        args.data_dir + args.data_name + "/artifacts/interaction.txt"
-    )  # interaction data file -> user, interaction만 있어야 함
-    # args.data_file = './data/bk100/interaction.txt' # interaction data file -> user, interaction만 있어야 함
-    item2attribute_file = (
-        args.data_dir + args.data_name + "/artifacts/_item2attributes.json"
-    )  # attribute data file
-    # args.data_file = args.data_dir + args.data_name + '.txt'
-    # args.data_file = './data/bk100/interaction.txt' # interaction data file -> user, interaction만 있어야 함
-    # item2attribute_file = args.data_dir + args.data_name + '_item2attributes.json'
-    # item2attribute_file = './data/bk100/_item2attributes.json' # attribute data file
-
-    user_seq, max_item, valid_rating_matrix, test_rating_matrix = get_user_seqs(
-        args.data_file
+    db_connect = psycopg2.connect(
+        user="myuser",
+        password="mypassword",
+        host="34.64.50.61",
+        port=5432,
+        database="mydatabase",
     )
+    df = pd.read_sql("select * from inter;", db_connect)
+
+    item2attribute_file = (
+        args.base + '_item2attributes.json'
+    )  
+    user_seq, max_item, valid_rating_matrix, test_rating_matrix = get_user_seqs(df)
 
     item2attribute, attribute_size = get_item2attribute_json(item2attribute_file)
 
@@ -103,14 +103,10 @@ def main():
     args.mask_id = max_item + 1
     args.attribute_size = attribute_size + 1
 
-    # args.item_size = max_item + 1 # mask_id 때문에 +2
-    # args.mask_id = max_item
-    # args.attribute_size = attribute_size
-
     # save model args
     args_str = f"{args.model_name}-{args.data_name}-{args.ckp}"
     args.log_file = os.path.join(args.output_dir, args_str + ".txt")
-    print(str(args))
+
     with open(args.log_file, "a") as f:
         f.write(str(args) + "\n")
 
@@ -145,7 +141,7 @@ def main():
     trainer = FinetuneTrainer(
         model, train_dataloader, eval_dataloader, test_dataloader, args
     )
-
+    
     if args.do_eval:
         trainer.load(args.checkpoint_path)
         print(f"Load model from {args.checkpoint_path} for test!")
@@ -165,11 +161,9 @@ def main():
         early_stopping = EarlyStopping(args.checkpoint_path, patience=100, verbose=True)
 
         for epoch in range(args.epochs):
-
             trainer.train(epoch)
-            # evaluate on NDCG@20
+
             scores, _, _ = trainer.valid(epoch, full_sort=True)
-            # early_stopping(np.array(scores[-1:]), trainer.model) # original(ndcg@20)
 
             early_stopping(np.array(scores[-2:-1]), trainer.model)  # recall@20
             if early_stopping.early_stop:
@@ -189,5 +183,5 @@ def main():
         f.write(args_str + "\n")
         f.write(result_info + "\n")
 
-
-main()
+if __name__ == "__main__":
+    main()

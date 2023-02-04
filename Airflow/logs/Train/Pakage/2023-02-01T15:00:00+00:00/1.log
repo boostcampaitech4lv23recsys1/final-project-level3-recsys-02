@@ -1,0 +1,31 @@
+[2023-02-04 19:22:18,693] {taskinstance.py:1035} INFO - Dependencies all met for <TaskInstance: Train.Pakage scheduled__2023-02-01T15:00:00+00:00 [queued]>
+[2023-02-04 19:22:18,698] {taskinstance.py:1035} INFO - Dependencies all met for <TaskInstance: Train.Pakage scheduled__2023-02-01T15:00:00+00:00 [queued]>
+[2023-02-04 19:22:18,699] {taskinstance.py:1241} INFO - 
+--------------------------------------------------------------------------------
+[2023-02-04 19:22:18,699] {taskinstance.py:1242} INFO - Starting attempt 1 of 1
+[2023-02-04 19:22:18,699] {taskinstance.py:1243} INFO - 
+--------------------------------------------------------------------------------
+[2023-02-04 19:22:18,708] {taskinstance.py:1262} INFO - Executing <Task(BashOperator): Pakage> on 2023-02-01 15:00:00+00:00
+[2023-02-04 19:22:18,710] {standard_task_runner.py:52} INFO - Started process 84151 to run task
+[2023-02-04 19:22:18,714] {standard_task_runner.py:76} INFO - Running: ['airflow', 'tasks', 'run', 'Train', 'Pakage', 'scheduled__2023-02-01T15:00:00+00:00', '--job-id', '42', '--raw', '--subdir', '/opt/ml/git/final-project-level3-recsys-02/Airflow/dags/RecSys_02.py', '--cfg-path', '/tmp/tmpli6g45qg', '--error-file', '/tmp/tmpvhbr6mam']
+[2023-02-04 19:22:18,714] {standard_task_runner.py:77} INFO - Job 42: Subtask Pakage
+[2023-02-04 19:22:18,739] {logging_mixin.py:109} INFO - Running <TaskInstance: Train.Pakage scheduled__2023-02-01T15:00:00+00:00 [running]> on host 3ab801c1e2ef
+[2023-02-04 19:22:18,764] {taskinstance.py:1412} INFO - Exporting the following env vars:
+AIRFLOW_CTX_DAG_OWNER=RecSys-02
+AIRFLOW_CTX_DAG_ID=Train
+AIRFLOW_CTX_TASK_ID=Pakage
+AIRFLOW_CTX_EXECUTION_DATE=2023-02-01T15:00:00+00:00
+AIRFLOW_CTX_DAG_RUN_ID=scheduled__2023-02-01T15:00:00+00:00
+[2023-02-04 19:22:18,764] {subprocess.py:62} INFO - Tmp dir root location: 
+ /tmp
+[2023-02-04 19:22:18,765] {subprocess.py:74} INFO - Running command: ['bash', '-c', 'python /opt/ml/git/final-project-level3-recsys-02/bentoml/my_bento_packer.py']
+[2023-02-04 19:22:18,771] {subprocess.py:85} INFO - Output:
+[2023-02-04 19:22:26,125] {subprocess.py:89} INFO - output/ created
+[2023-02-04 19:22:26,125] {subprocess.py:89} INFO - Total Parameters: 7143360
+[2023-02-04 19:22:26,125] {subprocess.py:89} INFO - Inferencing 'main' ...
+[2023-02-04 19:22:30,917] {subprocess.py:89} INFO - Recommendation EP:0:   0%|| 0/62 [00:00<?, ?it/s]Recommendation EP:0:   5%|| 3/62 [00:00<00:02, 24.64it/s]Recommendation EP:0:  11%|| 7/62 [00:00<00:01, 29.19it/s]Recommendation EP:0:  18%|| 11/62 [00:00<00:01, 30.37it/s]Recommendation EP:0:  24%|| 15/62 [00:00<00:01, 31.23it/s]Recommendation EP:0:  31%|| 19/62 [00:00<00:01, 31.47it/s]Recommendation EP:0:  37%|| 23/62 [00:00<00:01, 31.74it/s]Recommendation EP:0:  44%|| 27/62 [00:00<00:01, 32.00it/s]Recommendation EP:0:  50%|| 31/62 [00:00<00:00, 31.80it/s]Recommendation EP:0:  56%|| 35/62 [00:01<00:00, 31.85it/s]Recommendation EP:0:  63%|| 39/62 [00:01<00:00, 31.86it/s]Recommendation EP:0:  69%|| 43/62 [00:01<00:00, 30.70it/s]Recommendation EP:0:  76%|| 47/62 [00:01<00:00, 30.81it/s]Recommendation EP:0:  82%|| 51/62 [00:01<00:00, 30.98it/s]Recommendation EP:0:  89%|| 55/62 [00:01<00:00, 31.06it/s]Recommendation EP:0:  95%|| 59/62 [00:01<00:00, 31.25it/s]Recommendation EP:0: 100%|| 62/62 [00:01<00:00, 31.43it/s][2023-02-04 19:22:30,917] INFO - BentoService bundle 'MyService:20230204192228_CE8191' saved to: /opt/ml/bentoml/repository/MyService/20230204192228_CE8191
+[2023-02-04 19:22:30,923] {subprocess.py:89} INFO - 
+[2023-02-04 19:22:31,679] {subprocess.py:93} INFO - Command exited with return code 0
+[2023-02-04 19:22:31,697] {taskinstance.py:1270} INFO - Marking task as SUCCESS. dag_id=Train, task_id=Pakage, execution_date=20230201T150000, start_date=20230204T192218, end_date=20230204T192231
+[2023-02-04 19:22:31,729] {local_task_job.py:154} INFO - Task exited with return code 0
+[2023-02-04 19:22:31,748] {local_task_job.py:264} INFO - 1 downstream tasks scheduled from follow-on schedule check
