@@ -81,6 +81,7 @@ class _UserPageState extends State<UserPage> {
           following: recUser[i][3],
           follower: recUser[i][4]));
     }
+    setState(() {});
   }
 
   void getProfile() async {
@@ -128,16 +129,24 @@ class _UserPageState extends State<UserPage> {
 
     likelist = await dio.likesList(name: userId.toString());
     for (int i = 0; i < likelist.length; i++) {
-      if (likelist[i][4] == null) {
-        likelist[i][4] = 'assets/album.png';
+      for (int j = 0; j < 6; j++) {
+        if (likelist[i][j] == null) {
+          if (j == 5) {
+            likelist[i][j] = 'assets/album.png';
+          } else {
+            likelist[i][j] = 'No data';
+          }
+        }
       }
+
       myPlaylist.add(Item(
-          trackId: likelist[i][3], // fix need
-          image: likelist[i][4],
-          trackName: likelist[i][0],
-          albumName: likelist[i][1],
-          artistName: likelist[i][2],
-          duration: likelist[i][3]));
+          trackId: likelist[i][0], // fix need
+          image: likelist[i][5],
+          trackName: likelist[i][1],
+          albumName: likelist[i][2],
+          artistName: likelist[i][3],
+          duration: likelist[i][4],
+          url: likelist[i][6]));
     }
     setState(() {});
   }

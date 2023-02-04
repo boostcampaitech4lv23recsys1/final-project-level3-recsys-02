@@ -94,7 +94,8 @@ class _SearchBarState extends State<SearchBar> {
                                       image: 'assets/album.png',
                                       artistName: track['artist_name'],
                                       albumName: track['album_name'],
-                                      duration: track['duration'] as int),
+                                      duration: track['duration'] as int,
+                                      url: track['url']),
                                 )),
                       );
                     },
