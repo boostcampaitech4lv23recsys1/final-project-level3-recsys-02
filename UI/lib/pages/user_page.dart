@@ -78,6 +78,7 @@ class _UserPageState extends State<UserPage> {
           following: recUser[i][3],
           follower: recUser[i][4]));
     }
+    setState(() {});
   }
 
   void getProfile() async {
