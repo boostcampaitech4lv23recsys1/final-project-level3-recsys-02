@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:toast/toast.dart';
 import 'package:ui/constants.dart';
-import 'package:ui/main.dart';
 import 'package:ui/models/item.dart';
+import 'package:ui/widgets/search_popup.dart';
 import 'package:ui/widgets/track_detail.dart';
 import 'package:ui/widgets/footer.dart';
-import 'package:ui/widgets/custom_header.dart';
 import 'package:ui/widgets/custom_card.dart';
 import 'package:ui/widgets/titlebar.dart';
 import 'package:web_smooth_scroll/web_smooth_scroll.dart';
@@ -32,6 +31,7 @@ class _MainPageState extends State<MainPage> {
   final charController = ScrollController();
   final recController = ScrollController();
   final DioClient dioClient = DioClient();
+  final DioModel dioModel = DioModel();
 
   String userId = '';
 
@@ -47,8 +47,6 @@ class _MainPageState extends State<MainPage> {
   List recTagList = [];
   List recArtList = [];
   List user = [];
-
-  final DioModel dio = DioModel();
 
   Future addInteraction(Item item) async {
     await dioClient.interactionClick(
@@ -75,7 +73,7 @@ class _MainPageState extends State<MainPage> {
     final pref = await SharedPreferences.getInstance();
     userId = pref.getString('user_id')!;
 
-    Map recomlist = await dio.profile(name: userId);
+    Map recomlist = await dioModel.recMusic(name: userId);
 
     List temp = [recomlist['main'], recomlist['tag'], recomlist['artist']];
     for (int i = 0; i < temp.length; i++) {
@@ -83,7 +81,7 @@ class _MainPageState extends State<MainPage> {
         if (temp[i][j][1] == null) {
           temp[i][j][1] = 'assets/album.png';
         }
-        for (int k = 2; k < 6; k++) {
+        for (int k = 2; k < 7; k++) {
           if (temp[i][j][k] == null) {
             temp[i][j][k] = 'No data';
           }
@@ -94,7 +92,6 @@ class _MainPageState extends State<MainPage> {
     recMainList = temp[0];
     recTagList = temp[1];
     recArtList = temp[2];
-    user = recomlist['user'];
 
     recMainList.shuffle();
     recTagList.shuffle();
@@ -111,7 +108,8 @@ class _MainPageState extends State<MainPage> {
           trackName: recMainList[i][2],
           albumName: recMainList[i][3],
           artistName: recMainList[i][4],
-          duration: recMainList[i][5]));
+          duration: recMainList[i][5],
+          url: recMainList[i][6]));
 
       tagList.add(Item(
           trackId: recTagList[i][0],
@@ -119,7 +117,8 @@ class _MainPageState extends State<MainPage> {
           trackName: recTagList[i][2],
           albumName: recTagList[i][3],
           artistName: recTagList[i][4],
-          duration: recTagList[i][5]));
+          duration: recTagList[i][5],
+          url: recTagList[i][6]));
 
       artistList.add(Item(
           trackId: recArtList[i][0],
@@ -127,7 +126,8 @@ class _MainPageState extends State<MainPage> {
           trackName: recArtList[i][2],
           albumName: recArtList[i][3],
           artistName: recArtList[i][4],
-          duration: recArtList[i][5]));
+          duration: recArtList[i][5],
+          url: recArtList[i][6]));
     }
     setState(() {});
   }
@@ -140,7 +140,8 @@ class _MainPageState extends State<MainPage> {
           trackName: 'Track Name $i',
           albumName: 'Album Name $i',
           artistName: 'Artist Name $i',
-          duration: 24000));
+          duration: 24000,
+          url: 'No data'));
     }
   }
 
@@ -261,6 +262,93 @@ class _MainPageState extends State<MainPage> {
             },
           ))
     ]);
+  }
+
+  AppBar mainAppBar(context) {
+    return AppBar(
+      toolbarHeight: 80,
+      backgroundColor: kBlack,
+      elevation: 0,
+      leading: ElevatedButton(
+        style: OutlinedButton.styleFrom(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            padding: const EdgeInsets.all(12)),
+        child: Image.asset(
+          'assets/logo.png',
+        ),
+        onPressed: () {
+          Navigator.pushNamed(context, '/main');
+        },
+      ),
+      leadingWidth: 200,
+      centerTitle: true,
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: buttonWidth,
+            margin: const EdgeInsets.only(right: 10),
+            child: ElevatedButton(
+              style: OutlinedButton.styleFrom(
+                  backgroundColor: kBlack,
+                  // side: whiteBorder,
+                  padding: const EdgeInsets.all(12)),
+              child: Text('홈', style: subtitleTextStyle),
+              onPressed: () {
+                Navigator.pushNamed(context, '/home');
+              },
+            ),
+          ),
+          Container(
+            width: buttonWidth,
+            child: ElevatedButton(
+              style: OutlinedButton.styleFrom(
+                  backgroundColor: kBlack,
+                  elevation: 0,
+                  padding: const EdgeInsets.all(12)),
+              child: Text('마이페이지', style: subtitleTextStyle),
+              onPressed: () {
+                Navigator.pushNamed(context, '/mypage');
+              },
+            ),
+          ),
+          Container(
+            width: buttonWidth,
+            child: ElevatedButton(
+              style: OutlinedButton.styleFrom(
+                  backgroundColor: kBlack,
+                  elevation: 0,
+                  padding: const EdgeInsets.all(12)),
+              child: Text('검색하기', style: subtitleTextStyle),
+              onPressed: () {
+                Navigator.of(context).push(
+                  PageRouteBuilder(
+                      opaque: false, // set to false
+                      pageBuilder: (_, __, ___) => SearchBar()),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        Container(
+            width: buttonWidth,
+            child: ElevatedButton(
+              style: OutlinedButton.styleFrom(
+                  backgroundColor: kBlack,
+                  elevation: 0,
+                  padding: const EdgeInsets.all(12)),
+              child: Text('로그아웃', style: subtitleTextStyle),
+              onPressed: () {
+                exitSession();
+                setState(() {});
+                Navigator.popUntil(context, ModalRoute.withName('/home'));
+              },
+            )),
+      ],
+    );
   }
 
   @override

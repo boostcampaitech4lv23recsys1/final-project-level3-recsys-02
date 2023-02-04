@@ -58,11 +58,22 @@ def get_user_table():
     print(test)
     return test.to_string()
 
+@app.get('/get_search_track/{track}', description='트랙 검색 리스트 생성')
+def get_search_track(track: str):
+    query = ''
+    if track == '-1':
+        query = f"SELECT track_id, track_name, artist_name FROM track_info LIMIT 10;"
+    else:
+        query = f"SELECT track_id, track_name, artist_name FROM track_info WHERE track_name LIKE'%{track}%';"
+    track_df = pd.read_sql(query, db_connect)
+    return track_df.to_dict('records')  
 
-@app.get('/track')
-def get_track_table():
-    query = f"SELECT * FROM track_info;"
-    return pd.read_sql(query, db_connect)
+# 특정 트랙 정보 가져오기
+@app.get('/get_track_detail/{track_id}', description='트랙 정보 가져오기')
+def get_track_detail(track_id: int):
+    query = f"SELECT * FROM track_info WHERE track_id={track_id};"
+    track_df = pd.read_sql(query, db_connect)
+    return track_df.to_dict('records')  
 
 
 @app.post('/login', description='로그인')
@@ -129,6 +140,7 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
             values = cur.fetchall()[0][0]
 
         userInfo.user_id = values + 1
+
         user_query = f"INSERT INTO user_info (user_id, user_name, realname, password, age, following, follower, playcount) \
          VALUES ({userInfo.user_id}, '{userInfo.user_name}', '{userInfo.realname}', '{userInfo.password}', \
              {userInfo.age}, '{{}}', '{{}}', 0);"
@@ -158,13 +170,21 @@ def get_profiles(user_id: int) -> userInfo:
     if (len(user_df) == 0):
         return 'None'
     else:
+        if(user_df['playcount'][0] == None):
+            user_df['playcount'][0] = 0
+        if(user_df['image'][0] == None):
+            user_df['image'][0] = 'assets/profile2.png'
+        if(user_df['following'][0] == None):
+            user_df['following'][0] = []
+        if(user_df['follower'][0] == None):
+            user_df['follower'][0] = []
         info = userInfo(
                 user_id=user_df['user_id'][0],                
                 user_name=user_df['user_name'][0],  
                 password=user_df['password'][0], 
                 realname =user_df['realname'][0],  
                 image =user_df['image'][0],  
-                age =user_df['age'][0],  
+                age =user_df['age'][0],
                 playcount =user_df['playcount'][0],  
                 following = user_df['following'][0],  
                 follower = user_df['follower'][0])
@@ -175,9 +195,9 @@ def get_profiles(user_id: int) -> userInfo:
 
 @app.get("/users/{user_id}/likes", description="좋아요 리스트")
 def get_likes(user_id: int):  # -> track name
-    query = f"""select distinct track_info.track_name,
+    query = f"""select distinct track_info.track_id, track_info.track_name,
     track_info.album_name, track_info.artist_name, track_info.duration, 
-    album_info.image from track_info left outer join inter on 
+    album_info.image, track_info.url  from track_info left outer join inter on 
     track_info.track_id = inter.track_id left outer 
     join album_info on inter.album_name = album_info.album_name 
     where (inter.user_id = {user_id} and inter.loved = 1);
@@ -295,6 +315,8 @@ def get_top_tracks():
                 a.append(tuple(i))
 
         return a
+
+
 
 
 if __name__ == "__main__":

@@ -6,7 +6,6 @@ import 'package:ui/models/item.dart';
 import 'package:ui/models/user.dart';
 import 'package:ui/widgets/follow_list.dart';
 import 'package:ui/widgets/footer.dart';
-import 'package:ui/widgets/custom_header.dart';
 import 'package:ui/widgets/custom_card.dart';
 import 'package:ui/widgets/titlebar.dart';
 import 'package:ui/widgets/track_detail.dart';
@@ -33,7 +32,9 @@ class _UserPageState extends State<UserPage> {
   late List<Item> myPlaylist = [];
   late SharedPreferences pref;
   final DioClient dio = DioClient();
+  final DioModel dioModel = DioModel();
 
+  String mainUserId = '';
   String userId = '';
   String realname = '';
 
@@ -46,36 +47,75 @@ class _UserPageState extends State<UserPage> {
   List likelist = [];
 
   List<OtherUser> userList = [];
-  void getUserRec() {
-    for (int i = 0; i < 10; i++) {
-      userList.add(
-        OtherUser(
-            user_id: i,
-            realname: 'user$i',
-            image: 'assets/profile.png',
-            following: [],
-            follower: []),
-      );
+  List recUser = [];
+
+  bool isFollowing = false;
+
+  void getUserRec() async {
+    final pref = await SharedPreferences.getInstance();
+    userId = pref.getString('user_id')!;
+
+    recUser = await dioModel.recUser(name: userId.toString());
+
+    for (int i = 0; i < recUser.length; i++) {
+      for (int j = 0; j < 5; j++) {
+        if (recUser[i][j] == null) {
+          if (j < 3) {
+            if (j == 1) {
+              recUser[i][j] = recUser[i][5];
+            } else {
+              recUser[i][j] = '';
+            }
+          } else {
+            recUser[i][j] = [];
+          }
+        }
+      }
     }
+
+    for (int i = 0; i < 10; i++) {
+      userList.add(OtherUser(
+          user_id: recUser[i][0],
+          realname: recUser[i][1],
+          image: recUser[i][2],
+          following: recUser[i][3],
+          follower: recUser[i][4]));
+    }
+    setState(() {});
   }
 
-  Future getProfile() async {
-    if (widget.isMyPage) {
-      final pref = await SharedPreferences.getInstance();
-      userId = pref.getString('user_id')!;
+  void getProfile() async {
+    final pref = await SharedPreferences.getInstance();
+    mainUserId = pref.getString('user_id')!;
 
+    if (widget.isMyPage) {
+      userId = mainUserId;
       profile_info = await dio.profile(name: userId.toString());
 
       realname = profile_info['realname'];
-      follower = List<String>.from(profile_info['follower']);
-      following = List<String>.from(profile_info['following']);
+
+      follower = profile_info['follower']
+          .map((e) => e.toString())
+          .toList()
+          .cast<String>();
+      following = profile_info['following']
+          .map((e) => e.toString())
+          .toList()
+          .cast<String>();
 
       followerNum = profile_info['follower'].length;
       followingNum = profile_info['following'].length;
     } else {
+      userId = widget.otherUser.user_id.toString();
       realname = widget.otherUser.realname;
-      follower = List<String>.from(widget.otherUser.follower);
-      following = List<String>.from(widget.otherUser.following);
+      follower = widget.otherUser.follower
+          .map((e) => e.toString())
+          .toList()
+          .cast<String>();
+      following = widget.otherUser.following
+          .map((e) => e.toString())
+          .toList()
+          .cast<String>();
 
       followerNum = follower.length;
       followingNum = following.length;
@@ -85,10 +125,14 @@ class _UserPageState extends State<UserPage> {
 
   Future followUser(String usernameA, String usernameB) async {
     dio.followUser(usernameA: usernameA, usernameB: usernameB);
+    followerNum++;
+    setState(() {});
   }
 
   Future unfollowUser(String usernameA, String usernameB) async {
     dio.unfollowUser(usernameA: usernameA, usernameB: usernameB);
+    followerNum--;
+    setState(() {});
   }
 
   Future getMyMusics() async {
@@ -96,22 +140,30 @@ class _UserPageState extends State<UserPage> {
       final pref = await SharedPreferences.getInstance();
       userId = pref.getString('user_id')!;
     } else {
-      userId = widget.otherUser.userId;
+      userId = widget.otherUser.user_id.toString();
     }
     setState(() {});
 
     likelist = await dio.likesList(name: userId.toString());
     for (int i = 0; i < likelist.length; i++) {
-      if (likelist[i][4] == null) {
-        likelist[i][4] = 'assets/album.png';
+      for (int j = 0; j < 6; j++) {
+        if (likelist[i][j] == null) {
+          if (j == 5) {
+            likelist[i][j] = 'assets/album.png';
+          } else {
+            likelist[i][j] = 'No data';
+          }
+        }
       }
+
       myPlaylist.add(Item(
-          trackId: likelist[i][3], // fix need
-          image: likelist[i][4],
-          trackName: likelist[i][0],
-          albumName: likelist[i][1],
-          artistName: likelist[i][2],
-          duration: likelist[i][3]));
+          trackId: likelist[i][0], // fix need
+          image: likelist[i][5],
+          trackName: likelist[i][1],
+          albumName: likelist[i][2],
+          artistName: likelist[i][3],
+          duration: likelist[i][4],
+          url: likelist[i][6]));
     }
     setState(() {});
   }
@@ -210,13 +262,32 @@ class _UserPageState extends State<UserPage> {
                                 Text('선호도 조사 다시하기', style: contentsTextStyle),
                             onPressed: () {},
                           )
-                        : ElevatedButton(
-                            onPressed: () {},
-                            style: OutlinedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                side: whiteBorder,
-                                padding: const EdgeInsets.all(12)),
-                            child: Text('팔로우하기', style: contentsTextStyle)))
+                        : isFollowing
+                            ? ElevatedButton(
+                                onPressed: () {
+                                  unfollowUser(mainUserId, userId);
+                                  isFollowing = false;
+                                  // setState(() {});
+                                },
+                                style: OutlinedButton.styleFrom(
+                                    backgroundColor: kWhite,
+                                    side: whiteBorder,
+                                    padding: const EdgeInsets.all(12)),
+                                child: Text(
+                                  '팔로우 완료',
+                                  style: TextStyle(color: kBlack),
+                                ))
+                            : ElevatedButton(
+                                onPressed: () {
+                                  followUser(mainUserId, userId);
+                                  isFollowing = true;
+                                  // setState(() {});
+                                },
+                                style: OutlinedButton.styleFrom(
+                                    backgroundColor: Colors.transparent,
+                                    side: whiteBorder,
+                                    padding: const EdgeInsets.all(12)),
+                                child: Text('팔로우하기')))
               ],
             )
           ]),
@@ -311,6 +382,43 @@ class _UserPageState extends State<UserPage> {
               '취향분석 결과',
               style: titleTextStyle,
             )))
+      ],
+    );
+  }
+
+  AppBar mypagenAppBar(context) {
+    return AppBar(
+      toolbarHeight: 80,
+      elevation: 0,
+      backgroundColor: kBlack,
+      leading: ElevatedButton(
+        style: OutlinedButton.styleFrom(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            padding: const EdgeInsets.all(12)),
+        child: Image.asset(
+          'assets/logo.png',
+        ),
+        onPressed: () {
+          Navigator.pushNamed(context, '/main');
+        },
+      ),
+      leadingWidth: 200,
+      actions: [
+        Container(
+            width: buttonWidth,
+            child: ElevatedButton(
+              style: OutlinedButton.styleFrom(
+                  backgroundColor: kBlack,
+                  elevation: 0,
+                  padding: const EdgeInsets.all(12)),
+              child: Text('로그아웃', style: subtitleTextStyle),
+              onPressed: () {
+                exitSession();
+                setState(() {});
+                Navigator.popUntil(context, ModalRoute.withName('/home'));
+              },
+            )),
       ],
     );
   }

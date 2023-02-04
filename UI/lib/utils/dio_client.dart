@@ -91,8 +91,7 @@ class DioClient {
     try {
       response = await _dio.get('/users/' + name + '/profiles');
       debugPrint(response.toString());
-      var responseBody = response.data;
-
+      Map responseBody = response.data;
       return responseBody;
     } catch (e) {
       debugPrint('Error Profile : $e');
@@ -149,8 +148,7 @@ class DioClient {
     try {
       response = await _dio.get('/follow/$usernameA/$usernameB');
       debugPrint(response.toString());
-      List responseBody = response.data;
-      return responseBody;
+      return response.data;
     } catch (e) {
       debugPrint('Error followingFollower : $e');
       return -1;
@@ -165,8 +163,7 @@ class DioClient {
     try {
       response = await _dio.get('/unfollow/$usernameA/$usernameB');
       debugPrint(response.toString());
-      List responseBody = response.data;
-      return responseBody;
+      return response.data;
     } catch (e) {
       debugPrint('Error followingFollower : $e');
       return -1;
@@ -182,6 +179,26 @@ class DioClient {
       return responseBody;
     } catch (e) {
       debugPrint('Error LikeList : $e');
+  }
+  Future getSearchTrack({required String track}) async {
+    late Response response;
+    try {
+      response = await _dio.get('/get_search_track/$track');
+      return response.data;
+    } catch (e) {
+      debugPrint('Error getSearchTrack : $e');
+      return -1;
+    }
+  }
+
+  Future getTrackDetail(int trackId) async {
+    late Response response;
+    try {
+      response = await _dio.get('/get_track_detail/$trackId');
+      // debugPrint(response.toString());
+      return response.data[0];
+    } catch (e) {
+      debugPrint('Error getTrackDetail : $e');
       return -1;
     }
   }
@@ -194,12 +211,25 @@ class DioModel {
     ),
   )..interceptors.add(Logging());
 
-  Future profile({required String name}) async {
+  Future recMusic({required String name}) async {
     late Response response;
     try {
-      response = await _dio.post('/predict_user', data: '0');
+      response = await _dio.post('/recomendation_music', data: '0');
       // debugPrint(response.toString());
       Map responseBody = response.data;
+      return responseBody;
+    } catch (e) {
+      debugPrint('Error creating user: $e');
+      return -1;
+    }
+  }
+
+  Future recUser({required String name}) async {
+    late Response response;
+    try {
+      response = await _dio.post('/recomendation_user', data: '0');
+      // debugPrint(response.toString());
+      List responseBody = response.data;
       return responseBody;
     } catch (e) {
       debugPrint('Error creating user: $e');

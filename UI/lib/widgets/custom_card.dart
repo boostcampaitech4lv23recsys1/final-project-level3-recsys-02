@@ -40,7 +40,7 @@ Widget userCoverCard(OtherUser other) {
           width: 120,
           child: CircleAvatar(
             backgroundColor: Colors.transparent,
-            backgroundImage: AssetImage(other.image),
+            backgroundImage: NetworkImage(other.image),
           ),
         ),
         SizedBox(
@@ -69,7 +69,7 @@ Widget userCard(OtherUser otherUser) {
       children: [
         // image
         ClipRect(
-          child: Image.asset(otherUser.image),
+          child: Image.network(otherUser.image),
         ),
         defaultSpacer,
         defaultSpacer,
@@ -109,6 +109,32 @@ Widget trackCoverCard(Item item) {
           height: 10,
         ),
         // artist name
+        Text(item.artistName,
+            style: contentsTextStyle, textAlign: TextAlign.start),
+      ],
+    ),
+  );
+}
+
+Widget searchCard(searchItem item) {
+  return Container(
+    // decoration: outerBorder,
+    height: titleHeight * (1.5),
+    padding: kPadding,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // track name
+        Expanded(
+          child: Text(
+            item.trackName,
+            style: contentsTextStyle,
+            textAlign: TextAlign.start,
+            overflow: TextOverflow.fade,
+            softWrap: true,
+          ),
+        ),
         Text(item.artistName,
             style: contentsTextStyle, textAlign: TextAlign.start),
       ],
