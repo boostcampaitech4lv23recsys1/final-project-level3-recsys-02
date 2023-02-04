@@ -170,6 +170,16 @@ class DioClient {
     }
   }
 
+  Future getDailyChart() async {
+    late Response response;
+    try {
+      response = await _dio.get('/toptrack');
+      debugPrint(response.toString());
+      List responseBody = response.data;
+      return responseBody;
+    } catch (e) {
+      debugPrint('Error LikeList : $e');
+  }
   Future getSearchTrack({required String track}) async {
     late Response response;
     try {
