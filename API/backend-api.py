@@ -6,7 +6,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from datetime import datetime, timezone
 from typing import Optional
-
+import datetime
 app = FastAPI()
 
 # Fail response
@@ -250,6 +250,51 @@ def add_unfollow(user_A: int, user_B: int):
         db_connect.commit()
 
     return "Success"
+
+@app.get("/toptrack", description="daily Top tracks")
+def get_top_tracks():
+    now = datetime.datetime.now().timestamp()
+    now = 1674831129
+    dailysec = 86400
+    query = f"select * from inter where date_uts >= {now - 2 * dailysec} and date_uts <= {now - dailysec};"
+    df = pd.read_sql(query, db_connect)
+
+    if df.shape[0] == 0:
+        return {}
+    else:
+        df = (
+            df.groupby(by=["track_id"], as_index=False)["loved"]
+            .count()
+            .sort_values(by=["loved"], ascending=False)
+        )
+        list_ = df["track_id"][:20].to_list()
+        list_to_str = "(" + ",".join([str(i) for i in list_]) + ")"
+        print(list_to_str)
+        query = f"""select distinct track_info.track_id, track_info.track_name,
+                    track_info.album_name, track_info.artist_name, track_info.duration, 
+                    album_info.image from track_info left outer join inter on 
+                    track_info.track_id = inter.track_id left outer 
+                    join album_info on inter.album_name = album_info.album_name 
+                    where (inter.track_id in  {list_to_str});
+                    """
+
+        with db_connect.cursor() as cur:
+            cur.execute(query)
+            values = cur.fetchall()
+        a = []
+        name = []
+        for i in values:
+            i = list(i)
+            if i[1] not in name:
+                name.append(i[1])
+                if i[-1] == None:
+                    i[-1] = "assets/album.png"
+                for j in range(1,4):
+                    if i[j] == None:
+                        i[j] = '-'
+                a.append(tuple(i))
+
+        return a
 
 
 if __name__ == "__main__":

@@ -172,6 +172,19 @@ class DioClient {
       return -1;
     }
   }
+
+  Future getDailyChart() async {
+    late Response response;
+    try {
+      response = await _dio.get('/toptrack');
+      debugPrint(response.toString());
+      List responseBody = response.data;
+      return responseBody;
+    } catch (e) {
+      debugPrint('Error LikeList : $e');
+      return -1;
+    }
+  }
 }
 
 class DioModel {

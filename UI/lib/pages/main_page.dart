@@ -40,6 +40,9 @@ class _MainPageState extends State<MainPage> {
   List<Item> artistList = [];
   List<Item> recList = [];
 
+  List<Item> chartList = [];
+  List interChartList= [];
+
   List recMainList = [];
   List recTagList = [];
   List recArtList = [];
@@ -54,6 +57,20 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
+  void getChartList() async{
+    List interChartList = await dioClient.getDailyChart();
+    for(int i = 0; i < interChartList.length ; i ++){
+      chartList.add( Item(
+          trackId: interChartList[i][0],
+          image: interChartList[i][5],
+          trackName: interChartList[i][1],
+          albumName: interChartList[i][2],
+          artistName: interChartList[i][3],
+          duration: interChartList[i][4]
+
+      ));
+    }
+  }
   void getMusicList() async {
     final pref = await SharedPreferences.getInstance();
     userId = pref.getString('user_id')!;
@@ -131,6 +148,7 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     getMusicList();
     getRecList();
+    getChartList();
     super.initState();
   }
 
@@ -151,16 +169,16 @@ class _MainPageState extends State<MainPage> {
             itemBuilder: (context, index) {
               return GestureDetector(
                   onTap: () {
-                    addInteraction(musicList[index]);
+                    addInteraction(chartList[index]);
                     Navigator.of(context).push(
                       PageRouteBuilder(
                         opaque: false, // set to false
                         pageBuilder: (_, __, ___) =>
-                            DetailPage(item: musicList[index]),
+                            DetailPage(item: chartList[index]),
                       ),
                     );
                   },
-                  child: trackCard(musicList[index],
+                  child: trackCard(chartList[index],
                       isRank: true, index: index + 1));
             },
           )),
