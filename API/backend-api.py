@@ -145,6 +145,7 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
          VALUES ({int(userInfo.user_id)}, '{userInfo.user_name}', '{userInfo.realname}', '{userInfo.password}', \
              {int(userInfo.age)}, '{userInfo.image}');"
 
+
         with db_connect.cursor() as cur:
             cur.execute(user_query)
         
