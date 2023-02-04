@@ -10,10 +10,10 @@ class S3RecModel(nn.Module):
         self.item_embeddings = nn.Embedding(
             args.item_size, args.hidden_size, padding_idx=0
         )
-        if args.mode == 'train':
-            self.attribute_embeddings = nn.Embedding(
-                args.attribute_size, args.hidden_size, padding_idx=0
-            )
+
+        self.attribute_embeddings = nn.Embedding(
+            args.attribute_size, args.hidden_size, padding_idx=0
+        )
         self.position_embeddings = nn.Embedding(args.max_seq_length, args.hidden_size)
         self.item_encoder = Encoder(args)
         self.LayerNorm = LayerNorm(args.hidden_size, eps=1e-12)

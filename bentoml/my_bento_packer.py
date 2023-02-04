@@ -1,16 +1,15 @@
 import argparse
 import os
-import pickle
-import random
-import time
-from datetime import datetime
 import pandas as pd
 import psycopg2
-
+import torch
 from models import S3RecModel
 from my_bento_service import MyService
 from utils import check_path, set_seed
 from utils import get_user_seqs
+from torch.utils.data import DataLoader
+from predictor import Predictor
+from datasets import SASRecDataset
 
 def main():
     parser = argparse.ArgumentParser()
@@ -49,7 +48,7 @@ def main():
     # train args
     parser.add_argument("--lr", type=float, default=0.001, help="learning rate of adam")
     parser.add_argument(
-        "--batch_size", type=int, default=256, help="number of batch_size"
+        "--batch_size", type=int, default=16, help="number of batch_size"
     )
     parser.add_argument("--epochs", type=int, default=200, help="number of epochs")
     parser.add_argument("--no_cuda", action="store_true")
@@ -73,13 +72,26 @@ def main():
     check_path(args.output_dir)
     args.mode = 'infer'
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_id
-    args.item_size = 85687
+    args.item_size = 85687 # 85687 -> 현재(1000) db, 25300 -> 123.pt
+    args.attribute_size = 35485
+
     df = pd.read_sql("select * from inter;", db_connect)
         
     (_, _, args.train_matrix, _,) = get_user_seqs(df)  
     
     model = S3RecModel(args=args)
-    return model
+    
+    user_seq = list(df.sort_values(by = ['date_uts']).groupby(by= ['user_id'])['track_id'].apply(list).reset_index(drop=True))
+    infer_dataset = SASRecDataset(args, user_seq, data_type="infer")
+
+    #checkpoint = "/opt/ml/final-bentoml/output/Finetune_full-kdy_kdy1000-10.pt"
+    infer_dataloader = DataLoader(infer_dataset, batch_size=args.batch_size)
+    
+    predictor = Predictor(model, infer_dataloader, args)
+    pred_list = predictor.get_topk_main(0, full_sort=True)
+
+    #model.load_state_dict(torch.load('123.pt'))
+    return model, args, pred_list
 
 
 if __name__ == "__main__":
@@ -93,7 +105,7 @@ if __name__ == "__main__":
     )
     
     svc = MyService()
-    model = main()
-    model = {"S3Rec": model}
+    model, args, pred_list = main()
+    model = {"S3Rec": model, 'args' : args, 'pred_list': pred_list}
     svc.pack("test_model", model)
     svc.save()

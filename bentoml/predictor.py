@@ -185,9 +185,7 @@ class Predictor:
 
                     rating_pred = rating_pred.cpu().data.numpy().copy()
                     batch_user_index = user_ids.cpu().numpy()
-                    rating_pred[
-                        self.args.train_matrix[batch_user_index].toarray() > 0
-                    ] = 0  # train에 사용한 것들 = 0
+                    rating_pred[self.args.train_matrix[batch_user_index].toarray() > 0] = 0  # train에 사용한 것들 = 0
                     # reference: https://stackoverflow.com/a/23734295, https://stackoverflow.com/a/20104162
                     # argpartition 时间复杂度O(n)  argsort O(nlogn) 只会做
                     # 加负号"-"表示取大的值
