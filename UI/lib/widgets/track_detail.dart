@@ -39,13 +39,17 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   void addLike(Item item) async {
-    await dioClient.interactionLike(
-        userId: getUserName() as String, trackId: item.trackId);
+    final pref = await SharedPreferences.getInstance();
+    String userName = pref.getString('user_id')!;
+
+    await dioClient.interactionLike(userId: userName, trackId: item.trackId);
   }
 
   void addDelete(Item item) async {
-    await dioClient.interactionDelete(
-        userId: getUserName() as String, trackId: item.trackId);
+    final pref = await SharedPreferences.getInstance();
+    String userName = pref.getString('user_id')!;
+
+    await dioClient.interactionDelete(userId: userName, trackId: item.trackId);
   }
 
   @override

@@ -52,8 +52,11 @@ class _MainPageState extends State<MainPage> {
   List user = [];
 
   Future addInteraction(Item item) async {
+    final pref = await SharedPreferences.getInstance();
+    String userId = pref.getString('user_id')!;
+
     await dioClient.interactionClick(
-      userId: getUserName() as String,
+      userId: userId,
       trackId: item.trackId,
     );
   }
@@ -78,6 +81,7 @@ class _MainPageState extends State<MainPage> {
     userId = pref.getString('user_id')!;
 
     List tasts = await dioClient.get_usertasts(userId);
+    print(tasts);
     List tag_list = [
       'acoustic',
       'alternative',
@@ -265,6 +269,7 @@ class _MainPageState extends State<MainPage> {
               color: kWhite,
               onPressed: () {
                 getMusicList();
+                getTasts();
               }),
         ],
       ),

@@ -212,11 +212,13 @@ def get_likes(user_id: int):  # -> track name
 
 @app.get("/interaction/{user_id}/{track_id}/0", description='click interaction')
 def add_interaction(user_id: int, track_id: int):
-    timestamp = int(datetime.now().replace(tzinfo=timezone.utc).timestamp())
+    timestamp = int(datetime.datetime.now().replace(tzinfo=timezone.utc).timestamp())
 
     query = f"INSERT INTO inter (track_id, loved, user_id, date_uts)\
              VALUES ({track_id}, 0, {user_id}, {timestamp});"
     query2 = f"update track_info set playcount = playcount+1 where track_id = {track_id};"
+    # print(query)
+    # print(query2)
     with db_connect.cursor() as cur:
         cur.execute(query)
         cur.execute(query2)
@@ -227,7 +229,7 @@ def add_interaction(user_id: int, track_id: int):
 
 @app.get("/interaction/{user_id}/{track_id}/1", description='like interaction')
 def add_like(user_id: int, track_id: int):
-    timestamp = int(datetime.now().replace(tzinfo=timezone.utc).timestamp())
+    timestamp = int(datetime.datetime.now().replace(tzinfo=timezone.utc).timestamp())
 
     query = f"INSERT INTO inter (track_id, loved, user_id, date_uts)\
              VALUES ({track_id}, 1, {user_id}, {timestamp});"
@@ -239,7 +241,7 @@ def add_like(user_id: int, track_id: int):
 
 @app.get("/interaction/{user_id}/{track_id}/2", description='delete interaction')
 def add_delete(user_id: int, track_id: int):
-    timestamp = int(datetime.now().replace(tzinfo=timezone.utc).timestamp())
+    # timestamp = int(datetime.datetime.now().replace(tzinfo=timezone.utc).timestamp())
 
     query = f"update inter set loved = 0 where user_id = {user_id} and track_id = {track_id};"
     with db_connect.cursor() as cur:
@@ -289,7 +291,7 @@ def get_top_tracks():
         )
         list_ = df["track_id"][:20].to_list()
         list_to_str = "(" + ",".join([str(i) for i in list_]) + ")"
-        print(list_to_str)
+        # print(list_to_str)
         query = f"""select distinct track_info.track_id, track_info.track_name,
                     track_info.album_name, track_info.artist_name, track_info.duration, 
                     track_info.url ,album_info.image from track_info left outer join inter on 

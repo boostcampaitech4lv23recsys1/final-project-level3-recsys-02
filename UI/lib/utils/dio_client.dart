@@ -105,7 +105,7 @@ class DioClient {
     try {
       response = await _dio.get('/interaction/$userId/$trackId/0');
       debugPrint(response.toString());
-      List responseBody = response.data;
+      String responseBody = response.data;
       return responseBody;
     } catch (e) {
       debugPrint('Error Interaction Click : $e');
@@ -118,7 +118,7 @@ class DioClient {
     try {
       response = await _dio.get('/interaction/$userId/$trackId/1');
       debugPrint(response.toString());
-      List responseBody = response.data;
+      String responseBody = response.data;
       return responseBody;
     } catch (e) {
       debugPrint('Error interactionLike : $e');
@@ -132,7 +132,7 @@ class DioClient {
     try {
       response = await _dio.get('/interaction/$userId/$trackId/2');
       debugPrint(response.toString());
-      List responseBody = response.data;
+      String responseBody = response.data;
       return responseBody;
     } catch (e) {
       debugPrint('Error interactionDelete : $e');
