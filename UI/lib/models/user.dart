@@ -51,8 +51,8 @@ class OtherUser {
 // final String country;
   int user_id;
   String realname, image;
-  List<int> follower;
-  List<int> following;
+  List follower;
+  List following;
 
   OtherUser({
     required this.user_id,

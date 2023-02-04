@@ -32,6 +32,7 @@ class _MainPageState extends State<MainPage> {
   final charController = ScrollController();
   final recController = ScrollController();
   final DioClient dioClient = DioClient();
+  final DioModel dioModel = DioModel();
 
   String userId = '';
 
@@ -45,8 +46,6 @@ class _MainPageState extends State<MainPage> {
   List recArtList = [];
   List user = [];
 
-  final DioModel dio = DioModel();
-
   Future addInteraction(Item item) async {
     await dioClient.interactionClick(
       userId: getUserName() as String,
@@ -58,7 +57,7 @@ class _MainPageState extends State<MainPage> {
     final pref = await SharedPreferences.getInstance();
     userId = pref.getString('user_id')!;
 
-    Map recomlist = await dio.profile(name: userId);
+    Map recomlist = await dioModel.recMusic(name: userId);
 
     List temp = [recomlist['main'], recomlist['tag'], recomlist['artist']];
     for (int i = 0; i < temp.length; i++) {
@@ -77,7 +76,6 @@ class _MainPageState extends State<MainPage> {
     recMainList = temp[0];
     recTagList = temp[1];
     recArtList = temp[2];
-    user = recomlist['user'];
 
     recMainList.shuffle();
     recTagList.shuffle();
