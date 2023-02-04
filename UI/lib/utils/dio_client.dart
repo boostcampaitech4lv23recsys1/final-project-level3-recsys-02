@@ -179,6 +179,7 @@ class DioClient {
       return responseBody;
     } catch (e) {
       debugPrint('Error LikeList : $e');
+    }
   }
   Future getSearchTrack({required String track}) async {
     late Response response;
@@ -190,6 +191,7 @@ class DioClient {
       return -1;
     }
   }
+
 
   Future getTrackDetail(int trackId) async {
     late Response response;
@@ -224,6 +226,7 @@ class DioModel {
     }
   }
 
+
   Future recUser({required String name}) async {
     late Response response;
     try {
@@ -237,3 +240,4 @@ class DioModel {
     }
   }
 }
+

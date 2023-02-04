@@ -292,7 +292,7 @@ def get_top_tracks():
         print(list_to_str)
         query = f"""select distinct track_info.track_id, track_info.track_name,
                     track_info.album_name, track_info.artist_name, track_info.duration, 
-                    album_info.image from track_info left outer join inter on 
+                    track_info.url ,album_info.image from track_info left outer join inter on 
                     track_info.track_id = inter.track_id left outer 
                     join album_info on inter.album_name = album_info.album_name 
                     where (inter.track_id in  {list_to_str});

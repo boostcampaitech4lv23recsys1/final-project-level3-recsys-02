@@ -58,16 +58,17 @@ class _MainPageState extends State<MainPage> {
   void getChartList() async{
     List interChartList = await dioClient.getDailyChart();
     for(int i = 0; i < interChartList.length ; i ++){
-      chartList.add( Item(
+      chartList.add(Item(
           trackId: interChartList[i][0],
-          image: interChartList[i][5],
+          image: interChartList[i][6],
           trackName: interChartList[i][1],
           albumName: interChartList[i][2],
           artistName: interChartList[i][3],
-          duration: interChartList[i][4]
-
+          duration: interChartList[i][4],
+          url: interChartList[i][5]
       ));
     }
+    setState(() {});
   }
   void getMusicList() async {
     final pref = await SharedPreferences.getInstance();
@@ -166,7 +167,7 @@ class _MainPageState extends State<MainPage> {
             crossAxisCount: 3,
             mainAxisSpacing: 4,
             crossAxisSpacing: 4,
-            itemCount: musicList.length,
+            itemCount: chartList.length,
             itemBuilder: (context, index) {
               return GestureDetector(
                   onTap: () {
@@ -379,8 +380,6 @@ class _MainPageState extends State<MainPage> {
                     recommendation('00 장르를 좋아한다면', tagList),
                     defaultSpacer,
                     recommendation('00 아티스트를 좋아한다면', artistList),
-                    defaultSpacer,
-                    recommendation('00 노래를 좋아한다면', recList),
                     defaultSpacer,
                     footer(),
                     defaultSpacer,
