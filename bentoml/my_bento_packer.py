@@ -10,6 +10,7 @@ from utils import get_user_seqs
 from torch.utils.data import DataLoader
 from predictor import Predictor
 from datasets import SASRecDataset
+import pickle
 
 def main():
     parser = argparse.ArgumentParser()
@@ -72,15 +73,15 @@ def main():
     check_path(args.output_dir)
     args.mode = 'infer'
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_id
-    args.item_size = 85687 # 85687 -> 현재(1000) db, 25300 -> 123.pt
-    args.attribute_size = 35485
+    args.item_size = 85685 # 85687 -> 현재(1000) db, 25300 -> 123.pt
+    args.attribute_size = 24056
 
     df = pd.read_sql("select * from inter;", db_connect)
-        
-    (_, _, args.train_matrix, _,) = get_user_seqs(df)  
+    
+    (_, _, args.train_matrix, _,) = get_user_seqs(df)
     
     model = S3RecModel(args=args)
-    
+    #print(args.train_matrix)
     user_seq = list(df.sort_values(by = ['date_uts']).groupby(by= ['user_id'])['track_id'].apply(list).reset_index(drop=True))
     infer_dataset = SASRecDataset(args, user_seq, data_type="infer")
 
@@ -90,8 +91,10 @@ def main():
     predictor = Predictor(model, infer_dataloader, args)
     pred_list = predictor.get_topk_main(0, full_sort=True)
 
-    #model.load_state_dict(torch.load('123.pt'))
-    return model, args, pred_list
+    model.load_state_dict(torch.load('model.pt'))
+    with open('attributes_dict_list.pkl', 'rb') as f:
+        data = pickle.load(f)
+    return model, args, pred_list, data
 
 
 if __name__ == "__main__":
@@ -105,7 +108,7 @@ if __name__ == "__main__":
     )
     
     svc = MyService()
-    model, args, pred_list = main()
-    model = {"S3Rec": model, 'args' : args, 'pred_list': pred_list}
+    model, args, pred_list, data = main()
+    model = {"S3Rec": model, 'args' : args, 'pred_list': pred_list, 'data':data}
     svc.pack("test_model", model)
     svc.save()

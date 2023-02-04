@@ -145,7 +145,7 @@ def get_user_seqs(df):
     #df = df.sort_values(by = ['date_uts']).groupby(by= ['username'])['track_name'].apply(list).reset_index(drop=True)
     df = df.sort_values(by = ['date_uts']).groupby(by= ['user_id'])['track_id'].apply(list).reset_index(drop=True)
     #df_dict = {i: df.values[i] for i in range(df.shape[0])}
-    
+    df = df.apply(lambda x: [val-2 if val > 2 else val for val in x])
     # lines = open(data_file).readlines()
     # user_seq = []
     # item_set = set()
@@ -161,7 +161,7 @@ def get_user_seqs(df):
     #     user_seq.append(items)
     #     item_set = item_set | set(items)
     user_seq = list(df.values)
-    max_item = 85685 # max(item_set)
+    max_item = 85683 # max(item_set)
 
     num_users = len(df)
     num_items = max_item + 2
