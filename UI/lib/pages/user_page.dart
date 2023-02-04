@@ -93,16 +93,29 @@ class _UserPageState extends State<UserPage> {
       profile_info = await dio.profile(name: userId.toString());
 
       realname = profile_info['realname'];
-      follower = List<String>.from(profile_info['follower']);
-      following = List<String>.from(profile_info['following']);
+
+      follower = profile_info['follower']
+          .map((e) => e.toString())
+          .toList()
+          .cast<String>();
+      following = profile_info['following']
+          .map((e) => e.toString())
+          .toList()
+          .cast<String>();
 
       followerNum = profile_info['follower'].length;
       followingNum = profile_info['following'].length;
     } else {
       userId = widget.otherUser.user_id.toString();
       realname = widget.otherUser.realname;
-      follower = List<String>.from(widget.otherUser.follower);
-      following = List<String>.from(widget.otherUser.following);
+      follower = widget.otherUser.follower
+          .map((e) => e.toString())
+          .toList()
+          .cast<String>();
+      following = widget.otherUser.following
+          .map((e) => e.toString())
+          .toList()
+          .cast<String>();
 
       followerNum = follower.length;
       followingNum = following.length;
@@ -112,10 +125,14 @@ class _UserPageState extends State<UserPage> {
 
   Future followUser(String usernameA, String usernameB) async {
     dio.followUser(usernameA: usernameA, usernameB: usernameB);
+    followerNum++;
+    setState(() {});
   }
 
   Future unfollowUser(String usernameA, String usernameB) async {
     dio.unfollowUser(usernameA: usernameA, usernameB: usernameB);
+    followerNum--;
+    setState(() {});
   }
 
   Future getMyMusics() async {
@@ -248,10 +265,9 @@ class _UserPageState extends State<UserPage> {
                         : isFollowing
                             ? ElevatedButton(
                                 onPressed: () {
-                                  dio.unfollowUser(
-                                      usernameA: mainUserId, usernameB: userId);
+                                  unfollowUser(mainUserId, userId);
                                   isFollowing = false;
-                                  setState(() {});
+                                  // setState(() {});
                                 },
                                 style: OutlinedButton.styleFrom(
                                     backgroundColor: kWhite,
@@ -263,10 +279,9 @@ class _UserPageState extends State<UserPage> {
                                 ))
                             : ElevatedButton(
                                 onPressed: () {
-                                  dio.followUser(
-                                      usernameA: mainUserId, usernameB: userId);
+                                  followUser(mainUserId, userId);
                                   isFollowing = true;
-                                  setState(() {});
+                                  // setState(() {});
                                 },
                                 style: OutlinedButton.styleFrom(
                                     backgroundColor: Colors.transparent,
