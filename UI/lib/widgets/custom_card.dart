@@ -103,14 +103,24 @@ Widget trackCoverCard(Item item) {
           height: 20,
         ),
         // track name
-        Text(item.trackName,
-            style: subtitleTextStyle, textAlign: TextAlign.start),
+        Container(
+          width: 130,
+          child: Text(item.trackName,
+              maxLines: 1,
+              overflow: TextOverflow.fade,
+              softWrap: true,
+              style: subtitleTextStyle,
+              textAlign: TextAlign.start),
+        ),
         SizedBox(
           height: 10,
         ),
         // artist name
         Text(item.artistName,
-            style: contentsTextStyle, textAlign: TextAlign.start),
+            overflow: TextOverflow.fade,
+            softWrap: true,
+            style: contentsTextStyle,
+            textAlign: TextAlign.start),
       ],
     ),
   );
@@ -167,15 +177,21 @@ Widget trackCard(Item item, {bool isRank = false, int index = 1}) {
         defaultSpacer,
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // track name
             Text(
+              overflow: TextOverflow.fade,
+              softWrap: true,
               item.trackName,
               style: contentsTextStyle,
               textAlign: TextAlign.start,
             ),
             Text(item.artistName,
-                style: defaultTextStyle, textAlign: TextAlign.start),
+                overflow: TextOverflow.fade,
+                softWrap: true,
+                style: defaultTextStyle,
+                textAlign: TextAlign.start),
           ],
         ),
         const Spacer(),
