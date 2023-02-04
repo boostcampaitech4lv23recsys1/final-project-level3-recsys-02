@@ -316,6 +316,15 @@ def get_top_tracks():
 
         return a
 
+@app.get("/{user_id}/tasts", description='get tag, artist')
+def get_usertasts(user_id: int):
+    query = f"select track_tag_list, artist_name from track_info where track_id = (select track_id from inter where user_id = {user_id} order by date_uts desc limit 1);"
+    
+    with db_connect.cursor() as cur:
+        cur.execute(query)
+        values = cur.fetchall()[0]
+
+    return values
 
 
 
