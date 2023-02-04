@@ -195,9 +195,9 @@ def get_profiles(user_id: int) -> userInfo:
 
 @app.get("/users/{user_id}/likes", description="좋아요 리스트")
 def get_likes(user_id: int):  # -> track name
-    query = f"""select distinct track_info.track_name,
+    query = f"""select distinct track_info.track_id, track_info.track_name,
     track_info.album_name, track_info.artist_name, track_info.duration, 
-    album_info.image from track_info left outer join inter on 
+    album_info.image, track_info.url  from track_info left outer join inter on 
     track_info.track_id = inter.track_id left outer 
     join album_info on inter.album_name = album_info.album_name 
     where (inter.user_id = {user_id} and inter.loved = 1);
