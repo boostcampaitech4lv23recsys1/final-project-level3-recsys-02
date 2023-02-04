@@ -59,11 +59,22 @@ def get_user_table():
     print(test)
     return test.to_string()
 
+@app.get('/get_search_track/{track}', description='트랙 검색 리스트 생성')
+def get_search_track(track: str):
+    query = ''
+    if track == '-1':
+        query = f"SELECT track_id, track_name, artist_name FROM track_info LIMIT 10;"
+    else:
+        query = f"SELECT track_id, track_name, artist_name FROM track_info WHERE track_name LIKE'%{track}%';"
+    track_df = pd.read_sql(query, db_connect)
+    return track_df.to_dict('records')  
 
-@app.get('/track')
-def get_track_table():
-    query = f"SELECT * FROM track_info;"
-    return pd.read_sql(query, db_connect)
+# 특정 트랙 정보 가져오기
+@app.get('/get_track_detail/{track_id}', description='트랙 정보 가져오기')
+def get_track_detail(track_id: int):
+    query = f"SELECT * FROM track_info WHERE track_id={track_id};"
+    track_df = pd.read_sql(query, db_connect)
+    return track_df.to_dict('records')  
 
 
 @app.post('/login', description='로그인')
@@ -130,9 +141,10 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
             values = cur.fetchall()[0][0]
 
         userInfo.user_id = values + 1
-        user_query = f"INSERT INTO user_info (user_id, user_name, realname, password, age, following, follower) \
-         VALUES ({userInfo.user_id}, '{userInfo.user_name}', '{userInfo.realname}', '{userInfo.password}', \
-             {userInfo.age}, '{{}}', '{{}}');"
+        user_query = f"INSERT INTO user_info (user_id, user_name, realname, password, age, image) \
+         VALUES ({int(userInfo.user_id)}, '{userInfo.user_name}', '{userInfo.realname}', '{userInfo.password}', \
+             {int(userInfo.age)}, '{userInfo.image}');"
+
 
         with db_connect.cursor() as cur:
             cur.execute(user_query)
@@ -159,13 +171,21 @@ def get_profiles(user_id: int) -> userInfo:
     if (len(user_df) == 0):
         return 'None'
     else:
+        if(user_df['playcount'][0] == None):
+            user_df['playcount'][0] = 0
+        if(user_df['image'][0] == None):
+            user_df['image'][0] = 'assets/profile2.png'
+        if(user_df['following'][0] == None):
+            user_df['following'][0] = []
+        if(user_df['follower'][0] == None):
+            user_df['follower'][0] = []
         info = userInfo(
                 user_id=user_df['user_id'][0],                
                 user_name=user_df['user_name'][0],  
                 password=user_df['password'][0], 
                 realname =user_df['realname'][0],  
                 image =user_df['image'][0],  
-                age =user_df['age'][0],  
+                age =user_df['age'][0],
                 playcount =user_df['playcount'][0],  
                 following = user_df['following'][0],  
                 follower = user_df['follower'][0] )
@@ -251,6 +271,8 @@ def add_unfollow(user_A: int, user_B: int):
         db_connect.commit()
 
     return "Success"
+
+
 
 
 if __name__ == "__main__":
