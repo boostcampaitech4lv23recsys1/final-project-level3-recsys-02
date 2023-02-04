@@ -22,7 +22,7 @@ class _DetailPageState extends State<DetailPage> {
   late String _image, _name, _albumName, _artistName;
   late int _trackId;
   var isLike = false;
-  var url = 'https://www.naver.com';
+  var _url = 'https://www.naver.com';
   final DioClient dioClient = DioClient();
   void getAlbum(Item item) {}
 
@@ -34,6 +34,7 @@ class _DetailPageState extends State<DetailPage> {
     _name = widget.item.trackName;
     _albumName = widget.item.albumName;
     _artistName = widget.item.artistName;
+    _url = widget.item.url;
     getAlbum(widget.item);
   }
 
@@ -131,7 +132,7 @@ class _DetailPageState extends State<DetailPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text('URL', style: contentsTextStyle),
-                              Text('$url', style: contentsTextStyle),
+                              Text('$_url', style: contentsTextStyle),
                             ],
                           )
                         ],

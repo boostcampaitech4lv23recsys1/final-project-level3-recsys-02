@@ -64,7 +64,7 @@ class _MainPageState extends State<MainPage> {
         if (temp[i][j][1] == null) {
           temp[i][j][1] = 'assets/album.png';
         }
-        for (int k = 2; k < 6; k++) {
+        for (int k = 2; k < 7; k++) {
           if (temp[i][j][k] == null) {
             temp[i][j][k] = 'No data';
           }
@@ -91,7 +91,8 @@ class _MainPageState extends State<MainPage> {
           trackName: recMainList[i][2],
           albumName: recMainList[i][3],
           artistName: recMainList[i][4],
-          duration: recMainList[i][5]));
+          duration: recMainList[i][5],
+          url: recMainList[i][6]));
 
       tagList.add(Item(
           trackId: recTagList[i][0],
@@ -99,7 +100,8 @@ class _MainPageState extends State<MainPage> {
           trackName: recTagList[i][2],
           albumName: recTagList[i][3],
           artistName: recTagList[i][4],
-          duration: recTagList[i][5]));
+          duration: recTagList[i][5],
+          url: recTagList[i][6]));
 
       artistList.add(Item(
           trackId: recArtList[i][0],
@@ -107,7 +109,8 @@ class _MainPageState extends State<MainPage> {
           trackName: recArtList[i][2],
           albumName: recArtList[i][3],
           artistName: recArtList[i][4],
-          duration: recArtList[i][5]));
+          duration: recArtList[i][5],
+          url: recArtList[i][6]));
     }
     setState(() {});
   }
@@ -120,7 +123,8 @@ class _MainPageState extends State<MainPage> {
           trackName: 'Track Name $i',
           albumName: 'Album Name $i',
           artistName: 'Artist Name $i',
-          duration: 24000));
+          duration: 24000,
+          url: 'No data'));
     }
   }
 
