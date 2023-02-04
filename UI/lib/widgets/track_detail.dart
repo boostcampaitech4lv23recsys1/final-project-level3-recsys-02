@@ -90,6 +90,7 @@ class _DetailPageState extends State<DetailPage> {
                               addLike(widget.item);
                               isLike = true;
                             }
+                            setState(() {});
                           },
                           icon: isLike
                               ? Icon(
