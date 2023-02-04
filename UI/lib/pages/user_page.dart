@@ -34,6 +34,7 @@ class _UserPageState extends State<UserPage> {
   final DioClient dio = DioClient();
   final DioModel dioModel = DioModel();
 
+  String mainUserId = '';
   String userId = '';
   String realname = '';
 
@@ -47,6 +48,8 @@ class _UserPageState extends State<UserPage> {
 
   List<OtherUser> userList = [];
   List recUser = [];
+
+  bool isFollowing = false;
 
   void getUserRec() async {
     final pref = await SharedPreferences.getInstance();
@@ -81,10 +84,11 @@ class _UserPageState extends State<UserPage> {
   }
 
   void getProfile() async {
-    if (widget.isMyPage) {
-      final pref = await SharedPreferences.getInstance();
-      userId = pref.getString('user_id')!;
+    final pref = await SharedPreferences.getInstance();
+    mainUserId = pref.getString('user_id')!;
 
+    if (widget.isMyPage) {
+      userId = mainUserId;
       profile_info = await dio.profile(name: userId.toString());
 
       realname = profile_info['realname'];
@@ -94,6 +98,7 @@ class _UserPageState extends State<UserPage> {
       followerNum = profile_info['follower'].length;
       followingNum = profile_info['following'].length;
     } else {
+      userId = widget.otherUser.user_id.toString();
       realname = widget.otherUser.realname;
       follower = List<String>.from(widget.otherUser.follower);
       following = List<String>.from(widget.otherUser.following);
@@ -117,7 +122,7 @@ class _UserPageState extends State<UserPage> {
       final pref = await SharedPreferences.getInstance();
       userId = pref.getString('user_id')!;
     } else {
-      userId = widget.otherUser.userId;
+      userId = widget.otherUser.user_id.toString();
     }
     setState(() {});
 
@@ -231,13 +236,34 @@ class _UserPageState extends State<UserPage> {
                                 Text('선호도 조사 다시하기', style: contentsTextStyle),
                             onPressed: () {},
                           )
-                        : ElevatedButton(
-                            onPressed: () {},
-                            style: OutlinedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                side: whiteBorder,
-                                padding: const EdgeInsets.all(12)),
-                            child: Text('팔로우하기', style: contentsTextStyle)))
+                        : isFollowing
+                            ? ElevatedButton(
+                                onPressed: () {
+                                  dio.unfollowUser(
+                                      usernameA: mainUserId, usernameB: userId);
+                                  isFollowing = false;
+                                  setState(() {});
+                                },
+                                style: OutlinedButton.styleFrom(
+                                    backgroundColor: kWhite,
+                                    side: whiteBorder,
+                                    padding: const EdgeInsets.all(12)),
+                                child: Text(
+                                  '팔로우 완료',
+                                  style: TextStyle(color: kBlack),
+                                ))
+                            : ElevatedButton(
+                                onPressed: () {
+                                  dio.followUser(
+                                      usernameA: mainUserId, usernameB: userId);
+                                  isFollowing = true;
+                                  setState(() {});
+                                },
+                                style: OutlinedButton.styleFrom(
+                                    backgroundColor: Colors.transparent,
+                                    side: whiteBorder,
+                                    padding: const EdgeInsets.all(12)),
+                                child: Text('팔로우하기')))
               ],
             )
           ]),

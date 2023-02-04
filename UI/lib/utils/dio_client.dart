@@ -149,8 +149,7 @@ class DioClient {
     try {
       response = await _dio.get('/follow/$usernameA/$usernameB');
       debugPrint(response.toString());
-      List responseBody = response.data;
-      return responseBody;
+      return response.data;
     } catch (e) {
       debugPrint('Error followingFollower : $e');
       return -1;
@@ -165,8 +164,7 @@ class DioClient {
     try {
       response = await _dio.get('/unfollow/$usernameA/$usernameB');
       debugPrint(response.toString());
-      List responseBody = response.data;
-      return responseBody;
+      return response.data;
     } catch (e) {
       debugPrint('Error followingFollower : $e');
       return -1;
