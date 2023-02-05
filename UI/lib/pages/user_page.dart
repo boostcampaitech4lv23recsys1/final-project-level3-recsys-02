@@ -37,6 +37,7 @@ class _UserPageState extends State<UserPage> {
   String mainUserId = '';
   String userId = '';
   String realname = '';
+  String image = '';
 
   List<String> follower = [];
   List<String> following = [];
@@ -93,7 +94,7 @@ class _UserPageState extends State<UserPage> {
       profile_info = await dio.profile(name: userId.toString());
 
       realname = profile_info['realname'];
-
+      image = profile_info['image'];
       follower = profile_info['follower']
           .map((e) => e.toString())
           .toList()
@@ -108,6 +109,7 @@ class _UserPageState extends State<UserPage> {
     } else {
       userId = widget.otherUser.user_id.toString();
       realname = widget.otherUser.realname;
+      image = widget.otherUser.image;
       follower = widget.otherUser.follower
           .map((e) => e.toString())
           .toList()
@@ -194,7 +196,7 @@ class _UserPageState extends State<UserPage> {
               height: 160,
               child: CircleAvatar(
                 backgroundColor: kBlack,
-                backgroundImage: const AssetImage('assets/profile.png'),
+                backgroundImage: NetworkImage('$image'),
               ),
             ),
             defaultSpacer,
