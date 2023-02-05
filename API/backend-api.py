@@ -156,7 +156,7 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
 
         for _, row in user_tracks.iterrows():
             print(row)
-            add_interaction(user_id=userInfo.user_id, track_id=row['track_id'])
+            add_interaction(user_id=userInfo.user_id, track_id=row['track_id'], album_name=row['album_name'])
 
         db_connect.commit()
         return "True"
@@ -215,7 +215,10 @@ def get_likes(user_id: int):  # -> track name
 @app.get("/interaction/{user_id}/{track_id}/{album_name}/0", description='click interaction')
 def add_interaction(user_id: int, track_id: int, album_name: str):
     timestamp = int(datetime.datetime.now().replace(tzinfo=timezone.utc).timestamp())
-
+    try:
+        album_name = album_name.replace('\'', '')
+    except:
+        pass
     query = f"INSERT INTO inter (track_id, loved, user_id, date_uts, album_name)\
              VALUES ({track_id}, 0, {user_id}, {timestamp}, '{album_name}');"
     query2 = f"update track_info set playcount = playcount+1 where track_id = {track_id};"
@@ -231,7 +234,10 @@ def add_interaction(user_id: int, track_id: int, album_name: str):
 @app.get("/interaction/{user_id}/{track_id}/{album_name}/1", description='like interaction')
 def add_like(user_id: int, track_id: int, album_name: str):
     timestamp = int(datetime.datetime.now().replace(tzinfo=timezone.utc).timestamp())
-
+    try:
+        album_name = album_name.replace('\'', '')
+    except:
+        pass
     query = f"INSERT INTO inter (track_id, loved, user_id, date_uts, album_name)\
              VALUES ({track_id}, 1, {user_id}, {timestamp}, '{album_name}');"
     with db_connect.cursor() as cur:
@@ -327,7 +333,7 @@ def get_usertasts(user_id: int):
     with db_connect.cursor() as cur:
         cur.execute(query)
         values = cur.fetchall()[0]
-
+    
     return values
 
 
@@ -336,9 +342,15 @@ if __name__ == "__main__":
     db_connect = psycopg2.connect(
         user="myuser",
         password="mypassword",
-        host="34.64.50.61",
+        host="34.64.54.251",
         port=5432,
         database="mydatabase",
     )
 
     uvicorn.run(app, host="0.0.0.0", port=8001)
+
+
+
+
+
+

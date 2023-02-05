@@ -41,10 +41,9 @@ class _MainPageState extends State<MainPage> {
   List<Item> musicList = [];
   List<Item> tagList = [];
   List<Item> artistList = [];
-
   List<Item> chartList = [];
-  List interChartList = [];
 
+  List interChartList = [];
   List recMainList = [];
   List recTagList = [];
   List recArtList = [];
