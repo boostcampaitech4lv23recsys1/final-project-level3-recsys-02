@@ -85,12 +85,9 @@ def main():
         preprocessing_db.save_artifacts(interactions, attributes_dict_list, attributes_json, args)
         return print("Preprocessing Done!")
 
-    # args.data_file = args.data_dir + args.data_dir2 + '/artifacts/interaction.txt' # interaction data file -> user, interaction만 있어야 함
     args.data_file = args.data_dir + args.data_name + '/artifacts/interaction.txt' # interaction data file -> user, interaction만 있어야 함
-    # args.data_file = './data/bk100/interaction.txt' # interaction data file -> user, interaction만 있어야 함
-    # item2attribute_file = args.data_dir + args.data_dir2 + '/artifacts/_item2attributes.json' # attribute data file
     item2attribute_file = args.data_dir + args.data_name + '/artifacts/_item2attributes.json' # attribute data file
-    # item2attribute_file = './data/bk100/_item2attributes.json' # attribute data file
+    
     # concat all user_seq get a long sequence, from which sample neg segment for SP
     user_seq, max_item, long_sequence = get_user_seqs_long(args.data_file) # user별 interaction item list, max(itemset), user 구분 없이 전체 interaction item list
     item2attribute, attribute_size = get_item2attribute_json(item2attribute_file) # return json, max(attribute_set)
@@ -99,9 +96,6 @@ def main():
     args.mask_id = max_item + 1
     args.attribute_size = attribute_size + 1
     
-    # args.item_size = max_item + 1 # mask_id 때문에 +2
-    # args.mask_id = max_item 
-    # args.attribute_size = attribute_size 
     
     # save model args
     args_str = f'{args.model_name}-{args.data_name}'

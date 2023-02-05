@@ -137,6 +137,4 @@ def save_artifacts(interactions, attributes_dict_list, attributes_json, args) :
     # save attributes
     with open(data_path+"/artifacts/_item2attributes.json", "w") as f : 
         json.dump(attributes_json, f)
-    
-    # album, artist, tag
 
