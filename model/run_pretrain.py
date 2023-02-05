@@ -62,6 +62,7 @@ def main():
     parser.add_argument("--adam_beta2", type=float, default=0.999, help="adam second beta value")
     parser.add_argument("--gpu_id", type=str, default="0", help="gpu_id")
     parser.add_argument("--reprocess", type=bool, default=False)
+    parser.add_argument("--reprocess_only", type=bool, default=False)
 
 
     args = parser.parse_args()
@@ -77,6 +78,12 @@ def main():
         # preprocessing_csv.main(args)
         interactions, attributes_dict_list, attributes_json, _ = preprocessing_db.main(args)
         preprocessing_db.save_artifacts(interactions, attributes_dict_list, attributes_json, args)
+    
+    if args.reprocess_only : 
+        # preprocessing_csv.main(args)
+        interactions, attributes_dict_list, attributes_json, _ = preprocessing_db.main(args)
+        preprocessing_db.save_artifacts(interactions, attributes_dict_list, attributes_json, args)
+        return print("Preprocessing Done!")
 
     # args.data_file = args.data_dir + args.data_dir2 + '/artifacts/interaction.txt' # interaction data file -> user, interaction만 있어야 함
     args.data_file = args.data_dir + args.data_name + '/artifacts/interaction.txt' # interaction data file -> user, interaction만 있어야 함
