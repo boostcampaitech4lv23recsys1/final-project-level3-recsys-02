@@ -195,7 +195,6 @@ def get_profiles(user_id: int) -> userInfo:
     return info
 
 
-
 @app.get("/users/{user_id}/likes", description="좋아요 리스트")
 def get_likes(user_id: int):  # -> track name
     query = f"""select distinct track_info.track_id, track_info.track_name,
@@ -213,15 +212,14 @@ def get_likes(user_id: int):  # -> track name
 
 
 
-@app.get("/interaction/{user_id}/{track_id}/0", description='click interaction')
-def add_interaction(user_id: int, track_id: int):
+@app.get("/interaction/{user_id}/{track_id}/{album_name}/0", description='click interaction')
+def add_interaction(user_id: int, track_id: int, album_name: str):
     timestamp = int(datetime.datetime.now().replace(tzinfo=timezone.utc).timestamp())
 
-    query = f"INSERT INTO inter (track_id, loved, user_id, date_uts)\
-             VALUES ({track_id}, 0, {user_id}, {timestamp});"
+    query = f"INSERT INTO inter (track_id, loved, user_id, date_uts, album_name)\
+             VALUES ({track_id}, 0, {user_id}, {timestamp}, '{album_name}');"
     query2 = f"update track_info set playcount = playcount+1 where track_id = {track_id};"
-    # print(query)
-    # print(query2)
+
     with db_connect.cursor() as cur:
         cur.execute(query)
         cur.execute(query2)
@@ -230,12 +228,12 @@ def add_interaction(user_id: int, track_id: int):
     return "Success"
 
 
-@app.get("/interaction/{user_id}/{track_id}/1", description='like interaction')
-def add_like(user_id: int, track_id: int):
+@app.get("/interaction/{user_id}/{track_id}/{album_name}/1", description='like interaction')
+def add_like(user_id: int, track_id: int, album_name: str):
     timestamp = int(datetime.datetime.now().replace(tzinfo=timezone.utc).timestamp())
 
-    query = f"INSERT INTO inter (track_id, loved, user_id, date_uts)\
-             VALUES ({track_id}, 1, {user_id}, {timestamp});"
+    query = f"INSERT INTO inter (track_id, loved, user_id, date_uts, album_name)\
+             VALUES ({track_id}, 1, {user_id}, {timestamp}, '{album_name}');"
     with db_connect.cursor() as cur:
         cur.execute(query)
         db_connect.commit()

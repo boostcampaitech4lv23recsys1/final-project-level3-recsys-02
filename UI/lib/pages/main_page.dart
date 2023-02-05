@@ -57,6 +57,7 @@ class _MainPageState extends State<MainPage> {
     await dioClient.interactionClick(
       userId: userId,
       trackId: item.trackId,
+      album_name: item.albumName,
     );
   }
 
@@ -80,7 +81,7 @@ class _MainPageState extends State<MainPage> {
     userId = pref.getString('user_id')!;
 
     List tasts = await dioClient.get_usertasts(userId);
-    print(tasts);
+
     List tag_list = [
       'acoustic',
       'alternative',

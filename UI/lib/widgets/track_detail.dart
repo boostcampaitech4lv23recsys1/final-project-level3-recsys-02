@@ -43,7 +43,8 @@ class _DetailPageState extends State<DetailPage> {
     final pref = await SharedPreferences.getInstance();
     String userName = pref.getString('user_id')!;
 
-    await dioClient.interactionLike(userId: userName, trackId: item.trackId);
+    await dioClient.interactionLike(
+        userId: userName, trackId: item.trackId, album_name: item.albumName);
   }
 
   void addDelete(Item item) async {
