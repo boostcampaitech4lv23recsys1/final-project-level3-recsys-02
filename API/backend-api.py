@@ -112,13 +112,13 @@ def get_new_inters(tags, artists):
                                     'track_tag_list', 'album_name', 'streamable_text', 'streamable_fulltrack'])
 
     for t in tags:
-        tag_query = f"SELECT * FROM track_info WHERE '{t}' = ANY (track_tag_list) ORDER BY playcount LIMIT 10;"
+        tag_query = f"SELECT * FROM track_info WHERE '{t}' = ANY (track_tag_list) ORDER BY playcount desc LIMIT 10;"
         tag_tracks = pd.read_sql(tag_query, db_connect)
         inters = pd.concat([inters, tag_tracks])
 
     for a in artists:
         artist = f"'{a}'"
-        artist_query = f"SELECT * FROM track_info WHERE artist_name={artist} ORDER BY playcount LIMIT 10;"
+        artist_query = f"SELECT * FROM track_info WHERE artist_name={artist} ORDER BY playcount desc LIMIT 10;"
         artist_tracks = pd.read_sql(artist_query, db_connect)
         inters = pd.concat([inters, artist_tracks])
 
