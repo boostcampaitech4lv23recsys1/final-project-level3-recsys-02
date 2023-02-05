@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:ui/constants.dart';
 import 'package:searchable_listview/searchable_listview.dart';
@@ -82,7 +84,11 @@ class _SearchBarState extends State<SearchBar> {
                     onItemSelected: (searchItem item) async {
                       // get track Item
                       var track = await dioClient.getTrackDetail(item.trackId);
-                      print(track);
+                      String albumName = '';
+                      if (track['album_name'] == null) {
+                        albumName = track['track_name'];
+                      }
+                      int albumImageNum = Random().nextInt(4);
                       Navigator.pop(context);
                       Navigator.of(context).push(
                         PageRouteBuilder(
@@ -91,9 +97,9 @@ class _SearchBarState extends State<SearchBar> {
                                   item: Item(
                                       trackId: track['track_id'] as int,
                                       trackName: track['track_name'],
-                                      image: 'assets/album.png',
+                                      image: 'assets/album$albumImageNum.png',
                                       artistName: track['artist_name'],
-                                      albumName: track['album_name'],
+                                      albumName: albumName,
                                       duration: track['duration'] as int,
                                       url: track['url']),
                                 )),
