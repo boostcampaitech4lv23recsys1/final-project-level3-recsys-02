@@ -7,6 +7,8 @@ from pydantic import BaseModel
 from datetime import datetime, timezone
 from typing import Optional
 import datetime
+from random import randint
+
 app = FastAPI()
 
 # Fail response
@@ -310,7 +312,8 @@ def get_top_tracks():
             if i[1] not in name:
                 name.append(i[1])
                 if i[-1] == None:
-                    i[-1] = "assets/album.png"
+                    ran = randint(0,4)
+                    i[-1] = f"assets/album{ran}.png"
                 for j in range(1,4):
                     if i[j] == None:
                         i[j] = '-'
