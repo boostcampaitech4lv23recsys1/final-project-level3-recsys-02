@@ -1,11 +1,11 @@
+## Base Model
 ![avatar](model.PNG)
-
-
-### requirements
+---
+## requirements
 ```shell script
 pip install -r requirements.txt
 ```
-
+---
 ## data format
 ```shell script
 # data preprocess
@@ -20,6 +20,7 @@ user_2 item_1 item_2 ...
 # data-name_item2attributes.json(file format)
 {item_1:[attr, ...], item_2:[attr, ...], ... }
 ```
+---
 
 ## pretrain
 ```shell script
@@ -32,8 +33,7 @@ python run_pretrain.py \
 python run_pretrain.py \
 --data_name data_name --reprocess [true]
 ```
-
-
+---
 ## finetune
 
 + Rank the ground-truth item with all the items
@@ -42,7 +42,7 @@ python run_finetune_full.py \
 --data_name data_name \
 --ckp pretrain_epochs_num
 ```
-
+---
 ## inferenece
 ```shell script
 python run_inference.py \
