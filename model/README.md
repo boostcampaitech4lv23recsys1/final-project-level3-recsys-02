@@ -42,3 +42,10 @@ python run_finetune_full.py \
 --data_name data_name \
 --ckp pretrain_epochs_num
 ```
+
+## inferenece
+```shell script
+python run_inference.py \
+--data_name data_name \
+--ckp pretrain_epochs_num
+```
