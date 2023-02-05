@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,12 +39,13 @@ class _UserPageState extends State<UserPage> {
   String mainUserId = '';
   String userId = '';
   String realname = '';
+  String image = '';
 
   List<String> follower = [];
   List<String> following = [];
   int followerNum = 0;
   int followingNum = 0;
-  int match = 85;
+
   Map profile_info = {};
   List likelist = [];
 
@@ -93,6 +96,7 @@ class _UserPageState extends State<UserPage> {
       profile_info = await dio.profile(name: userId.toString());
 
       realname = profile_info['realname'];
+      image = profile_info['image'];
 
       follower = profile_info['follower']
           .map((e) => e.toString())
@@ -108,6 +112,8 @@ class _UserPageState extends State<UserPage> {
     } else {
       userId = widget.otherUser.user_id.toString();
       realname = widget.otherUser.realname;
+      image = widget.otherUser.image;
+
       follower = widget.otherUser.follower
           .map((e) => e.toString())
           .toList()
@@ -149,7 +155,8 @@ class _UserPageState extends State<UserPage> {
       for (int j = 0; j < 6; j++) {
         if (likelist[i][j] == null) {
           if (j == 5) {
-            likelist[i][j] = 'assets/album.png';
+            int rnum = Random().nextInt(4);
+            likelist[i][j] = 'assets/album$rnum.png';
           } else {
             likelist[i][j] = 'No data';
           }
@@ -194,7 +201,7 @@ class _UserPageState extends State<UserPage> {
               height: 160,
               child: CircleAvatar(
                 backgroundColor: kBlack,
-                backgroundImage: const AssetImage('assets/profile.png'),
+                backgroundImage: AssetImage('$image'),
               ),
             ),
             defaultSpacer,
@@ -210,7 +217,7 @@ class _UserPageState extends State<UserPage> {
                         PageRouteBuilder(
                           opaque: false, // set to false
                           pageBuilder: (_, __, ___) => FollowListPage(
-                            itemNameList: following,
+                            itemIdList: following,
                             isFollowing: true,
                           ),
                         ),
@@ -228,7 +235,7 @@ class _UserPageState extends State<UserPage> {
                         PageRouteBuilder(
                           opaque: false, // set to false
                           pageBuilder: (_, __, ___) => FollowListPage(
-                            itemNameList: follower,
+                            itemIdList: follower,
                             isFollowing: false,
                           ),
                         ),
@@ -240,16 +247,6 @@ class _UserPageState extends State<UserPage> {
                         padding: const EdgeInsets.all(16)),
                     child: Text('♥  팔로워         $followerNum 명',
                         style: contentsTextStyle)),
-                widget.isMyPage
-                    ? defaultSpacer
-                    : ElevatedButton(
-                        onPressed: () {},
-                        style: OutlinedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            elevation: 0,
-                            padding: const EdgeInsets.all(16)),
-                        child: Text('♥  취향매칭률      $match %',
-                            style: contentsTextStyle)),
                 Container(
                     width: 180,
                     child: widget.isMyPage
@@ -308,8 +305,10 @@ class _UserPageState extends State<UserPage> {
                       Navigator.of(context).push(
                         PageRouteBuilder(
                           opaque: false, // set to false
-                          pageBuilder: (_, __, ___) =>
-                              DetailPage(item: myPlaylist[index]),
+                          pageBuilder: (_, __, ___) => DetailPage(
+                            item: myPlaylist[index],
+                            fromLike: true,
+                          ),
                         ),
                       );
                     },

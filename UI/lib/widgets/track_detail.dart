@@ -12,8 +12,9 @@ Future<String> getUserName() async {
 }
 
 class DetailPage extends StatefulWidget {
-  const DetailPage({super.key, required this.item});
+  DetailPage({super.key, required this.item, this.fromLike = false});
   final Item item;
+  bool fromLike;
   @override
   _DetailPageState createState() => _DetailPageState();
 }
@@ -86,26 +87,37 @@ class _DetailPageState extends State<DetailPage> {
                       const Spacer(),
 
                       // 좋아요
-                      IconButton(
-                          onPressed: () {
-                            if (isLike) {
-                              addDelete(widget.item);
-                              isLike = false;
-                            } else {
-                              addLike(widget.item);
-                              isLike = true;
-                            }
-                            setState(() {});
-                          },
-                          icon: isLike
-                              ? Icon(
-                                  Icons.favorite,
-                                  color: kWhite,
-                                )
-                              : Icon(
-                                  Icons.favorite_outline_rounded,
-                                  color: kWhite,
-                                )),
+                      widget.fromLike
+                          ? IconButton(
+                              onPressed: () {
+                                addDelete(widget.item);
+                                Navigator.popAndPushNamed(context, '/mypage');
+                                setState(() {});
+                              },
+                              icon: Icon(
+                                Icons.delete,
+                                color: kWhite,
+                              ))
+                          : IconButton(
+                              onPressed: () {
+                                if (isLike) {
+                                  addDelete(widget.item);
+                                  isLike = false;
+                                } else {
+                                  addLike(widget.item);
+                                  isLike = true;
+                                }
+                                setState(() {});
+                              },
+                              icon: isLike
+                                  ? Icon(
+                                      Icons.favorite,
+                                      color: kWhite,
+                                    )
+                                  : Icon(
+                                      Icons.favorite_outline_rounded,
+                                      color: kWhite,
+                                    )),
                       defaultSpacer
                     ],
                   ),
