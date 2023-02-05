@@ -260,8 +260,15 @@ def add_delete(user_id: int, track_id: int):
 
 @app.get("/follow/{user_A}/{user_B}", description='user_A follows user_B')
 def add_follow(user_A: int, user_B: int):
-    query = f"update user_info set follower = array_append(follower, {user_A}) where user_id = {user_B};"
-    query2= f"update user_info set following = array_append(following, {user_B}) where user_id = {user_A};"
+    query = f"""
+    UPDATE user_info 
+    SET following = CASE WHEN CAST({user_B} AS BIGINT) = ANY(following) THEN following ELSE ARRAY_APPEND(following, CAST({user_B} AS BIGINT)) END
+    WHERE user_id = {user_A};"""
+
+    query2 = f"""UPDATE user_info 
+    SET follower = CASE WHEN CAST({user_A} AS BIGINT) = ANY(follower) THEN follower ELSE ARRAY_APPEND(follower, CAST({user_A} AS BIGINT)) END
+    WHERE user_id = {user_B}"""
+
     with db_connect.cursor() as cur:
         cur.execute(query2)
         cur.execute(query)
