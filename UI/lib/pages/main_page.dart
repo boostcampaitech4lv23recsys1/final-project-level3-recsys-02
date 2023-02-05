@@ -41,7 +41,6 @@ class _MainPageState extends State<MainPage> {
   List<Item> musicList = [];
   List<Item> tagList = [];
   List<Item> artistList = [];
-  List<Item> recList = [];
 
   List<Item> chartList = [];
   List interChartList = [];
@@ -149,7 +148,8 @@ class _MainPageState extends State<MainPage> {
     for (int i = 0; i < temp.length; i++) {
       for (int j = 0; j < temp[i].length; j++) {
         if (temp[i][j][1] == null) {
-          temp[i][j][1] = 'assets/album.png';
+          int rnum = Random().nextInt(4);
+          temp[i][j][1] = 'assets/album$rnum.png';
         }
         for (int k = 2; k < 7; k++) {
           if (temp[i][j][k] == null) {
@@ -202,23 +202,9 @@ class _MainPageState extends State<MainPage> {
     setState(() {});
   }
 
-  void getRecList() {
-    for (int i = 0; i < 9; i++) {
-      recList.add(Item(
-          trackId: i,
-          image: 'assets/album.png',
-          trackName: 'Track Name $i',
-          albumName: 'Album Name $i',
-          artistName: 'Artist Name $i',
-          duration: 24000,
-          url: 'No data'));
-    }
-  }
-
   @override
   void initState() {
     getMusicList();
-    getRecList();
     getChartList();
     getTasts();
     super.initState();
