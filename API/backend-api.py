@@ -254,8 +254,40 @@ def add_delete(user_id: int, track_id: int):
 
 @app.get("/follow/{user_A}/{user_B}", description='user_A follows user_B')
 def add_follow(user_A: int, user_B: int):
-    query = f"update user_info set follower = array_append(follower, {user_A}) where user_id = {user_B};"
-    query2= f"update user_info set following = array_append(following, {user_B}) where user_id = {user_A};"
+    df = pd.read_sql(f'select * from user_info where user_id in{(user_A, user_B)}', db_connect)
+
+    a_none =  (df[df['user_id'] == user_A].values[0][-3] == None)
+    b_none =  (df[df['user_id'] == user_B].values[0][-2] == None)
+
+    print(df[df['user_id'] == user_A].values[0][-3])
+    if  a_none:
+        a = [str(user_B)]
+    else:
+        a = df[df['user_id'] == user_A].values[0][-3]
+        a.append(str(user_B))
+
+
+    if b_none:
+        b = [str(user_A)]
+    else:
+        b = df[df['user_id'] == user_B].values[0][-3]
+        b.append(str(user_A))
+
+    a = list(set(a))
+    if str(user_A) in a:
+        a.remove(str(user_A))
+
+    b = list(set(b))
+
+    if str(user_B) in b:
+        b.remove(str(user_B))
+
+    a = "{" + ",".join([str(i) for i in a]) + "}"
+    b = "{" + ",".join([str(i) for i in b]) + "}"
+
+    query = f"update user_info set follower = '{b}'  where user_id = {user_B};"
+    query2= f"update user_info set following = '{a}' where user_id = {user_A};"
+
     with db_connect.cursor() as cur:
         cur.execute(query2)
         cur.execute(query)
@@ -336,7 +368,7 @@ if __name__ == "__main__":
     db_connect = psycopg2.connect(
         user="myuser",
         password="mypassword",
-        host="34.64.50.61",
+        host="34.64.54.251",
         port=5432,
         database="mydatabase",
     )
