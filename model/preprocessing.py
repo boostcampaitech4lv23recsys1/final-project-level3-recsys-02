@@ -55,9 +55,13 @@ def main(args) :
             "metal","rnb", "reggae", "acoustic", "indie", "alternative", "punk", "hardcore", "soul"]
     
     # tag 결측치 채우기
+    tag_not_null = merge_df['tag'].notnull()
     tag_mask = (merge_df['tag'].isnull())&(merge_df['track_tag_list'].notnull())
+    merge_df.loc[tag_not_null, 'tag'] = merge_df.loc[tag_not_null,'tag'].map(lambda x: list(set(x).intersection(set(tag_list))))
     merge_df.loc[tag_mask,'tag'] = merge_df.loc[tag_mask, 'track_tag_list'].map(lambda x:ast.literal_eval(x) if x != None else x).map(lambda x:list(set(x).intersection(set(tag_list))))
     merge_df['tag'] = merge_df['tag'].apply(lambda x:np.nan if x ==[] else x)
+    merge_df['tag'] = merge_df['tag'].apply(lambda x:list(set(x)) if x == np.nan else x)
+    
 
     # 최종 dataframe
     final_df = merge_df[['user_name', 'album_name', 'date_uts', 'artist_name',
@@ -118,7 +122,8 @@ def main(args) :
         attributes[f'{col}2id'] = attributes[col].map(attributes_dict_list[i])
         final_df_explode[f'{col}2id'] = final_df_explode[col].map(attributes_dict_list[i])
         
-    tag2id_join = final_df['track_name'].map(final_df_explode.astype(str).groupby("track_name")['tag2id'].apply(lambda x:','.join(x)))
+    tag_join = final_df_explode.astype(str).groupby("track_name")['tag2id'].apply(set).apply(lambda x:','.join(x))
+    tag2id_join = final_df['track_name'].map(tag_join)
     final_df['tag2id_join'] = tag2id_join
     final_df['album_name2id'] = final_df['album_name'].map(attributes_dict_list[0])
     final_df['artist_name2id'] = final_df['artist_name'].map(attributes_dict_list[1])

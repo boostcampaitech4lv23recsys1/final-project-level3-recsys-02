@@ -49,7 +49,6 @@ class Trainer:
                                                         patience=5,
                                                         verbose=True
                                                         )
-        self.patience = 0
 
         print("Total Parameters:", sum([p.nelement() for p in self.model.parameters()]))
         self.criterion = nn.BCELoss()
