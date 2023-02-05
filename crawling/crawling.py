@@ -66,10 +66,8 @@ def run_bs(tag, mode) :
             print("adding tag-artist dictionary ...")
             page = requests.get(f"https://www.last.fm/tag/{tag.lower()}/artists")
             soup = bs(page.text, "html.parser")
-            # len_pages = soup.find_all('li', {"class":"pagination-page"})[-1].text.strip()
             artist_lst = []
 
-            # for page in range(int(len_pages)) : 
             for page in tqdm(range(1, 101)) : 
                 page = requests.get(f"https://www.last.fm/tag/{tag.lower()}/artists?page={page}")
                 soup = bs(page.text, "html.parser")
@@ -86,12 +84,9 @@ def run_bs(tag, mode) :
             tag_artist_dict = {}
             for tag in tqdm(tags) : 
                 page = requests.get(f"https://www.last.fm/tag/{tag.lower()}/artists")
-                # page = requests.get(f"https://www.last.fm/tag/Electronic/artists")
                 soup = bs(page.text, "html.parser")
-                # len_pages = soup.find_all('li', {"class":"pagination-page"})[-1].text.strip()
                 artist_lst = []
 
-                # for page in range(int(len_pages)) : 
                 for page in range(1, 101) : 
                     page = requests.get(f"https://www.last.fm/tag/{tag.lower()}/artists?page={page}")
                     soup = bs(page.text, "html.parser")
@@ -122,7 +117,6 @@ def next_page(driver) :
     except  : 
         return False
 
-
 def crawl(tag, mode) : 
     try:
         tag_artist_dict = run_bs(tag, mode)
@@ -142,7 +136,6 @@ def crawl(tag, mode) :
         pw_box = driver.find_element(By.CSS_SELECTOR, "#id_password")
 
         # login
-
         id_box.send_keys("your id")
         time.sleep(0.5)
         pw_box.send_keys("your password")
@@ -183,7 +176,6 @@ def crawl(tag, mode) :
 
 # tag list : [jazz, pop, dance, rock, electronic, rap, hip-hop, country, blues, classical, k-pop, metal,
 # rnb, reggae, acoustic, indie, alternative, punk, hardcore, soul]
-
 def get_listeners(arguments) : 
     print(arguments)
     mode = arguments[0]
@@ -241,13 +233,9 @@ def main(tags) :
         tags = [tags]
         mode = ["new_tag"]
     arguments = list(zip(mode, tags))
-    # arguments = [[mode, tags]]
-    print(arguments)
     cpu_count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(cpu_count)
     pool.map(get_listeners,arguments)
-    # pool.map(get_listeners, args)
-    # pool.map(get_listeners, args.tags)
     pool.close()
     pool.join()
     
