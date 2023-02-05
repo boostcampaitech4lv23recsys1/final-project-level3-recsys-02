@@ -33,6 +33,14 @@ python run_pretrain.py \
 python run_pretrain.py \
 --data_name data_name --reprocess [true]
 ```
+
+### pretrain with preprocessing
+```shell script
+# if you merely want to update interaction.txt & _item2attribute.json files
+python run_pretrain.py \
+--data_name data_name --reprocess [true]
+```
+
 ---
 ## finetune
 

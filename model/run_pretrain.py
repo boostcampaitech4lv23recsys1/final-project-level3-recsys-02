@@ -73,7 +73,7 @@ def main():
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_id
     args.cuda_condition = torch.cuda.is_available() and not args.no_cuda
     
-    # redo preprocessing
+    # redo preprocessing + pretrain
     if args.reprocess : 
         # preprocessing_csv.main(args)
         interactions, attributes_dict_list, attributes_json, _ = preprocessing_db.main(args)
