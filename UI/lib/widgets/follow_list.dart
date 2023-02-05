@@ -8,8 +8,8 @@ import 'package:ui/widgets/custom_card.dart';
 
 class FollowListPage extends StatefulWidget {
   const FollowListPage(
-      {super.key, required this.itemNameList, required this.isFollowing});
-  final List<String> itemNameList;
+      {super.key, required this.itemIdList, required this.isFollowing});
+  final List<String> itemIdList;
   final bool isFollowing;
 
   @override
@@ -21,26 +21,30 @@ class _FollowListPageState extends State<FollowListPage> {
 
   late List<OtherUser> itemList = [];
 
-  void getAlbum(Item item) {}
   void getItemProfile() async {
-    // for (int i = 0; i < widget.itemNameList.length; i++) {
-    // Map value = await dio.profile(name: widget.itemNameList[i]);
-    // // get itemLNameList Profiles
-    // itemList.add(OtherUser(
-    //     user_name: value['user_id'] as int,
-    //     realname: value['realname'] as String,
-    //     image: value['image'] as String,
-    //     following: List<String>.from(value['following']),
-    //     follower: List<String>.from(value['follower'])));
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < widget.itemIdList.length; i++) {
+      Map value = await dio.profile(name: widget.itemIdList[i]);
+      print(value);
+      // get itemLNameList Profiles
+      var _realname = '';
+      if (value['realname'] == null) {
+        _realname = value['user_name'];
+      } else {
+        _realname = value['realname'];
+      }
+
       itemList.add(OtherUser(
-          user_id: i,
-          realname: 'user$i',
-          image: 'assets/profile.png',
-          following: [],
-          follower: []));
+        user_id: value['user_id'] as int,
+        realname: _realname,
+        image: value['image'] as String,
+        following:
+            value['following'].map((e) => e.toString()).toList().cast<String>(),
+        follower:
+            value['follower'].map((e) => e.toString()).toList().cast<String>(),
+      ));
+
+      setState(() {});
     }
-    setState(() {});
   }
 
   @override
@@ -51,7 +55,6 @@ class _FollowListPageState extends State<FollowListPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('other user list ${itemList.toList()}');
     return Scaffold(
         backgroundColor: const Color.fromARGB(200, 0, 0, 0),
         body: Center(
