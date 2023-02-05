@@ -66,6 +66,9 @@ class _UserPageState extends State<UserPage> {
           if (j < 3) {
             if (j == 1) {
               recUser[i][j] = recUser[i][5];
+            }
+            if (j == 2) {
+              recUser[i][j] = 'assets/profile.png';
             } else {
               recUser[i][j] = '';
             }
@@ -97,7 +100,6 @@ class _UserPageState extends State<UserPage> {
 
       realname = profile_info['realname'];
       image = profile_info['image'];
-
       follower = profile_info['follower']
           .map((e) => e.toString())
           .toList()
@@ -113,7 +115,6 @@ class _UserPageState extends State<UserPage> {
       userId = widget.otherUser.user_id.toString();
       realname = widget.otherUser.realname;
       image = widget.otherUser.image;
-
       follower = widget.otherUser.follower
           .map((e) => e.toString())
           .toList()
@@ -201,7 +202,7 @@ class _UserPageState extends State<UserPage> {
               height: 160,
               child: CircleAvatar(
                 backgroundColor: kBlack,
-                backgroundImage: AssetImage('$image'),
+                backgroundImage: NetworkImage('$image'),
               ),
             ),
             defaultSpacer,

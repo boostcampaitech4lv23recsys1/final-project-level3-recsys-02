@@ -131,6 +131,7 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
     # 이미 가입한 회원인지 확인
     user_query = f"SELECT user_name FROM user_info WHERE user_name='{userInfo.user_name}';"
     #user_df = pd.read_sql(user_query, db_connect)
+    print(userInfo)
     with db_connect.cursor() as cur:
         cur.execute(user_query)
         values = cur.fetchall()
@@ -143,9 +144,9 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
 
         userInfo.user_id = values + 1
 
-        user_query = f"INSERT INTO user_info (user_id, user_name, realname, password, age, following, follower, playcount) \
+        user_query = f"INSERT INTO user_info (user_id, user_name, realname, password, age, following, follower, playcount, image) \
          VALUES ({userInfo.user_id}, '{userInfo.user_name}', '{userInfo.realname}', '{userInfo.password}', \
-             {userInfo.age}, '{{}}', '{{}}', 0);"
+             {userInfo.age}, '{{}}', '{{}}', 0, '{userInfo.image}');"
 
         with db_connect.cursor() as cur:
             cur.execute(user_query)
