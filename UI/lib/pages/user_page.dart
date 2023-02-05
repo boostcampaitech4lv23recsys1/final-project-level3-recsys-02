@@ -64,6 +64,9 @@ class _UserPageState extends State<UserPage> {
           if (j < 3) {
             if (j == 1) {
               recUser[i][j] = recUser[i][5];
+            }
+            if (j == 2) {
+              recUser[i][j] = 'assets/profile.png';
             } else {
               recUser[i][j] = '';
             }
