@@ -13,8 +13,8 @@ import argparse
 from datasets import PretrainDataset
 from trainers import PretrainTrainer
 from models import S3RecModel
-import preprocessing
-import preprocessing_2
+import preprocessing_csv
+import preprocessing_db
 
 
 from utils import get_user_seqs_long, get_item2attribute_json, check_path, set_seed
@@ -74,9 +74,9 @@ def main():
     
     # redo preprocessing
     if args.reprocess : 
-        # preprocessing.main(args)
-        interactions, attributes_dict_list, attributes_json, _ = preprocessing_2.main(args)
-        preprocessing_2.save_artifacts(interactions, attributes_dict_list, attributes_json, args)
+        # preprocessing_csv.main(args)
+        interactions, attributes_dict_list, attributes_json, _ = preprocessing_db.main(args)
+        preprocessing_db.save_artifacts(interactions, attributes_dict_list, attributes_json, args)
 
     # args.data_file = args.data_dir + args.data_dir2 + '/artifacts/interaction.txt' # interaction data file -> user, interaction만 있어야 함
     args.data_file = args.data_dir + args.data_name + '/artifacts/interaction.txt' # interaction data file -> user, interaction만 있어야 함
