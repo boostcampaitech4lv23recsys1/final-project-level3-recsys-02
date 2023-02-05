@@ -253,15 +253,7 @@ class _UserPageState extends State<UserPage> {
                 Container(
                     width: 180,
                     child: widget.isMyPage
-                        ? ElevatedButton(
-                            style: OutlinedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                side: whiteBorder,
-                                padding: const EdgeInsets.all(12)),
-                            child:
-                                Text('선호도 조사 다시하기', style: contentsTextStyle),
-                            onPressed: () {},
-                          )
+                        ? Text('')
                         : isFollowing
                             ? ElevatedButton(
                                 onPressed: () {
