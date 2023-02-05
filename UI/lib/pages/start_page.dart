@@ -35,11 +35,9 @@ class _StartPageState extends State<StartPage> {
                   Container(
                       height: titleHeight,
                       width: buttonWidth,
-                      decoration: outerBorder,
                       child: ElevatedButton(
                         style: OutlinedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            side: whiteBorder,
+                            backgroundColor: kBlack,
                             padding: const EdgeInsets.all(16)),
                         child: Text('메인페이지', style: subtitleTextStyle),
                         onPressed: () {
@@ -68,11 +66,9 @@ class _StartPageState extends State<StartPage> {
                     Container(
                         height: titleHeight,
                         width: buttonWidth,
-                        decoration: outerBorder,
                         child: ElevatedButton(
                           style: OutlinedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              side: whiteBorder,
+                              backgroundColor: kBlack,
                               padding: const EdgeInsets.all(16)),
                           child: Text('로그인', style: subtitleTextStyle),
                           onPressed: () {
@@ -88,11 +84,9 @@ class _StartPageState extends State<StartPage> {
                     Container(
                         height: titleHeight,
                         width: buttonWidth,
-                        decoration: outerBorder,
                         child: ElevatedButton(
                           style: OutlinedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              side: whiteBorder,
+                              backgroundColor: kBlack,
                               padding: const EdgeInsets.all(16)),
                           child: Text('회원가입', style: subtitleTextStyle),
                           onPressed: () {
@@ -116,7 +110,14 @@ class _StartPageState extends State<StartPage> {
                     decoration: outerBorder,
                     height: 600,
                     width: width,
-                    child: Center(child: Text('서비스개요', style: titleTextStyle))),
+                    child: Text(
+                      '서비스개요',
+                      style: titleTextStyle,
+                    )
+                    // Image.asset(
+                    //   'assets/overview.png',
+                    //   fit: BoxFit.cover,
+                    ),
                 const Spacer(),
                 footer(),
                 defaultSpacer,

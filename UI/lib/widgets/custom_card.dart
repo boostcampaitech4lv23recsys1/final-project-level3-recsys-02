@@ -86,6 +86,7 @@ Widget userCard(OtherUser otherUser) {
 Widget trackCoverCard(Item item) {
   return Container(
     //decoration: outerBorder,
+    height: boxHeight - 20,
     width: 150,
     padding: kPadding,
     child: Column(
@@ -103,7 +104,7 @@ Widget trackCoverCard(Item item) {
           height: 20,
         ),
         // track name
-        Container(
+        SizedBox(
           width: 130,
           child: Text(item.trackName,
               maxLines: 1,
@@ -116,11 +117,14 @@ Widget trackCoverCard(Item item) {
           height: 10,
         ),
         // artist name
-        Text(item.artistName,
-            overflow: TextOverflow.fade,
-            softWrap: true,
-            style: contentsTextStyle,
-            textAlign: TextAlign.start),
+        SizedBox(
+          width: 130,
+          child: Text(item.artistName,
+              overflow: TextOverflow.fade,
+              softWrap: true,
+              style: contentsTextStyle,
+              textAlign: TextAlign.start),
+        ),
       ],
     ),
   );
@@ -180,12 +184,15 @@ Widget trackCard(Item item, {bool isRank = false, int index = 1}) {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // track name
-            Text(
-              overflow: TextOverflow.fade,
-              softWrap: true,
-              item.trackName,
-              style: contentsTextStyle,
-              textAlign: TextAlign.start,
+            Container(
+              width: 250,
+              child: Text(
+                overflow: TextOverflow.fade,
+                softWrap: true,
+                item.trackName,
+                style: contentsTextStyle,
+                textAlign: TextAlign.start,
+              ),
             ),
             Text(item.artistName,
                 overflow: TextOverflow.fade,
@@ -205,8 +212,7 @@ Widget trackCard(Item item, {bool isRank = false, int index = 1}) {
   );
 }
 
-Widget playlistCard(Item item) {
-  bool isLike = true;
+Widget playlistCard(Item item, {isLike = false}) {
   return Container(
     // decoration: outerBorder,
     height: titleHeight * (1.5),
@@ -238,22 +244,11 @@ Widget playlistCard(Item item) {
 
         // 좋아요
         IconButton(
-            onPressed: () {
-              if (isLike) {
-                isLike = false;
-              } else {
-                isLike = true;
-              }
-            },
-            icon: isLike
-                ? Icon(
-                    Icons.favorite,
-                    color: kWhite,
-                  )
-                : Icon(
-                    Icons.favorite_outline_rounded,
-                    color: kWhite,
-                  )),
+            onPressed: () {},
+            icon: Icon(
+              Icons.favorite,
+              color: kWhite,
+            )),
       ],
     ),
   );
