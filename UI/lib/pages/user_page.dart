@@ -59,15 +59,14 @@ class _UserPageState extends State<UserPage> {
     userId = pref.getString('user_id')!;
 
     recUser = await dioModel.recUser(name: userId.toString());
-
+    //print(recUser);
     for (int i = 0; i < recUser.length; i++) {
       for (int j = 0; j < 5; j++) {
         if (recUser[i][j] == null) {
           if (j < 3) {
             if (j == 1) {
               recUser[i][j] = recUser[i][5];
-            }
-            if (j == 2) {
+            } else if (j == 2) {
               recUser[i][j] = 'assets/profile.png';
             } else {
               recUser[i][j] = '';

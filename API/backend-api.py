@@ -57,7 +57,7 @@ class userInfo(BaseModel):
 def get_user_table():
     query = f"SELECT * FROM user_info;"
     test = pd.read_sql(query, db_connect)
-    print(test)
+    #print(test)
     return test.to_string()
 
 @app.get('/get_search_track/{track}', description='트랙 검색 리스트 생성')
@@ -82,7 +82,7 @@ def get_track_detail(track_id: int):
 def login_user(user: User) -> str:
     user_query = f"SELECT user_id, password FROM user_info WHERE user_name='{user.id}';"
     user_df = pd.read_sql(user_query, db_connect).to_dict()
-    print(user_df)
+    #print(user_df)
     if (len(user_df) == 0):
         return 'Empty'
 
@@ -131,7 +131,7 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
     # 이미 가입한 회원인지 확인
     user_query = f"SELECT user_name FROM user_info WHERE user_name='{userInfo.user_name}';"
     #user_df = pd.read_sql(user_query, db_connect)
-    print(userInfo)
+    #print(userInfo)
     with db_connect.cursor() as cur:
         cur.execute(user_query)
         values = cur.fetchall()
@@ -155,7 +155,7 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
         user_tracks = get_new_inters(tags, artists)
 
         for _, row in user_tracks.iterrows():
-            print(row)
+            #print(row)
             add_interaction(user_id=userInfo.user_id, track_id=row['track_id'], album_name=row['album_name'])
 
         db_connect.commit()
@@ -169,7 +169,7 @@ def signin_user(userInfo: userInfo, tags: list, artists: list):
 def get_profiles(user_id: int) -> userInfo:
     user_query = f"SELECT * FROM user_info WHERE user_id={user_id};"
     user_df = pd.read_sql(user_query, db_connect).to_dict()
-    print(user_df)
+    #print(user_df)
     if (len(user_df) == 0):
         return 'None'
     else:
