@@ -39,8 +39,7 @@ const Widget defaultSpacer = SizedBox(
   width: 20,
   height: 30,
 );
-BorderSide whiteBorder =
-    BorderSide(color: kWhite, strokeAlign: StrokeAlign.outside);
+BorderSide whiteBorder = BorderSide(color: kWhite);
 
 BoxDecoration profileBorder = BoxDecoration(
   border: Border.all(color: Colors.white, width: 1.5),
