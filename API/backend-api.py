@@ -269,9 +269,14 @@ def add_follow(user_A: int, user_B: int):
     SET follower = CASE WHEN CAST({user_A} AS BIGINT) = ANY(follower) THEN follower ELSE ARRAY_APPEND(follower, CAST({user_A} AS BIGINT)) END
     WHERE user_id = {user_B}"""
 
+    query3 = f"update user_info set following = array_remove(following, {user_A}) where user_id = {user_A};"
+    query4 = f"update user_info set follower = array_remove(follower, {user_B}) where user_id = {user_B};"
+
     with db_connect.cursor() as cur:
         cur.execute(query2)
         cur.execute(query)
+        cur.execute(query3)
+        cur.execute(query4)
         db_connect.commit()
 
     return "Success"
