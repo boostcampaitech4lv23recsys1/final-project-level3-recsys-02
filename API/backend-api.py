@@ -261,26 +261,26 @@ def add_follow(user_A: int, user_B: int):
 
     print(df[df['user_id'] == user_A].values[0][-3])
     if  a_none:
-        a = [str(user_B)]
+        a = [user_B]
     else:
         a = df[df['user_id'] == user_A].values[0][-3]
-        a.append(str(user_B))
+        a.append(user_B)
 
 
     if b_none:
-        b = [str(user_A)]
+        b = [user_A]
     else:
         b = df[df['user_id'] == user_B].values[0][-3]
-        b.append(str(user_A))
+        b.append(user_A)
 
     a = list(set(a))
-    if str(user_A) in a:
-        a.remove(str(user_A))
+    if user_A in a:
+        a.remove(user_A)
 
     b = list(set(b))
 
-    if str(user_B) in b:
-        b.remove(str(user_B))
+    if user_B in b:
+        b.remove(user_B)
 
     a = "{" + ",".join([str(i) for i in a]) + "}"
     b = "{" + ",".join([str(i) for i in b]) + "}"
@@ -298,7 +298,7 @@ def add_follow(user_A: int, user_B: int):
 @app.get("/unfollow/{user_A}/{user_B}", description='user_A unfollows user_B')
 def add_unfollow(user_A: int, user_B: int):
     query = f"update user_info set following = array_remove(following, {user_B}) where user_id = {user_A};"
-    query2 = f"update user_info set following = array_remove(follower, {user_A}) where user_id = {user_B};"
+    query2 = f"update user_info set follower = array_remove(follower, {user_A}) where user_id = {user_B};"
     with db_connect.cursor() as cur:
         cur.execute(query2)
         cur.execute(query)
