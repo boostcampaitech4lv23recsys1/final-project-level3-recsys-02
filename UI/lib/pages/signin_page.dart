@@ -365,7 +365,7 @@ class _SigninPageState extends State<SigninPage> {
                     child: Container(
                       height: 100,
                       child: Image.asset(
-                        'assets/logo.png',
+                        'logo.png',
                       ),
                     ),
                     onTap: () {
