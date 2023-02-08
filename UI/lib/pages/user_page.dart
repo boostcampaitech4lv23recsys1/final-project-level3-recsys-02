@@ -13,6 +13,7 @@ import 'package:ui/widgets/titlebar.dart';
 import 'package:ui/widgets/track_detail.dart';
 import 'package:web_smooth_scroll/web_smooth_scroll.dart';
 import 'package:ui/utils/dio_client.dart';
+import 'package:flutter_scatter/flutter_scatter.dart';
 
 class UserPage extends StatefulWidget {
   const UserPage({super.key, this.isMyPage = true, this.otherUser});
@@ -53,6 +54,9 @@ class _UserPageState extends State<UserPage> {
   List recUser = [];
 
   bool isFollowing = false;
+
+  List<Widget> words = [];
+  List selectedTasts = [];
 
   void getUserRec() async {
     final pref = await SharedPreferences.getInstance();
@@ -175,6 +179,56 @@ class _UserPageState extends State<UserPage> {
     setState(() {});
   }
 
+  Future getPrefReview() async {
+    if (widget.isMyPage) {
+      final pref = await SharedPreferences.getInstance();
+      userId = pref.getString('user_id')!;
+    } else {
+      userId = widget.otherUser.user_id.toString();
+    }
+    setState(() {});
+
+    // 0 : 사용자가 자주 듣는 음악시간대
+    // 1 : 사용자가 많이 들은 트랙
+    var data = await dio.get_user_pref_review(user_id: userId);
+    words.add(Container(
+      margin: const EdgeInsets.all(20),
+      child: Text('가장 음악을 많이 듣는 시간대 ${data['freq_time']}시',
+          style: const TextStyle(
+            color: Color.fromARGB(255, 191, 217, 247),
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+          )),
+    ));
+
+    List<double> fonts = [18.0, 20.0, 22.0];
+    selectedTasts = await dio.get_usertasts(userId);
+    print(selectedTasts);
+    int i = 0;
+    for (var tags in selectedTasts[0]) {
+      words.add(Container(
+        margin: const EdgeInsets.all(20),
+        child: Text('$tags',
+            style: TextStyle(
+              color: Color.fromARGB(255, 255, 218, 247),
+              fontSize: fonts[i++ % 3],
+              fontWeight: FontWeight.bold,
+            )),
+      ));
+    }
+    words.add(Container(
+      margin: const EdgeInsets.all(20),
+      child: Text('${selectedTasts[1]}',
+          style: const TextStyle(
+            color: Color.fromARGB(255, 243, 255, 229),
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
+          )),
+    ));
+
+    setState(() {});
+  }
+
   @override
   void initState() {
     if (widget.isMyPage) {
@@ -182,6 +236,7 @@ class _UserPageState extends State<UserPage> {
     }
     getProfile();
     getMyMusics();
+    getPrefReview();
     super.initState();
   }
 
@@ -367,12 +422,17 @@ class _UserPageState extends State<UserPage> {
         Container(
             decoration: outerBorder,
             width: width,
-            height: 590,
+            height: 400,
+            padding: kPadding,
             child: Center(
-                child: Text(
-              '취향분석 결과',
-              style: titleTextStyle,
-            )))
+              child: FittedBox(
+                child: Scatter(
+                  fillGaps: true,
+                  delegate: FermatSpiralScatterDelegate(ratio: 1),
+                  children: words,
+                ),
+              ),
+            ))
       ],
     );
   }
