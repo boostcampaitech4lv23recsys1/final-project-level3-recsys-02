@@ -292,15 +292,7 @@ class _SigninPageState extends State<SigninPage> {
                   ));
             },
           )),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Text('선호하시는 아티스트 최소 3명을 선택해주세요', style: subtitleTextStyle),
-          IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.refresh_rounded, color: kWhite))
-        ],
-      ),
+      Text('선호하시는 아티스트 최소 3명을 선택해주세요', style: subtitleTextStyle),
       Container(
           height: boxHeight,
           alignment: Alignment.center,

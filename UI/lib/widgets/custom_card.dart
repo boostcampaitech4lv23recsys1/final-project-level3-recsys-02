@@ -93,11 +93,15 @@ Widget trackCoverCard(Item item) {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // image
-        ClipRRect(
-          borderRadius: kBorder,
-          child: Image.network(
-            item.image,
-            fit: BoxFit.cover,
+        SizedBox(
+          height: 130,
+          width: 130,
+          child: ClipRRect(
+            borderRadius: kBorder,
+            child: Image.network(
+              item.image,
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         SizedBox(
@@ -185,7 +189,7 @@ Widget trackCard(Item item, {bool isRank = false, int index = 1}) {
           children: [
             // track name
             Container(
-              width: 250,
+              width: 230,
               child: Text(
                 overflow: TextOverflow.fade,
                 softWrap: true,

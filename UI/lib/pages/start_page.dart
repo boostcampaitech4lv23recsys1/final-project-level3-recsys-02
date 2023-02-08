@@ -110,14 +110,10 @@ class _StartPageState extends State<StartPage> {
                     decoration: outerBorder,
                     height: 600,
                     width: width,
-                    child: Text(
-                      '서비스개요',
-                      style: titleTextStyle,
-                    )
-                    // Image.asset(
-                    //   'assets/overview.png',
-                    //   fit: BoxFit.cover,
-                    ),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.asset('assets/overview.png',
+                            fit: BoxFit.fitWidth))),
                 const Spacer(),
                 footer(),
                 defaultSpacer,

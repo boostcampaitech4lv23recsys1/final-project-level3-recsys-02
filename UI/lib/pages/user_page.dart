@@ -87,7 +87,7 @@ class _UserPageState extends State<UserPage> {
       }
     }
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 20; i++) {
       userList.add(OtherUser(
           user_id: recUser[i][0],
           realname: recUser[i][1],
@@ -432,31 +432,31 @@ class _UserPageState extends State<UserPage> {
               width: width,
               decoration: outerBorder,
               height: boxHeight,
-              child: AlignedGridView.count(
-                crossAxisCount: 1,
-                mainAxisSpacing: 15,
-                controller: _userScrollController,
-                padding: defaultPadding,
-                scrollDirection: Axis.horizontal,
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: userList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => UserPage(
-                                  isMyPage: false,
-                                  otherUser: userList[index],
-                                )),
+              child: RawScrollbar(
+                  controller: _userScrollController,
+                  child: ListView.builder(
+                    controller: _userScrollController,
+                    padding: defaultPadding,
+                    scrollDirection: Axis.horizontal,
+                    physics: const ScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: userList.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => UserPage(
+                                      isMyPage: false,
+                                      otherUser: userList[index],
+                                    )),
+                          );
+                        },
+                        child: userCoverCard(userList[index]),
                       );
                     },
-                    child: userCoverCard(userList[index]),
-                  );
-                },
-              )),
+                  ))),
           defaultSpacer,
         ]);
   }
