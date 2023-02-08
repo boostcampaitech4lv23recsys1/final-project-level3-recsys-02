@@ -338,7 +338,7 @@ def get_top_tracks():
                 name.append(i[1])
                 if i[-1] == None:
                     ran = randint(0,4)
-                    i[-1] = f"assets/album{ran}.png"
+                    i[-1] = "assets/album0.png"
                 for j in range(1,4):
                     if i[j] == None:
                         i[j] = '-'
@@ -379,7 +379,6 @@ if __name__ == "__main__":
 
     app.add_middleware(
         CORSMiddleware,
-        
         allow_origins=['*'],
         allow_credentials=True,
         allow_methods=['*'],

@@ -68,7 +68,7 @@ class _StartPageState extends State<StartPage> {
                         width: buttonWidth,
                         child: ElevatedButton(
                           style: OutlinedButton.styleFrom(
-                              backgroundColor: kBlack,
+                              backgroundColor: kBlack3,
                               padding: const EdgeInsets.all(16)),
                           child: Text('로그인', style: subtitleTextStyle),
                           onPressed: () {
@@ -107,13 +107,12 @@ class _StartPageState extends State<StartPage> {
                 startHeader(), defaultSpacer,
                 // 서비스 개요
                 Container(
-                    decoration: outerBorder,
+                    //decoration: outerBorder,
                     height: 600,
                     width: width,
                     child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.asset('assets/overview.png',
-                            fit: BoxFit.fitWidth))),
+                        child: Image.asset('3.png', fit: BoxFit.fitWidth))),
                 const Spacer(),
                 footer(),
                 defaultSpacer,

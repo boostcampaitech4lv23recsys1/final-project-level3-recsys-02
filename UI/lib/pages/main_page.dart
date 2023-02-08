@@ -39,6 +39,9 @@ class _MainPageState extends State<MainPage> {
   String userId = '';
   String tag = '';
   String artist = '';
+  Map profile_info = {};
+  String realname = '';
+  String image = '';
 
   List<Item> musicList = [];
   List<Item> tagList = [];
@@ -51,6 +54,9 @@ class _MainPageState extends State<MainPage> {
   List recArtList = [];
   List user = [];
 
+  var tag_list_e = ['🍏', '🍎', '🍇', '🌽', '🥐', '🍟', '🍙', '🍡'];
+  var emo = '';
+
   Future addInteraction(Item item) async {
     final pref = await SharedPreferences.getInstance();
     String userId = pref.getString('user_id')!;
@@ -60,6 +66,18 @@ class _MainPageState extends State<MainPage> {
       trackId: item.trackId,
       album_name: item.albumName,
     );
+  }
+
+  void getProfile() async {
+    final pref = await SharedPreferences.getInstance();
+    userId = pref.getString('user_id')!;
+
+    profile_info = await dioClient.profile(name: userId.toString());
+
+    realname = profile_info['realname'];
+    image = profile_info['image'];
+
+    setState(() {});
   }
 
   void getChartList() async {
@@ -105,6 +123,7 @@ class _MainPageState extends State<MainPage> {
       'rock',
       'soul'
     ];
+
     List art_list = [
       '10 Years',
       '100 gecs',
@@ -151,7 +170,7 @@ class _MainPageState extends State<MainPage> {
       for (int j = 0; j < temp[i].length; j++) {
         if (temp[i][j][1] == null) {
           int rnum = Random().nextInt(4);
-          temp[i][j][1] = 'assets/album$rnum.png';
+          temp[i][j][1] = 'assets/album0.png';
         }
         for (int k = 2; k < 7; k++) {
           if (temp[i][j][k] == null) {
@@ -201,6 +220,10 @@ class _MainPageState extends State<MainPage> {
           duration: recArtList[i][5],
           url: recArtList[i][6]));
     }
+    Random random = new Random();
+    int randomInt = random.nextInt(7 - 0 + 1);
+    emo = tag_list_e[randomInt];
+
     setState(() {});
   }
 
@@ -209,6 +232,7 @@ class _MainPageState extends State<MainPage> {
     getMusicList();
     getChartList();
     getTasts();
+    getProfile();
     super.initState();
   }
 
@@ -218,7 +242,7 @@ class _MainPageState extends State<MainPage> {
         '인기곡',
       ),
       SizedBox(
-          height: boxHeight,
+          height: boxHeight * 1.2,
           width: width * 0.8,
           child: AlignedGridView.count(
             controller: charController,
@@ -251,7 +275,21 @@ class _MainPageState extends State<MainPage> {
       Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text("빠른선곡", style: titleTextStyle),
+          SizedBox(
+            width: 30,
+            height: 30,
+            child: CircleAvatar(
+              backgroundColor: kBlack,
+              backgroundImage: NetworkImage('$image'),
+            ),
+          ),
+          Text("  " + "$realname 님 반갑습니다,", style: titleTextStyle3),
+        ],
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text("빠른선곡", style: titleTextStyle2),
           IconButton(
               icon: const Icon(Icons.refresh_rounded),
               color: kWhite,
@@ -262,7 +300,11 @@ class _MainPageState extends State<MainPage> {
         ],
       ),
       SizedBox(
-          height: boxHeight,
+        height: 20,
+        width: width * 0.8,
+      ),
+      SizedBox(
+          height: boxHeight * 1.19,
           width: width * 0.8,
           child: AlignedGridView.count(
             controller: fastSelectionController,
@@ -294,36 +336,9 @@ class _MainPageState extends State<MainPage> {
         title,
       ),
       Container(
-          decoration: outerBorder,
+          //decoration: outerBorder,
           width: width * 0.8,
-<<<<<<< HEAD
-          height: boxHeight * 1.2,
-          child: AlignedGridView.count(
-            crossAxisCount: 1,
-            mainAxisSpacing: 20,
-            controller: recController,
-            padding: defaultPadding,
-            scrollDirection: Axis.horizontal,
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: items.length,
-            itemBuilder: (BuildContext context, int idx) {
-              return GestureDetector(
-                  onTap: () {
-                    addInteraction(items[idx]);
-                    Navigator.of(context).push(
-                      PageRouteBuilder(
-                        opaque: false, // set to false
-                        pageBuilder: (_, __, ___) =>
-                            DetailPage(item: items[idx]),
-                      ),
-                    );
-                  },
-                  child: trackCoverCard(items[idx]));
-            },
-          ))
-=======
-          height: boxHeight,
+          height: boxHeight * 1.45,
           child: RawScrollbar(
               controller: controller,
               child: ListView.builder(
@@ -348,7 +363,6 @@ class _MainPageState extends State<MainPage> {
                       child: trackCoverCard(items[idx]));
                 },
               )))
->>>>>>> 2ce91908acdb2b548490e4b59a80fc3281d71168
     ]);
   }
 
@@ -422,13 +436,25 @@ class _MainPageState extends State<MainPage> {
       ),
       actions: [
         Container(
-            width: buttonWidth,
+            width: buttonWidth * 1.2,
             child: ElevatedButton(
               style: OutlinedButton.styleFrom(
                   backgroundColor: kBlack,
                   elevation: 0,
                   padding: const EdgeInsets.all(12)),
-              child: Text('로그아웃', style: subtitleTextStyle),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 30,
+                    height: 30,
+                    child: CircleAvatar(
+                      backgroundColor: kBlack,
+                      backgroundImage: NetworkImage('$image'),
+                    ),
+                  ),
+                  Text("  " + "로그아웃", style: subtitleTextStyle),
+                ],
+              ),
               onPressed: () {
                 exitSession();
                 setState(() {});
@@ -462,16 +488,24 @@ class _MainPageState extends State<MainPage> {
                   children: [
                     fastSelection(),
                     defaultSpacer,
-                    musicRank(),
+                    // musicRank(),
+                    // defaultSpacer,
+                    defaultSpacer,
                     defaultSpacer,
                     recommendation(
-                        '$tag 장르를 좋아한다면', tagList, _tagRecController),
+                        '$tag 장르를 좋아한다면 $emo', tagList, _tagRecController),
+                    defaultSpacer,
+                    defaultSpacer,
                     defaultSpacer,
                     recommendation('$artist 아티스트를 좋아한다면', artistList,
                         _artistRecController),
                     defaultSpacer,
-                    footer(),
                     defaultSpacer,
+                    defaultSpacer,
+                    musicRank(),
+                    defaultSpacer,
+                    defaultSpacer,
+                    footer(),
                     defaultSpacer,
                   ],
                 ),

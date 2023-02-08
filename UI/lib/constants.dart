@@ -8,8 +8,11 @@ BorderRadius kBorder = BorderRadius.circular(12);
 
 Color kLightGrey = const Color(0xFFE5E5E5);
 Color kDarkGrey = const Color.fromARGB(255, 155, 155, 155);
+Color kkDarkGrey = const Color.fromARGB(255, 155, 155, 155);
 
-Color kBlack = const Color.fromRGBO(22, 22, 22, 1);
+Color kBlack = const Color.fromRGBO(11, 11, 11, 1);
+Color kBlack2 = const Color.fromRGBO(22, 22, 22, 1);
+Color kBlack3 = const Color.fromRGBO(0, 0, 0, 0);
 Color kWhite = const Color.fromARGB(255, 240, 240, 240);
 
 const String username = "yongheewon";
@@ -17,18 +20,49 @@ const String username = "yongheewon";
 EdgeInsets outerMargin = const EdgeInsets.all(20);
 EdgeInsets defaultPadding = const EdgeInsets.all(8);
 const kPadding = EdgeInsets.only(top: 8, bottom: 12, left: 8, right: 8);
+const kPadding2 = EdgeInsets.only(top: 2, bottom: 3, left: 4, right: 4);
 
 final hintTextStyle = TextStyle(color: kDarkGrey, fontSize: 13.0);
 final defaultTextStyle = TextStyle(color: kWhite, fontSize: 12.0);
+final defaultTextStyle2 = TextStyle(color: kkDarkGrey, fontSize: 16.0);
+final defaultTextStyle3 = TextStyle(color: kkDarkGrey, fontSize: 14.0);
+final defaultTextStyle4 = TextStyle(color: kkDarkGrey, fontSize: 16.0);
 final contentsTextStyle = TextStyle(color: kWhite, fontSize: 14.0);
+final contentsTextStyle2 = TextStyle(color: kWhite, fontSize: 18.0);
+final contentsTextStyle3 = TextStyle(color: kWhite, fontSize: 18.0);
+final contentsTextStyle4 = TextStyle(color: kWhite, fontSize: 16.0);
+final ccontentsTextStyle = TextStyle(color: kkDarkGrey, fontSize: 17.0);
 final subtitleTextStyle = TextStyle(
   color: kWhite,
-  fontSize: 16.0,
+  fontSize: 20.0,
   fontWeight: FontWeight.bold,
+);
+final ssubtitleTextStyle = TextStyle(
+  color: kWhite,
+  fontSize: 20.0,
+  //fontWeight: FontWeight,
 );
 final titleTextStyle = TextStyle(
   color: kWhite,
+  fontSize: 30.0,
+  fontWeight: FontWeight.bold,
+);
+
+final titleTextStyle2 = TextStyle(
+  color: kWhite,
+  fontSize: 40.0,
+  fontWeight: FontWeight.bold,
+);
+
+final titleTextStyle3 = TextStyle(
+  color: kkDarkGrey,
   fontSize: 20.0,
+  fontWeight: FontWeight.bold,
+);
+
+final titleTextStyle4 = TextStyle(
+  color: kWhite,
+  fontSize: 25.0,
   fontWeight: FontWeight.bold,
 );
 
@@ -38,6 +72,15 @@ const buttonWidth = 120.0;
 const Widget defaultSpacer = SizedBox(
   width: 20,
   height: 30,
+);
+const Widget defaultSpacer2 = SizedBox(
+  width: 10,
+  height: 20,
+);
+
+const Widget defaultSpacer3 = SizedBox(
+  width: 5,
+  height: 10,
 );
 BorderSide whiteBorder = BorderSide(color: kWhite);
 
@@ -64,4 +107,3 @@ void exitSession() async {
   isLogin = false;
   debugPrint("session == $isLogin");
 }
-

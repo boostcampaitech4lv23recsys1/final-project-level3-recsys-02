@@ -195,7 +195,7 @@ class _UserPageState extends State<UserPage> {
         if (likelist[i][j] == null) {
           if (j == 5) {
             int rnum = Random().nextInt(4);
-            likelist[i][j] = 'assets/album$rnum.png';
+            likelist[i][j] = 'assets/album0.png';
           } else {
             likelist[i][j] = 'No data';
           }
@@ -228,7 +228,7 @@ class _UserPageState extends State<UserPage> {
     var data = await dio.get_user_pref_review(user_id: userId);
     words.add(Container(
       margin: const EdgeInsets.all(20),
-      child: Text('$data',
+      child: Text('$data' + ' 🌙',
           style: const TextStyle(
             color: Color.fromARGB(255, 191, 217, 247),
             fontSize: 18.0,
@@ -279,7 +279,7 @@ class _UserPageState extends State<UserPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        titleBar('내 정보'),
+        titleBar2('내 정보'),
         Container(
           width: 500,
           height: boxHeight,
@@ -325,7 +325,7 @@ class _UserPageState extends State<UserPage> {
                                 .length
                                 .toString() +
                             '명',
-                        style: contentsTextStyle)),
+                        style: contentsTextStyle3)),
                 ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(
@@ -349,7 +349,7 @@ class _UserPageState extends State<UserPage> {
                                 .length
                                 .toString() +
                             '명',
-                        style: contentsTextStyle)),
+                        style: contentsTextStyle3)),
                 Container(
                     width: 180,
                     child: widget.isMyPage
@@ -392,7 +392,7 @@ class _UserPageState extends State<UserPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        titleBar('나의 플레이리스트'),
+        titleBar2('나의 플레이리스트'),
         Container(
             height: boxHeight,
             decoration: outerBorder,
@@ -427,11 +427,11 @@ class _UserPageState extends State<UserPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          titleBar('$realname와 취향이 비슷한 사용자'),
+          titleBar2('$realname와 취향이 비슷한 사용자'),
           Container(
               width: width,
               decoration: outerBorder,
-              height: boxHeight,
+              height: boxHeight + 40,
               child: RawScrollbar(
                   controller: _userScrollController,
                   child: ListView.builder(
@@ -444,7 +444,7 @@ class _UserPageState extends State<UserPage> {
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
                         onTap: () {
-                          Navigator.push(
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => UserPage(
@@ -466,7 +466,7 @@ class _UserPageState extends State<UserPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        titleBar('$realname님의 취향분석 결과'),
+        titleBar2('$realname님의 취향분석 결과'),
         Container(
           decoration: outerBorder,
           width: width,
@@ -536,13 +536,25 @@ class _UserPageState extends State<UserPage> {
       ),
       actions: [
         Container(
-            width: buttonWidth,
+            width: buttonWidth * 1.2,
             child: ElevatedButton(
               style: OutlinedButton.styleFrom(
                   backgroundColor: kBlack,
                   elevation: 0,
                   padding: const EdgeInsets.all(12)),
-              child: Text('로그아웃', style: subtitleTextStyle),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 30,
+                    height: 30,
+                    child: CircleAvatar(
+                      backgroundColor: kBlack,
+                      backgroundImage: NetworkImage('$image'),
+                    ),
+                  ),
+                  Text("  " + "로그아웃", style: subtitleTextStyle),
+                ],
+              ),
               onPressed: () {
                 exitSession();
                 setState(() {});
