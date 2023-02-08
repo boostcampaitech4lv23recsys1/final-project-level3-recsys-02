@@ -30,7 +30,9 @@ class _MainPageState extends State<MainPage> {
   final _mainScrollCotroller = ScrollController();
   final fastSelectionController = ScrollController();
   final charController = ScrollController();
-  final recController = ScrollController();
+  final _tagRecController = ScrollController();
+  final _artistRecController = ScrollController();
+
   final DioClient dioClient = DioClient();
   final DioModel dioModel = DioModel();
 
@@ -286,7 +288,7 @@ class _MainPageState extends State<MainPage> {
     ]);
   }
 
-  Widget recommendation(String title, List<Item> items) {
+  Widget recommendation(String title, List<Item> items, controller) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       titleBar(
         title,
@@ -295,30 +297,30 @@ class _MainPageState extends State<MainPage> {
           decoration: outerBorder,
           width: width * 0.8,
           height: boxHeight,
-          child: AlignedGridView.count(
-            crossAxisCount: 1,
-            mainAxisSpacing: 20,
-            controller: recController,
-            padding: defaultPadding,
-            scrollDirection: Axis.horizontal,
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: items.length,
-            itemBuilder: (BuildContext context, int idx) {
-              return GestureDetector(
-                  onTap: () {
-                    addInteraction(items[idx]);
-                    Navigator.of(context).push(
-                      PageRouteBuilder(
-                        opaque: false, // set to false
-                        pageBuilder: (_, __, ___) =>
-                            DetailPage(item: items[idx]),
-                      ),
-                    );
-                  },
-                  child: trackCoverCard(items[idx]));
-            },
-          ))
+          child: RawScrollbar(
+              controller: controller,
+              child: ListView.builder(
+                controller: controller,
+                padding: defaultPadding,
+                scrollDirection: Axis.horizontal,
+                physics: const ScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: items.length,
+                itemBuilder: (BuildContext context, int idx) {
+                  return GestureDetector(
+                      onTap: () {
+                        addInteraction(items[idx]);
+                        Navigator.of(context).push(
+                          PageRouteBuilder(
+                            opaque: false, // set to false
+                            pageBuilder: (_, __, ___) =>
+                                DetailPage(item: items[idx]),
+                          ),
+                        );
+                      },
+                      child: trackCoverCard(items[idx]));
+                },
+              )))
     ]);
   }
 
@@ -434,9 +436,11 @@ class _MainPageState extends State<MainPage> {
                     defaultSpacer,
                     musicRank(),
                     defaultSpacer,
-                    recommendation('$tag 장르를 좋아한다면', tagList),
+                    recommendation(
+                        '$tag 장르를 좋아한다면', tagList, _tagRecController),
                     defaultSpacer,
-                    recommendation('$artist 아티스트를 좋아한다면', artistList),
+                    recommendation('$artist 아티스트를 좋아한다면', artistList,
+                        _artistRecController),
                     defaultSpacer,
                     footer(),
                     defaultSpacer,
