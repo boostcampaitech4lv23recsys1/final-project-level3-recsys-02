@@ -225,11 +225,15 @@ class DioClient {
     late Response response;
     try {
       response = await _dio.get('/$user_id/reviews');
+
+      if (response.statusCode == 404) {
+        return '이제 알듯 말듯 하네요. 조금만 더 평가해주세요!';
+      }
       debugPrint(response.toString());
-      return response.data;
+      return '가장 음악을 많이 듣는 시간대 ${response.data['freq_time']}시';
     } catch (e) {
       debugPrint('Error get_user_pref_review : $e');
-      return -1;
+      return 'Error';
     }
   }
 }

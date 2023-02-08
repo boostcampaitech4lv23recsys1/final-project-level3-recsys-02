@@ -193,7 +193,7 @@ class _UserPageState extends State<UserPage> {
     var data = await dio.get_user_pref_review(user_id: userId);
     words.add(Container(
       margin: const EdgeInsets.all(20),
-      child: Text('가장 음악을 많이 듣는 시간대 ${data['freq_time']}시',
+      child: Text('$data',
           style: const TextStyle(
             color: Color.fromARGB(255, 191, 217, 247),
             fontSize: 18.0,
@@ -311,7 +311,7 @@ class _UserPageState extends State<UserPage> {
                                 onPressed: () {
                                   unfollowUser(mainUserId, userId);
                                   isFollowing = false;
-                                  // setState(() {});
+                                  setState(() {});
                                 },
                                 style: OutlinedButton.styleFrom(
                                     backgroundColor: kWhite,
@@ -325,7 +325,7 @@ class _UserPageState extends State<UserPage> {
                                 onPressed: () {
                                   followUser(mainUserId, userId);
                                   isFollowing = true;
-                                  // setState(() {});
+                                  setState(() {});
                                 },
                                 style: OutlinedButton.styleFrom(
                                     backgroundColor: Colors.transparent,
@@ -420,24 +420,23 @@ class _UserPageState extends State<UserPage> {
       children: [
         titleBar('$realname님의 취향분석 결과'),
         Container(
-            decoration: outerBorder,
-            width: width,
-            height: 400,
-            padding: kPadding,
-            child: Center(
-              child: FittedBox(
-                child: Scatter(
-                  fillGaps: true,
-                  delegate: FermatSpiralScatterDelegate(ratio: 1),
-                  children: words,
-                ),
-              ),
-            ))
+          decoration: outerBorder,
+          width: width,
+          height: 400,
+          padding: kPadding,
+          child: Center(
+            child: Scatter(
+              fillGaps: true,
+              delegate: FermatSpiralScatterDelegate(ratio: 1),
+              children: words,
+            ),
+          ),
+        )
       ],
     );
   }
 
-  AppBar mypagenAppBar(context) {
+  AppBar mypageAppBar(context) {
     return AppBar(
       toolbarHeight: 80,
       elevation: 0,
@@ -455,6 +454,38 @@ class _UserPageState extends State<UserPage> {
         },
       ),
       leadingWidth: 200,
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: buttonWidth,
+            margin: const EdgeInsets.only(right: 10),
+            child: ElevatedButton(
+              style: OutlinedButton.styleFrom(
+                  backgroundColor: kBlack,
+                  // side: whiteBorder,
+                  padding: const EdgeInsets.all(12)),
+              child: Text('홈', style: subtitleTextStyle),
+              onPressed: () {
+                Navigator.pushNamed(context, '/home');
+              },
+            ),
+          ),
+          Container(
+            width: buttonWidth,
+            child: ElevatedButton(
+              style: OutlinedButton.styleFrom(
+                  backgroundColor: kBlack,
+                  elevation: 0,
+                  padding: const EdgeInsets.all(12)),
+              child: Text('마이페이지', style: subtitleTextStyle),
+              onPressed: () {
+                Navigator.pushNamed(context, '/mypage');
+              },
+            ),
+          ),
+        ],
+      ),
       actions: [
         Container(
             width: buttonWidth,
@@ -478,7 +509,7 @@ class _UserPageState extends State<UserPage> {
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
     return Scaffold(
-        appBar: mypagenAppBar(context),
+        appBar: mypageAppBar(context),
         body: Container(
             // width: width,
             // height: 400,
