@@ -373,10 +373,7 @@ class _UserPageState extends State<UserPage> {
                                 onPressed: () {
                                   followUser(mainUserId, userId);
                                   isFollowing = true;
-<<<<<<< HEAD
-=======
                                   setState(() {});
->>>>>>> 4b519657fa0def4b40c4d9431e9dcce92cd2149a
                                 },
                                 style: OutlinedButton.styleFrom(
                                     backgroundColor: Colors.transparent,

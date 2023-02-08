@@ -294,7 +294,7 @@ class _MainPageState extends State<MainPage> {
       Container(
           decoration: outerBorder,
           width: width * 0.8,
-          height: boxHeight,
+          height: boxHeight * 1.2,
           child: AlignedGridView.count(
             crossAxisCount: 1,
             mainAxisSpacing: 20,
