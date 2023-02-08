@@ -141,7 +141,7 @@ class _MainPageState extends State<MainPage> {
   void getMusicList() async {
     final pref = await SharedPreferences.getInstance();
     userId = pref.getString('user_id')!;
-
+    // print(userId);
     Map recomlist = await dioModel.recMusic(name: userId);
 
     List temp = [recomlist['main'], recomlist['tag'], recomlist['artist']];

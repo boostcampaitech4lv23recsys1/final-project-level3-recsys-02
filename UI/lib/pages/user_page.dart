@@ -41,10 +41,15 @@ class _UserPageState extends State<UserPage> {
   String realname = '';
   String image = '';
 
-  List<String> follower = [];
-  List<String> following = [];
-  int followerNum = 0;
-  int followingNum = 0;
+  List<String> mainFollower = [];
+  List<String> mainFollowing = [];
+  int mainFollowerNum = 0;
+  int mainFollowingNum = 0;
+
+  List<String> otherFollower = [];
+  List<String> otherFollowing = [];
+  int otherFollowerNum = 0;
+  int otherFollowingNum = 0;
 
   Map profile_info = {};
   List likelist = [];
@@ -59,7 +64,7 @@ class _UserPageState extends State<UserPage> {
     userId = pref.getString('user_id')!;
 
     recUser = await dioModel.recUser(name: userId.toString());
-    //print(recUser);
+
     for (int i = 0; i < recUser.length; i++) {
       for (int j = 0; j < 5; j++) {
         if (recUser[i][j] == null) {
@@ -89,6 +94,38 @@ class _UserPageState extends State<UserPage> {
     setState(() {});
   }
 
+  void getFoFe(String main_user, String other_user) async {
+    profile_info = await dio.profile(name: main_user.toString());
+
+    mainFollower = profile_info['follower']
+        .map((e) => e.toString())
+        .toList()
+        .cast<String>();
+    mainFollowing = profile_info['following']
+        .map((e) => e.toString())
+        .toList()
+        .cast<String>();
+
+    mainFollowerNum = profile_info['follower'].length;
+    mainFollowingNum = profile_info['following'].length;
+
+    profile_info = await dio.profile(name: other_user.toString());
+
+    otherFollower = profile_info['follower']
+        .map((e) => e.toString())
+        .toList()
+        .cast<String>();
+    otherFollowing = profile_info['following']
+        .map((e) => e.toString())
+        .toList()
+        .cast<String>();
+
+    otherFollowerNum = profile_info['follower'].length;
+    otherFollowingNum = profile_info['following'].length;
+
+    setState(() {});
+  }
+
   void getProfile() async {
     final pref = await SharedPreferences.getInstance();
     mainUserId = pref.getString('user_id')!;
@@ -99,46 +136,44 @@ class _UserPageState extends State<UserPage> {
 
       realname = profile_info['realname'];
       image = profile_info['image'];
-      follower = profile_info['follower']
+      mainFollower = profile_info['follower']
           .map((e) => e.toString())
           .toList()
           .cast<String>();
-      following = profile_info['following']
+      mainFollowing = profile_info['following']
           .map((e) => e.toString())
           .toList()
           .cast<String>();
 
-      followerNum = profile_info['follower'].length;
-      followingNum = profile_info['following'].length;
+      mainFollowerNum = profile_info['follower'].length;
+      mainFollowingNum = profile_info['following'].length;
     } else {
       userId = widget.otherUser.user_id.toString();
       realname = widget.otherUser.realname;
       image = widget.otherUser.image;
-      follower = widget.otherUser.follower
+      otherFollower = widget.otherUser.follower
           .map((e) => e.toString())
           .toList()
           .cast<String>();
-      following = widget.otherUser.following
+      otherFollowing = widget.otherUser.following
           .map((e) => e.toString())
           .toList()
           .cast<String>();
 
-      followerNum = follower.length;
-      followingNum = following.length;
+      otherFollowerNum = otherFollower.length;
+      otherFollowingNum = otherFollowing.length;
     }
     setState(() {});
   }
 
   Future followUser(String usernameA, String usernameB) async {
-    dio.followUser(usernameA: usernameA, usernameB: usernameB);
-    followerNum++;
-    setState(() {});
+    await dio.followUser(usernameA: usernameA, usernameB: usernameB);
+    getFoFe(usernameA, usernameB);
   }
 
   Future unfollowUser(String usernameA, String usernameB) async {
-    dio.unfollowUser(usernameA: usernameA, usernameB: usernameB);
-    followerNum--;
-    setState(() {});
+    await dio.unfollowUser(usernameA: usernameA, usernameB: usernameB);
+    getFoFe(usernameA, usernameB);
   }
 
   Future getMyMusics() async {
@@ -217,7 +252,9 @@ class _UserPageState extends State<UserPage> {
                         PageRouteBuilder(
                           opaque: false, // set to false
                           pageBuilder: (_, __, ___) => FollowListPage(
-                            itemIdList: following,
+                            itemIdList: widget.isMyPage
+                                ? mainFollowing
+                                : otherFollowing,
                             isFollowing: true,
                           ),
                         ),
@@ -227,7 +264,12 @@ class _UserPageState extends State<UserPage> {
                         backgroundColor: Colors.transparent,
                         elevation: 0,
                         padding: const EdgeInsets.all(16)),
-                    child: Text('♥  팔로잉         $followingNum 명',
+                    child: Text(
+                        '♥  팔로잉         ' +
+                            (widget.isMyPage ? mainFollowing : otherFollowing)
+                                .length
+                                .toString() +
+                            '명',
                         style: contentsTextStyle)),
                 ElevatedButton(
                     onPressed: () {
@@ -235,7 +277,8 @@ class _UserPageState extends State<UserPage> {
                         PageRouteBuilder(
                           opaque: false, // set to false
                           pageBuilder: (_, __, ___) => FollowListPage(
-                            itemIdList: follower,
+                            itemIdList:
+                                widget.isMyPage ? mainFollower : otherFollower,
                             isFollowing: false,
                           ),
                         ),
@@ -245,7 +288,12 @@ class _UserPageState extends State<UserPage> {
                         backgroundColor: Colors.transparent,
                         elevation: 0,
                         padding: const EdgeInsets.all(16)),
-                    child: Text('♥  팔로워         $followerNum 명',
+                    child: Text(
+                        '♥  팔로워         ' +
+                            (widget.isMyPage ? mainFollower : otherFollower)
+                                .length
+                                .toString() +
+                            '명',
                         style: contentsTextStyle)),
                 Container(
                     width: 180,
@@ -270,7 +318,6 @@ class _UserPageState extends State<UserPage> {
                                 onPressed: () {
                                   followUser(mainUserId, userId);
                                   isFollowing = true;
-                                  // setState(() {});
                                 },
                                 style: OutlinedButton.styleFrom(
                                     backgroundColor: Colors.transparent,

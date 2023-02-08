@@ -8,6 +8,8 @@ from datetime import datetime, timezone
 from typing import Optional
 import datetime
 from random import randint
+#from starlette.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
@@ -41,6 +43,9 @@ class User(BaseModel):
     id: str
     pwd: str
 
+class artist(BaseModel):
+    name: str
+    url: str
 
 class userInfo(BaseModel):
     user_id: int
@@ -77,6 +82,9 @@ def get_track_detail(track_id: int):
     track_df = pd.read_sql(query, db_connect)
     return track_df.to_dict('records')  
 
+# @app.options('/login', description='preflight')
+# def pre_login_user():
+#     return ''
 
 @app.post('/login', description='로그인')
 def login_user(user: User) -> str:
@@ -92,11 +100,15 @@ def login_user(user: User) -> str:
         return 'Empty'
 
 
-@app.get('/signin/artists')
+@app.get('/signin/artists', response_model=list[artist])
 def get_artists():
-    artist_query = f"SELECT DISTINCT artist_name, artist_url FROM track_info ORDER BY artist_name;"
+    artist_query = f"SELECT DISTINCT artist_name, artist_url FROM track_info ORDER BY artist_name limit 100;"
     artist_df = pd.read_sql(artist_query, db_connect)
-    return artist_df.to_dict('records')
+    artist_list = []
+    for i in artist_df.to_dict('records'):
+        artist_list.append(artist(name = i['artist_name'], url = i['artist_url']))
+
+    return artist_list
 
 
 def list2array(list_data):
@@ -279,7 +291,7 @@ def add_follow(user_A: int, user_B: int):
         cur.execute(query4)
         db_connect.commit()
 
-    return "Success"
+    return True
 
 @app.get("/unfollow/{user_A}/{user_B}", description='user_A unfollows user_B')
 def add_unfollow(user_A: int, user_B: int):
@@ -359,7 +371,16 @@ if __name__ == "__main__":
         database="mydatabase",
     )
 
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    app.add_middleware(
+        CORSMiddleware,
+        
+        allow_origins=['*'],
+        allow_credentials=True,
+        allow_methods=['*'],
+        allow_headers=["*"],
+    )
+
+    uvicorn.run(app, host="0.0.0.0", port=8002)
 
 
 

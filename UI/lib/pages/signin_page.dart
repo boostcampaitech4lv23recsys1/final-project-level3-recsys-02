@@ -89,7 +89,7 @@ class _SigninPageState extends State<SigninPage> {
   void getArtists() async {
     var res = await dioClient.getArtists();
     for (var r in res) {
-      artistList.add([r['artist_name'], false]);
+      artistList.add([r['name'], false]);
     }
     setState(() {});
   }

@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class DioClient {
   final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: 'http://127.0.0.1:8001',
+      baseUrl: 'http://127.0.0.1:8002',
       validateStatus: (_) => true,
       responseType: ResponseType.json,
     ),
@@ -21,6 +21,7 @@ class DioClient {
     try {
       var userData = {"id": name, "pwd": pwd};
       response = await _dio.post('/login', data: userData);
+
       debugPrint('dioclient: ${response.data}');
 
       if (response.data == 'Empty') {
@@ -41,6 +42,7 @@ class DioClient {
   Future getArtists() async {
     try {
       Response response = await _dio.get('/signin/artists');
+
       return response.data;
     } catch (e) {
       debugPrint('Error get ARtist : $e');
@@ -153,7 +155,7 @@ class DioClient {
     try {
       response = await _dio.get('/follow/$usernameA/$usernameB');
       debugPrint(response.toString());
-      return response.data;
+      return true;
     } catch (e) {
       debugPrint('Error followingFollower : $e');
       return -1;
@@ -179,7 +181,7 @@ class DioClient {
     late Response response;
     try {
       response = await _dio.get('/toptrack');
-      debugPrint(response.toString());
+      //debugPrint(response.toString());
       List responseBody = response.data;
       return responseBody;
     } catch (e) {
@@ -237,6 +239,7 @@ class DioModel {
       response = await _dio.post('/recomendation_music', data: '0');
       // debugPrint(response.toString());
       Map responseBody = response.data;
+
       return responseBody;
     } catch (e) {
       debugPrint('Error creating user: $e');
