@@ -2,7 +2,7 @@
 
 <a align = "center"><img width="100" src="img/musicoops.png"></a>
 
- <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=Python&logoColor=white"> <img src="https://img.shields.io/badge/Pytorch-EE4C2C?style=flat-square&logo=Pytorch&logoColor=white"> <img src = https://img.shields.io/badge/Flutter-02569B?style=flat-square&logo=flutter&logoColor=white> <img src="https://img.shields.io/badge/PostgreSQL-316192?style=flat-square&logo=postgresql&logoColor=white"> <img src="https://img.shields.io/badge/Google_Cloud-4285F4?style=flat-square&logo=google-cloud&logoColor=white"> <img src="https://img.shields.io/badge/Airflow-017CEE?style=flat-square&logo=Apache%20Airflow&logoColor=white"> <img src="https://img.shields.io/badge/FastAPI-005571?style=flat-square&logo=fastapi"> <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=flat-square&logo=docker&logoColor=white"> <img src >
+ <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=Python&logoColor=white"> <img src="https://img.shields.io/badge/Pytorch-EE4C2C?style=flat-square&logo=Pytorch&logoColor=white"> <img src="https://img.shields.io/badge/PostgreSQL-316192?style=flat-square&logo=postgresql&logoColor=white"> <img src="https://img.shields.io/badge/Google_Cloud-4285F4?style=flat-square&logo=google-cloud&logoColor=white"> <img src="https://img.shields.io/badge/Airflow-017CEE?style=flat-square&logo=Apache%20Airflow&logoColor=white"> <img src="https://img.shields.io/badge/FastAPI-005571?style=flat-square&logo=fastapi"> <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=flat-square&logo=docker&logoColor=white"> <img src="https://img.shields.io/badge/Flutter-02569B?style=flat-square&logo=flutter&logoColor=white">
 
 &nbsp;
 &nbsp;
@@ -56,11 +56,16 @@
 ![plan.png](img/plan.png)
 
 &nbsp;
+## MusicOops
+<img width="1200" alt="image" src="https://user-images.githubusercontent.com/74080194/217674648-f4589392-3894-467f-8e3c-b389bc3b5f80.png">
+
 ## ✅ Recommand List
-![reclist.png](img%2Freclist.png)
+<img width = "500" src = "img/reclist.png">
 
 ## 🚨 System Architecture
-![img_1.png](img_1.png)
+
+![System drawio (3)](https://user-images.githubusercontent.com/74080194/217675107-c551bd51-65ce-45c5-8b38-e5e0c11cec90.png)
+
 
 
 ## 📀 Dataset
@@ -80,4 +85,5 @@
 
 
 [//]: # (## DB : Postgresql)
+
 
