@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class DioClient {
   final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: 'http://127.0.0.1:8001',
+      baseUrl: 'http://34.64.54.251:8001',
       validateStatus: (_) => true,
       responseType: ResponseType.json,
     ),
@@ -43,7 +43,7 @@ class DioClient {
       Response response = await _dio.get('/signin/artists');
       return response.data;
     } catch (e) {
-      debugPrint('Error get ARtist : $e');
+      debugPrint('Error get Artist : $e');
     }
   }
 

@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from typing import Optional
 import datetime
 from random import randint
+from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
@@ -16,11 +17,8 @@ NAME_NOT_FOUND = HTTPException(status_code=400, detail="Name not found.")
 TRACK_NOT_FOUND = HTTPException(status_code=400, detail="Track not found.")
 AuthError = HTTPException(status_code=400, detail="not auth user")
 
-
 def change_str(a):
     return a.replace('\'', '')
-
-
 
 class trackInfo(BaseModel):
     # username: str
@@ -94,7 +92,7 @@ def login_user(user: User) -> str:
 
 @app.get('/signin/artists')
 def get_artists():
-    artist_query = f"SELECT DISTINCT artist_name, artist_url FROM track_info ORDER BY artist_name;"
+    artist_query = f"SELECT DISTINCT artist_name, artist_url FROM track_info ORDER BY artist_name limit 100;"
     artist_df = pd.read_sql(artist_query, db_connect)
     return artist_df.to_dict('records')
 
@@ -357,6 +355,16 @@ if __name__ == "__main__":
         host="34.64.54.251",
         port=5432,
         database="mydatabase",
+    )
+    origins = [
+        "*",
+    ]
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
 
     uvicorn.run(app, host="0.0.0.0", port=8001)
