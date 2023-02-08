@@ -21,7 +21,7 @@ db_connect = psycopg2.connect(
     port=5432,
     database="mydatabase",
 )
-
+ 
 @env(infer_pip_packages=True)
 @artifacts([MyModelArtifact("test_model")])
 class MyService(bentoml.BentoService):
