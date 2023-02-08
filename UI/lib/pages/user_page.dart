@@ -13,6 +13,7 @@ import 'package:ui/widgets/titlebar.dart';
 import 'package:ui/widgets/track_detail.dart';
 import 'package:web_smooth_scroll/web_smooth_scroll.dart';
 import 'package:ui/utils/dio_client.dart';
+import 'package:flutter_scatter/flutter_scatter.dart';
 
 class UserPage extends StatefulWidget {
   const UserPage({super.key, this.isMyPage = true, this.otherUser});
@@ -58,6 +59,9 @@ class _UserPageState extends State<UserPage> {
   List recUser = [];
 
   bool isFollowing = false;
+
+  List<Widget> words = [];
+  List selectedTasts = [];
 
   void getUserRec() async {
     final pref = await SharedPreferences.getInstance();
@@ -210,6 +214,56 @@ class _UserPageState extends State<UserPage> {
     setState(() {});
   }
 
+  Future getPrefReview() async {
+    if (widget.isMyPage) {
+      final pref = await SharedPreferences.getInstance();
+      userId = pref.getString('user_id')!;
+    } else {
+      userId = widget.otherUser.user_id.toString();
+    }
+    setState(() {});
+
+    // 0 : 사용자가 자주 듣는 음악시간대
+    // 1 : 사용자가 많이 들은 트랙
+    var data = await dio.get_user_pref_review(user_id: userId);
+    words.add(Container(
+      margin: const EdgeInsets.all(20),
+      child: Text('$data',
+          style: const TextStyle(
+            color: Color.fromARGB(255, 191, 217, 247),
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+          )),
+    ));
+
+    List<double> fonts = [18.0, 20.0, 22.0];
+    selectedTasts = await dio.get_usertasts(userId);
+    print(selectedTasts);
+    int i = 0;
+    for (var tags in selectedTasts[0]) {
+      words.add(Container(
+        margin: const EdgeInsets.all(20),
+        child: Text('$tags',
+            style: TextStyle(
+              color: Color.fromARGB(255, 255, 218, 247),
+              fontSize: fonts[i++ % 3],
+              fontWeight: FontWeight.bold,
+            )),
+      ));
+    }
+    words.add(Container(
+      margin: const EdgeInsets.all(20),
+      child: Text('${selectedTasts[1]}',
+          style: const TextStyle(
+            color: Color.fromARGB(255, 243, 255, 229),
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
+          )),
+    ));
+
+    setState(() {});
+  }
+
   @override
   void initState() {
     if (widget.isMyPage) {
@@ -217,6 +271,7 @@ class _UserPageState extends State<UserPage> {
     }
     getProfile();
     getMyMusics();
+    getPrefReview();
     super.initState();
   }
 
@@ -304,7 +359,7 @@ class _UserPageState extends State<UserPage> {
                                 onPressed: () {
                                   unfollowUser(mainUserId, userId);
                                   isFollowing = false;
-                                  // setState(() {});
+                                  setState(() {});
                                 },
                                 style: OutlinedButton.styleFrom(
                                     backgroundColor: kWhite,
@@ -318,6 +373,10 @@ class _UserPageState extends State<UserPage> {
                                 onPressed: () {
                                   followUser(mainUserId, userId);
                                   isFollowing = true;
+<<<<<<< HEAD
+=======
+                                  setState(() {});
+>>>>>>> 4b519657fa0def4b40c4d9431e9dcce92cd2149a
                                 },
                                 style: OutlinedButton.styleFrom(
                                     backgroundColor: Colors.transparent,
@@ -412,19 +471,23 @@ class _UserPageState extends State<UserPage> {
       children: [
         titleBar('$realname님의 취향분석 결과'),
         Container(
-            decoration: outerBorder,
-            width: width,
-            height: 590,
-            child: Center(
-                child: Text(
-              '취향분석 결과',
-              style: titleTextStyle,
-            )))
+          decoration: outerBorder,
+          width: width,
+          height: 400,
+          padding: kPadding,
+          child: Center(
+            child: Scatter(
+              fillGaps: true,
+              delegate: FermatSpiralScatterDelegate(ratio: 1),
+              children: words,
+            ),
+          ),
+        )
       ],
     );
   }
 
-  AppBar mypagenAppBar(context) {
+  AppBar mypageAppBar(context) {
     return AppBar(
       toolbarHeight: 80,
       elevation: 0,
@@ -442,6 +505,38 @@ class _UserPageState extends State<UserPage> {
         },
       ),
       leadingWidth: 200,
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: buttonWidth,
+            margin: const EdgeInsets.only(right: 10),
+            child: ElevatedButton(
+              style: OutlinedButton.styleFrom(
+                  backgroundColor: kBlack,
+                  // side: whiteBorder,
+                  padding: const EdgeInsets.all(12)),
+              child: Text('홈', style: subtitleTextStyle),
+              onPressed: () {
+                Navigator.pushNamed(context, '/home');
+              },
+            ),
+          ),
+          Container(
+            width: buttonWidth,
+            child: ElevatedButton(
+              style: OutlinedButton.styleFrom(
+                  backgroundColor: kBlack,
+                  elevation: 0,
+                  padding: const EdgeInsets.all(12)),
+              child: Text('마이페이지', style: subtitleTextStyle),
+              onPressed: () {
+                Navigator.pushNamed(context, '/mypage');
+              },
+            ),
+          ),
+        ],
+      ),
       actions: [
         Container(
             width: buttonWidth,
@@ -465,7 +560,7 @@ class _UserPageState extends State<UserPage> {
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
     return Scaffold(
-        appBar: mypagenAppBar(context),
+        appBar: mypageAppBar(context),
         body: Container(
             // width: width,
             // height: 400,

@@ -18,11 +18,8 @@ NAME_NOT_FOUND = HTTPException(status_code=400, detail="Name not found.")
 TRACK_NOT_FOUND = HTTPException(status_code=400, detail="Track not found.")
 AuthError = HTTPException(status_code=400, detail="not auth user")
 
-
 def change_str(a):
     return a.replace('\'', '')
-
-
 
 class trackInfo(BaseModel):
     # username: str
@@ -90,10 +87,9 @@ def get_track_detail(track_id: int):
 def login_user(user: User) -> str:
     user_query = f"SELECT user_id, password FROM user_info WHERE user_name='{user.id}';"
     user_df = pd.read_sql(user_query, db_connect).to_dict()
-    #print(user_df)
-    if (len(user_df) == 0):
+    print(user_df)
+    if (len(user_df['user_id']) == 0):
         return 'Empty'
-
     elif user.pwd == user_df['password'][0]: 
         return user_df['user_id'][0]
     else:
@@ -360,7 +356,17 @@ def get_usertasts(user_id: int):
     
     return values
 
+@app.get('/{user_id}/reviews', description='사용자 취향 분석')
+def get_user_reviews(user_id : int):
+    query = f"""SELECT * FROM inter WHERE user_id={user_id};"""
+    values = pd.read_sql(query, db_connect)
 
+    # 가장 interaction이 많은 시간대 
+    values['hour'] = values['date_uts'].apply(lambda x: datetime.datetime.utcfromtimestamp(x).strftime('%H'))
+    freq_time = values['hour'].value_counts().index.to_list()[0]
+    return {
+        'freq_time' : freq_time,
+    }
 
 if __name__ == "__main__":
     db_connect = psycopg2.connect(

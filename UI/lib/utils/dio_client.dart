@@ -1,8 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:ui/models/user.dart';
-import 'package:ui/models/item.dart';
-import 'package:ui/models/ops.dart';
 import 'package:ui/utils/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -45,7 +43,7 @@ class DioClient {
 
       return response.data;
     } catch (e) {
-      debugPrint('Error get ARtist : $e');
+      debugPrint('Error get Artist : $e');
     }
   }
 
@@ -222,6 +220,22 @@ class DioClient {
     } catch (e) {
       debugPrint('Error getTrackDetail : $e');
       return -1;
+    }
+  }
+
+  Future get_user_pref_review({required String user_id}) async {
+    late Response response;
+    try {
+      response = await _dio.get('/$user_id/reviews');
+
+      if (response.statusCode == 404) {
+        return '이제 알듯 말듯 하네요. 조금만 더 평가해주세요!';
+      }
+      debugPrint(response.toString());
+      return '가장 음악을 많이 듣는 시간대 ${response.data['freq_time']}시';
+    } catch (e) {
+      debugPrint('Error get_user_pref_review : $e');
+      return 'Error';
     }
   }
 }
