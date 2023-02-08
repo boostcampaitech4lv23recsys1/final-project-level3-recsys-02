@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: kBlack, // 앱 배경색
       ),
       title: 'Final Project',
-      home: TestPage(),
+//       home: TestPage(),
       initialRoute: '/home',
       routes: {
         "/home": (context) => const StartPage(),
