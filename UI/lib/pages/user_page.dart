@@ -188,16 +188,30 @@ class _UserPageState extends State<UserPage> {
     }
     setState(() {});
 
-    // [[cover, soul, rock, 70s, laidback], The Pointer Sisters]
+    // 0 : 사용자가 자주 듣는 음악시간대
+    // 1 : 사용자가 많이 들은 트랙
+    var data = await dio.get_user_pref_review(user_id: userId);
+    words.add(Container(
+      margin: const EdgeInsets.all(20),
+      child: Text('가장 음악을 많이 듣는 시간대 ${data['freq_time']}시',
+          style: const TextStyle(
+            color: Color.fromARGB(255, 191, 217, 247),
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+          )),
+    ));
+
+    List<double> fonts = [18.0, 20.0, 22.0];
     selectedTasts = await dio.get_usertasts(userId);
     print(selectedTasts);
+    int i = 0;
     for (var tags in selectedTasts[0]) {
       words.add(Container(
         margin: const EdgeInsets.all(20),
         child: Text('$tags',
-            style: const TextStyle(
+            style: TextStyle(
               color: Color.fromARGB(255, 255, 218, 247),
-              fontSize: 16.0,
+              fontSize: fonts[i++ % 3],
               fontWeight: FontWeight.bold,
             )),
       ));
@@ -207,23 +221,11 @@ class _UserPageState extends State<UserPage> {
       child: Text('${selectedTasts[1]}',
           style: const TextStyle(
             color: Color.fromARGB(255, 243, 255, 229),
-            fontSize: 16.0,
+            fontSize: 20.0,
             fontWeight: FontWeight.bold,
           )),
     ));
-    // 0 : 사용자가 자주 듣는 음악시간대
-    // 1 : 사용자가 많이 들은 트랙
-    // likelist = await dio.get_user_pref_review(user_id: userId);
 
-    // for (var i = 0; i < 3; i++) {
-    //   words.add(Container(
-    //     margin: EdgeInsets.all(20),
-    //     child: Text(
-    //       '단어뭉치',
-    //       style: subtitleTextStyle,
-    //     ),
-    //   ));
-    // }
     setState(() {});
   }
 
@@ -426,7 +428,7 @@ class _UserPageState extends State<UserPage> {
               child: FittedBox(
                 child: Scatter(
                   fillGaps: true,
-                  delegate: FermatSpiralScatterDelegate(ratio: 2),
+                  delegate: FermatSpiralScatterDelegate(ratio: 1),
                   children: words,
                 ),
               ),

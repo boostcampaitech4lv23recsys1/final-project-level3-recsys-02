@@ -1,8 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:ui/models/user.dart';
-import 'package:ui/models/item.dart';
-import 'package:ui/models/ops.dart';
 import 'package:ui/utils/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -219,6 +217,18 @@ class DioClient {
       return responseBody;
     } catch (e) {
       debugPrint('Error getTrackDetail : $e');
+      return -1;
+    }
+  }
+
+  Future get_user_pref_review({required String user_id}) async {
+    late Response response;
+    try {
+      response = await _dio.get('/$user_id/reviews');
+      debugPrint(response.toString());
+      return response.data;
+    } catch (e) {
+      debugPrint('Error get_user_pref_review : $e');
       return -1;
     }
   }
