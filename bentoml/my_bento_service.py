@@ -17,7 +17,7 @@ import random
 db_connect = psycopg2.connect(
     user="myuser",
     password="mypassword",
-    host="34.64.50.61",
+    host="34.64.54.251",
     port=5432,
     database="mydatabase",
 )
@@ -25,7 +25,7 @@ db_connect = psycopg2.connect(
 @env(infer_pip_packages=True)
 @artifacts([MyModelArtifact("test_model")])
 class MyService(bentoml.BentoService):
-    @api(input=StringInput(), batch=False)
+    @api(input=StringInput(), batch=False, outputConfig={'cors':'*'})
     def recomendation_music(self, input_data):
         args = self.artifacts.test_model["args"]
         username = int(input_data)
@@ -58,9 +58,9 @@ class MyService(bentoml.BentoService):
         random.shuffle(artist_pred_list[0])
         self.artifacts.test_model["pred_list"][username] = main_pred_list
         
-        main_query = f"""select track_info.track_id, album_info.image, track_info.track_name, track_info.album_name, track_info.artist_name, track_info.duration, track_info.url from track_info left outer join album_info on track_info.album_name = album_info.album_name where (track_info.track_id in {tuple(main_pred_list[0][:20])});"""
-        tag_pred_list = f"""select track_info.track_id, album_info.image, track_info.track_name, track_info.album_name, track_info.artist_name, track_info.duration, track_info.url from track_info left outer join album_info on track_info.album_name = album_info.album_name where (track_info.track_id in {tuple(tag_pred_list[0][:20])});"""
-        artist_pred_list = f"""select track_info.track_id, album_info.image, track_info.track_name, track_info.album_name, track_info.artist_name, track_info.duration, track_info.url from track_info left outer join album_info on track_info.album_name = album_info.album_name where (track_info.track_id in {tuple(artist_pred_list[0][:20])});"""
+        main_query = f"""select track_info.track_id, album_info.image, track_info.track_name, track_info.album_name, track_info.artist_name, track_info.duration, track_info.url from track_info left outer join album_info on track_info.album_name = album_info.album_name where (track_info.track_id in {tuple(main_pred_list[0][:40])});"""
+        tag_pred_list = f"""select track_info.track_id, album_info.image, track_info.track_name, track_info.album_name, track_info.artist_name, track_info.duration, track_info.url from track_info left outer join album_info on track_info.album_name = album_info.album_name where (track_info.track_id in {tuple(tag_pred_list[0][:40])});"""
+        artist_pred_list = f"""select track_info.track_id, album_info.image, track_info.track_name, track_info.album_name, track_info.artist_name, track_info.duration, track_info.url from track_info left outer join album_info on track_info.album_name = album_info.album_name where (track_info.track_id in {tuple(artist_pred_list[0][:40])});"""
         
         output = {'main':-1, 'tag':-1, 'artist':-1}
         with db_connect.cursor() as cur:
@@ -69,7 +69,7 @@ class MyService(bentoml.BentoService):
                 output[list(output.keys())[index]] = cur.fetchall()
         return output
 
-    @api(input=StringInput(), batch=False)
+    @api(input=StringInput(), batch=False, outputConfig={'cors':'*'})
     def recomendation_user(self, input_data):
         args = self.artifacts.test_model["args"]
         username = int(input_data)

@@ -96,13 +96,13 @@ def main():
         data = pickle.load(f)
     return model, args, pred_list, data
 
-
+# db-connect -> psycopg2, args, pred_list, attribute, model
 if __name__ == "__main__":
     
     db_connect = psycopg2.connect(
         user="myuser",
         password="mypassword",
-        host="34.64.50.61",
+        host="34.64.54.251",
         port=5432,
         database="mydatabase",
     )
