@@ -4,6 +4,7 @@ import 'package:ui/main.dart';
 import 'package:ui/models/item.dart';
 import 'package:ui/utils/dio_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Future<String> getUserName() async {
   final pref = await SharedPreferences.getInstance();
@@ -150,7 +151,20 @@ class _DetailPageState extends State<DetailPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text('URL', style: contentsTextStyle),
-                              Text('$_url', style: contentsTextStyle),
+                              GestureDetector(
+                                child: Text('$_url', style: contentsTextStyle),
+                                onTap: () async {
+                                  final url = Uri.parse(
+                                    _url,
+                                  );
+                                  if (await canLaunchUrl(url)) {
+                                    launchUrl(url);
+                                  } else {
+                                    // ignore: avoid_print
+                                    print("Can't launch $url");
+                                  }
+                                },
+                              )
                             ],
                           )
                         ],

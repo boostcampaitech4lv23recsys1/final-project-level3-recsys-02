@@ -38,6 +38,7 @@ dependencies:
   searchable_listview: ^2.2.1
   shared_preferences: ^2.0.17
   toast: ^0.3.0
+  url_launcher: ^6.1.9
   web_smooth_scroll: ^1.1.0
 
 dev_dependencies:
