@@ -78,7 +78,7 @@
 
 ### 🧶Model : S3Rec
 ![s3rec.png](img%2Fs3rec.png)
-출처 : https://recbole.io/docs/user_guide/model/sequential/s3rec.html
+출처 : https://arxiv.org/abs/2008.07873
 
 ### 🧳 DB : Postgresql
 ![image](https://user-images.githubusercontent.com/62127798/217698587-18de8ffb-b4c0-4d97-9766-2154d0bfd986.png)
