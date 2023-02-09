@@ -112,7 +112,8 @@ class _StartPageState extends State<StartPage> {
                     width: width,
                     child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.asset('3.png', fit: BoxFit.fitWidth))),
+                        child: Image.asset('assets/overview.png',
+                            fit: BoxFit.fitWidth))),
                 const Spacer(),
                 footer(),
                 defaultSpacer,
