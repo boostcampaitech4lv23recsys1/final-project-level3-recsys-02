@@ -1,0 +1,17 @@
+﻿create table track_info (track_id int, track_name text, url text, duration int, listeners int, playcount int, artist_name text, artist_url text, track_tag_list text[], album_name text, streamable_text int, streamable_fulltrack int);
+create table inter (track_id int, loved int, user_id int, album_name text, date_uts int, artist_name text);
+create table user_info (user_id int, user_name text, age int, subscriber int, realname text, bootstrap int, playcount int, image text, registered int, country text, gender int, url text, following text[], follower text[]);
+create table album_info (artist_name text, album_name text, image text, listeners int, playcount int, url text, tag text[], published text);
+
+\copy track_info from '/home/rudwns708.14564/data/trackinfo3.csv' delimiter ',' csv header;
+\copy album_info from '/home/rudwns708.14564/data/albuminfo2.csv' delimiter ',' csv header;
+\copy inter from '/home/rudwns708.14564/data/inter2.csv' delimiter ',' csv header;
+\copy user_info from '/home/rudwns708.14564/data/user2.csv' delimiter ',' csv header;
+
+\copy track_info from '/home/rudwns708_14564/data/trackinfo3.csv' delimiter ',' csv header;
+\copy album_info from '/home/rudwns708_14564/data/albuminfo3.csv' delimiter ',' csv header;
+\copy inter from '/home/rudwns708_14564/data/inter2.csv' delimiter ',' csv header;
+\copy user_info from '/home/rudwns708_14564/data/user3.csv' delimiter ',' csv header;
+
+
+psql 설치: https://www.postgresqltutorial.com/postgresql-getting-started/install-postgresql-linux/
