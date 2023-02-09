@@ -5,29 +5,28 @@
 ├── pubspec.yaml
 ├── assets
 └── lib
-    ├── constants.dart
-    ├── main.dart
-    ├── models
-    │   ├── item.dart
-    │   ├── ops.dart
-    │   └── user.dart
-    ├── pages
-    │   ├── login_page.dart
-    │   ├── main_page.dart
-    │   ├── signin_page.dart
-    │   ├── start_page.dart
-    │   └── user_page.dart
-    ├── utils
-    │   ├── dio_client.dart
-    │   └── logging.dart
-    └── widgets
-        ├── custom_card.dart
-        ├── follow_list.dart
-        ├── footer.dart
-        ├── search_popup.dart
-        ├── titlebar.dart
-        └── track_detail.dart
-
+    ├── constants.dart
+    ├── main.dart
+    ├── models
+    │   ├── item.dart
+    │   ├── ops.dart
+    │   └── user.dart
+    ├── pages
+    │   ├── login_page.dart
+    │   ├── main_page.dart 
+    │   ├── signin_page.dart 
+    │   ├── start_page.dart
+    │   └── user_page.dart
+    ├── utils
+    │   ├── dio_client.dart
+    │   └── logging.dart
+    └── widgets
+        ├── custom_card.dart
+        ├── follow_list.dart
+        ├── footer.dart
+        ├── search_popup.dart
+        ├── titlebar.dart
+        └── track_detail.dart
 ```
 ### Screenshots
 - 시작페이지, 로그인페이지
