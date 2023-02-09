@@ -7,9 +7,9 @@
 &nbsp;
 &nbsp;
 
-## 2️⃣ RecSys_2조 2️⃣
+### 2️⃣ RecSys_2조 2️⃣
 
-## 🙋🏻‍♂️🙋🏻‍♀️  Member
+### 🙋🏻‍♂️🙋🏻‍♀️  Member
 <table align="center">
   <tr height="155px">
     <td align="center" width="150px">
@@ -46,34 +46,28 @@
     </td>
   </tr>
 </table>
-&nbsp;
 
-## 🎶  Project Overview
+### 🎶  Project Overview
 이 서비스는 사용자에게 새로운 친구와 새로운 음악에 대한 추천을 제공함으로써 두 장점을 결합한다. 사용자의 음악 선호도와 패턴을 분석해 음악 취향이 비슷한 사람들을 매칭해주는 서비스이다.
 
 또한, 사용자가 좋아하는 아티스트, 노래, 장르를 기반으로 개인화된 음악 추천 제공한다. 더불어 사용자가 항상 원하는 스타일의 최신 음악에 접근할 수 있도록 정기적으로 업데이트를 진행한다.
 
 이 서비스를 통해, 사용자들은 새로운 음악을 발견하고, 새로운 친구를 사귀고, 음악에 대한 열정을 공유하는 다른 사람들을 만날 수 있다.
 
-## Project Plan
+### 📆 Project Plan
 
 ![plan.png](img/plan.png)
 
-&nbsp;
-## MusicOops
+### 🎧 MusicOops
 <img width="1200" alt="image" src="https://user-images.githubusercontent.com/74080194/217674648-f4589392-3894-467f-8e3c-b389bc3b5f80.png">
 
-## ✅ Recommand List
+### ✅ Recommand List
 <img width = "500" src = "img/reclist.png">
 
-## 🚨 System Architecture
+### 🚨 System Architecture
+![image](https://user-images.githubusercontent.com/62127798/217698684-6dc6a9ae-fcce-41d5-a23f-922b868ca373.png)
 
-![System drawio (3)](https://user-images.githubusercontent.com/74080194/217675107-c551bd51-65ce-45c5-8b38-e5e0c11cec90.png)
-
-
-
-## 📀 Dataset
-### LFM-1b dataset
+### 📀 Dataset : LFM-1b dataset
 ![lastfmsite.png](img/lastfmsite.png)
 
 [//]: # ()
@@ -82,11 +76,9 @@
 [//]: # ()
 [//]: # (![lastfmapi1.png]&#40;img/lastfmapi1.png&#41;)
 
-## Model : S3Rec
+### 🧶Model : S3Rec
 ![s3rec.png](img%2Fs3rec.png)
-[출처 : https://recbole.io/docs/user_guide/model/sequential/s3rec.html]
+출처 : https://recbole.io/docs/user_guide/model/sequential/s3rec.html
 
-
-[//]: # (## DB : Postgresql)
-
-
+### 🧳 DB : Postgresql
+![image](https://user-images.githubusercontent.com/62127798/217698587-18de8ffb-b4c0-4d97-9766-2154d0bfd986.png)
