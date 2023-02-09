@@ -4,7 +4,6 @@
 
 import os
 import numpy as np
-import random
 import torch
 import argparse
 
@@ -14,7 +13,8 @@ from datasets import SASRecDataset
 from trainers import FinetuneTrainer
 from models import S3RecModel
 from utils import EarlyStopping, get_user_seqs, get_item2attribute_json, check_path, set_seed
-from datetime import datetime
+import bentoml
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -38,7 +38,7 @@ def main():
     parser.add_argument('--max_seq_length', default=50, type=int)
 
     # train args
-    parser.add_argument("--lr", type=float, default=0.001, help="learning rate of adam")
+    parser.add_argument("--lr", type=float, default=0.01, help="learning rate of adam")
     parser.add_argument("--batch_size", type=int, default=256, help="number of batch_size")
     parser.add_argument("--epochs", type=int, default=200, help="number of epochs")
     parser.add_argument("--no_cuda", action="store_true")
@@ -93,7 +93,9 @@ def main():
 
     # save model
     checkpoint = args_str + '.pt'
-    args.checkpoint_path = os.path.join(args.output_dir, checkpoint)
+    if not os.path.exists(args.output_dir+args.data_name) : 
+        os.mkdir(args.output_dir+args.data_name+"/")
+    args.checkpoint_path = os.path.join(args.output_dir+args.data_name+"/", checkpoint)
 
     train_dataset = SASRecDataset(args, user_seq, data_type='train')
     train_sampler = RandomSampler(train_dataset)
@@ -149,6 +151,14 @@ def main():
         # scores, result_info = trainer.test(0, full_sort=True)
         scores, result_info, pred_list = trainer.test(0, full_sort=True)
 
+    ### bentoml model save ###
+    # saved_model = bentoml.pytorch.save(
+    #     trainer.model,
+    #     "s3rec_kdykdy1000",
+    #     signatures={"__call__": {"batchable":True, "batch_dim": 0}}
+    # )
+    # print(f"Model saved: {saved_model}")
+    
     print(args_str)
     print(result_info)
     with open(args.log_file, 'a') as f:

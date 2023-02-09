@@ -49,7 +49,6 @@ class Trainer:
                                                         patience=5,
                                                         verbose=True
                                                         )
-        self.patience = 0
 
         print("Total Parameters:", sum([p.nelement() for p in self.model.parameters()]))
         self.criterion = nn.BCELoss()
@@ -278,7 +277,7 @@ class FinetuneTrainer(Trainer):
                     recommend_output = self.model.finetune(input_ids)
 
                     recommend_output = recommend_output[:, -1, :] # transformer의 마지막 Sequence값
-                    # 推荐的结果
+                    
 
                     rating_pred = self.predict_full(recommend_output) # item embedding.weight과 matmul
 
@@ -286,14 +285,13 @@ class FinetuneTrainer(Trainer):
                     batch_user_index = user_ids.cpu().numpy()
                     rating_pred[self.args.train_matrix[batch_user_index].toarray() > 0] = 0 # train에 사용한 것들 = 0
                     # reference: https://stackoverflow.com/a/23734295, https://stackoverflow.com/a/20104162
-                    # argpartition 时间复杂度O(n)  argsort O(nlogn) 只会做
-                    # 加负号"-"表示取大的值
+                    
                     ind = np.argpartition(rating_pred, -20)[:, -20:] # train에 사용한 것 제외하고 상위 20개 인덱스
-                    # 根据返回的下标 从对应维度分别取对应的值 得到每行topk的子表
+                    
                     arr_ind = rating_pred[np.arange(len(rating_pred))[:, None], ind] # 
-                    # 对子表进行排序 得到从大到小的顺序
+                    
                     arr_ind_argsort = np.argsort(arr_ind)[np.arange(len(rating_pred)), ::-1]
-                    # 再取一次 从ind中取回 原来的下标
+                    
                     batch_pred_list = ind[np.arange(len(rating_pred))[:, None], arr_ind_argsort]
 
                     if i == 0:

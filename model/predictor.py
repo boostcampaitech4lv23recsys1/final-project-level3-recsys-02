@@ -52,36 +52,34 @@ class Predictor:
         test_item_emb = self.model.item_embeddings.weight
         # [batch hidden_size ]
         rating_pred = torch.matmul(seq_out, test_item_emb.transpose(0, 1))
-        # rating_pred = torch.matmul(seq_out, test_item_emb.transpose(0, 1))
         return rating_pred
     
     def predict_full_attribute(self, seq_out, attribute):
         # [item_num hidden_size]
-        tag_emb = self.model.attribute_embeddings.weight[attribute]
-        test_item_emb = self.model.item_embeddings.weight + tag_emb
+        attribute_emb = self.model.attribute_embeddings.weight[attribute]
+        test_item_emb = self.model.item_embeddings.weight + attribute_emb*2
         # [batch hidden_size ]
         rating_pred = torch.matmul(seq_out, test_item_emb.transpose(0, 1))
-        # rating_pred = torch.matmul(seq_out, test_item_emb.transpose(0, 1))
         return rating_pred
     
     
-    # interaction data -> matmul with embedding.weight -> sort 20 items by each user
-    def get_topk_main(self, epoch, full_sort=True): 
+    # interaction data -> matmul with embedding.weight -> sort k items by each user
+    def get_topk_main(self, k=20, epoch=0, full_sort=True): 
         print("Inferencing 'main' ...")
-        return self.iteration(epoch, self.infer_dataloader, None, full_sort)
+        return self.iteration(k, epoch, self.infer_dataloader, None, full_sort)
     
-    # interaction data -> matmul with embedding.weight+tag_embedding.weight -> sort 20 items by each user
-    def get_topk_tag(self, epoch, tag, full_sort=True): 
+    # interaction data -> matmul with embedding.weight+tag_embedding.weight -> sort k items by each user
+    def get_topk_tag(self, tag, k=20, epoch=0, full_sort=True): 
         print("Inferencing 'tag' ...")
-        return self.iteration(epoch, self.infer_dataloader, int(tag), full_sort)
+        return self.iteration(k, epoch, self.infer_dataloader, int(tag), full_sort)
     
-    # interaction data -> matmul with embedding.weight+tag_embedding.weight -> sort 20 items by each user
-    def get_topk_artist(self, epoch, artist, full_sort=True): 
+    # interaction data -> matmul with embedding.weight+tag_embedding.weight -> sort k items by each user
+    def get_topk_artist(self, artist, k=0, epoch=0, full_sort=True): 
         print("Inferencing 'artist' ...")
-        return self.iteration(epoch, self.infer_dataloader, int(artist), full_sort)
+        return self.iteration(k, epoch, self.infer_dataloader, int(artist), full_sort)
     
-    # target pred_list[20s] @ each pred_list[20s] -> embedding.weight -> matmul -> sort 10 users
-    def get_topk_users(self, target_user, pred_list):
+    # target pred_list[20s] @ each pred_list[20s] -> embedding.weight -> matmul -> sort k users
+    def get_topk_users(self, target_user, pred_list, k):
         self.target_user = target_user # target user index
         self.pred_list = pred_list # item index
         self.item_embeddings = self.model.item_embeddings
@@ -98,12 +96,12 @@ class Predictor:
         # pick top-k users
         user_sims = user_sims.cpu().data.numpy().copy().squeeze(0) # (962,)
         user_sims[self.target_user] = -10000 # exclude target user
-        result_ind = np.argpartition(user_sims, -20)[-20:]
+        result_ind = np.argpartition(user_sims, -k)[-k:]
         
         return result_ind
         
             
-    def iteration(self, epoch, dataloader, attribute=None, full_sort=False):
+    def iteration(self, k, epoch, dataloader, attribute=None, full_sort=False):
 
         # Setting the tqdm progress bar
 
@@ -134,9 +132,7 @@ class Predictor:
                     batch_user_index = user_ids.cpu().numpy()
                     rating_pred[self.args.train_matrix[batch_user_index].toarray() > 0] = 0 # train에 사용한 것들 = 0
                     # reference: https://stackoverflow.com/a/23734295, https://stackoverflow.com/a/20104162
-                    # argpartition 时间复杂度O(n)  argsort O(nlogn) 只会做
-                    # 加负号"-"表示取大的值
-                    ind = np.argpartition(rating_pred, -20)[:, -20:] # train에 사용한 것 제외하고 상위 20개 인덱스
+                    ind = np.argpartition(rating_pred, -k)[:, -k:] # train에 사용한 것 제외하고 상위 k개 인덱스
                     arr_ind = rating_pred[np.arange(len(rating_pred))[:, None], ind]
                     arr_ind_argsort = np.argsort(arr_ind)[np.arange(len(rating_pred)), ::-1]
                     batch_pred_list = ind[np.arange(len(rating_pred))[:, None], arr_ind_argsort]
@@ -160,9 +156,7 @@ class Predictor:
                     batch_user_index = user_ids.cpu().numpy()
                     rating_pred[self.args.train_matrix[batch_user_index].toarray() > 0] = 0 # train에 사용한 것들 = 0
                     # reference: https://stackoverflow.com/a/23734295, https://stackoverflow.com/a/20104162
-                    # argpartition 时间复杂度O(n)  argsort O(nlogn) 只会做
-                    # 加负号"-"表示取大的值
-                    ind = np.argpartition(rating_pred, -20)[:, -20:] # train에 사용한 것 제외하고 상위 20개 인덱스
+                    ind = np.argpartition(rating_pred, -k)[:, -k:] # train에 사용한 것 제외하고 상위 k개 인덱스
                     arr_ind = rating_pred[np.arange(len(rating_pred))[:, None], ind]
                     arr_ind_argsort = np.argsort(arr_ind)[np.arange(len(rating_pred)), ::-1]
                     batch_pred_list = ind[np.arange(len(rating_pred))[:, None], arr_ind_argsort]

@@ -12,3 +12,4 @@ run_finetune_sample.py
 *.pt
 output/*.txt
 data/bk100/
+output/
