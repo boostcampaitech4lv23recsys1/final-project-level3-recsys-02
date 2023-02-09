@@ -11,18 +11,9 @@ class StartPage extends StatefulWidget {
 }
 
 class _StartPageState extends State<StartPage> {
-  var name;
-
-  void navigationPage() {
-    name == ''
-        ? {Navigator.pushNamed(context, '/main')}
-        : Navigator.pushNamed(context, '/main');
-  }
-
   @override
   void initState() {
     super.initState();
-    getSession();
   }
 
   @override
@@ -44,11 +35,9 @@ class _StartPageState extends State<StartPage> {
                   Container(
                       height: titleHeight,
                       width: buttonWidth,
-                      decoration: outerBorder,
                       child: ElevatedButton(
                         style: OutlinedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            side: whiteBorder,
+                            backgroundColor: kBlack,
                             padding: const EdgeInsets.all(16)),
                         child: Text('메인페이지', style: subtitleTextStyle),
                         onPressed: () {
@@ -57,32 +46,29 @@ class _StartPageState extends State<StartPage> {
                       )),
                   defaultSpacer,
                   Container(
-                      height: titleHeight,
                       width: buttonWidth,
                       child: ElevatedButton(
                         style: OutlinedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            side: whiteBorder,
-                            padding: const EdgeInsets.all(16)),
+                            backgroundColor: kBlack,
+                            elevation: 0,
+                            padding: const EdgeInsets.all(12)),
                         child: Text('로그아웃', style: subtitleTextStyle),
                         onPressed: () {
-                          setSession(false);
+                          exitSession();
                           setState(() {});
                           Navigator.popUntil(
                               context, ModalRoute.withName('/home'));
                         },
-                      ))
+                      )),
                 ])
               : Row(
                   children: [
                     Container(
                         height: titleHeight,
                         width: buttonWidth,
-                        decoration: outerBorder,
                         child: ElevatedButton(
                           style: OutlinedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              side: whiteBorder,
+                              backgroundColor: kBlack3,
                               padding: const EdgeInsets.all(16)),
                           child: Text('로그인', style: subtitleTextStyle),
                           onPressed: () {
@@ -98,11 +84,9 @@ class _StartPageState extends State<StartPage> {
                     Container(
                         height: titleHeight,
                         width: buttonWidth,
-                        decoration: outerBorder,
                         child: ElevatedButton(
                           style: OutlinedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              side: whiteBorder,
+                              backgroundColor: kBlack,
                               padding: const EdgeInsets.all(16)),
                           child: Text('회원가입', style: subtitleTextStyle),
                           onPressed: () {
@@ -123,10 +107,13 @@ class _StartPageState extends State<StartPage> {
                 startHeader(), defaultSpacer,
                 // 서비스 개요
                 Container(
-                    decoration: outerBorder,
+                    //decoration: outerBorder,
                     height: 600,
                     width: width,
-                    child: Center(child: Text('서비스개요', style: titleTextStyle))),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.asset('assets/overview.png',
+                            fit: BoxFit.fitWidth))),
                 const Spacer(),
                 footer(),
                 defaultSpacer,

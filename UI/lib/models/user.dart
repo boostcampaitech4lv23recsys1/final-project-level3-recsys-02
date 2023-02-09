@@ -1,20 +1,20 @@
 class UserInfo {
 // final String country;
-  String id, pwd, name, country;
-  int image, age, gender;
-  List<String> followers;
-  List<String> following;
+  String user_name, password, realname, image;
+  int userId, age, playcount;
+  List<int> follower;
+  List<int> following;
 
   UserInfo({
-    required this.id,
-    required this.pwd,
-    required this.name,
-    required this.country,
+    required this.userId,
+    required this.user_name,
+    required this.password,
+    required this.realname,
     required this.image,
     required this.age,
-    required this.gender,
+    required this.playcount,
     required this.following,
-    required this.followers,
+    required this.follower,
   });
   factory UserInfo.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
@@ -23,39 +23,42 @@ class UserInfo {
 
 UserInfo _$UserFromJson(Map<String, dynamic> json) {
   return UserInfo(
-    id: json['id'] as String,
-    pwd: json['pwd'] as String,
-    name: json['name'] as String,
-    country: json['country'] as String,
-    image: json['image'] as int,
+    userId: json['user_id'] as int,
+    user_name: json['user_name'] as String,
+    password: json['pwd'] as String,
+    realname: json['realname'] as String,
+    image: json['image'] as String,
     age: json['age'] as int,
-    gender: json['gender'] as int,
-    following: json['following'] as List<String>,
-    followers: json['followers'] as List<String>,
+    playcount: json['playcount'] as int,
+    following: json['following'] as List<int>,
+    follower: json['followers'] as List<int>,
   );
 }
 
 Map<String, dynamic> _$UserToJson(UserInfo instance) => <String, dynamic>{
-      'id': instance.id,
-      'pwd': instance.pwd,
-      'name': instance.name,
-      'country': instance.country,
+      'user_id': instance.userId,
+      'user_name': instance.user_name,
+      'password': instance.password,
+      'realname': instance.realname,
       'image': instance.image,
       'age': instance.age,
-      'gender': instance.gender,
+      'playcount': instance.playcount,
       'following': instance.following,
-      'followers': instance.followers,
+      'follower': instance.follower,
     };
 
 class OtherUser {
-  var image;
-  String name;
-  int followerNum;
-  bool isFollowing;
+// final String country;
+  int user_id;
+  String realname, image;
+  List follower;
+  List following;
 
-  OtherUser(
-      {this.image = 'assets/profile.png',
-      required this.name,
-      required this.followerNum,
-      required this.isFollowing});
+  OtherUser({
+    required this.user_id,
+    required this.realname,
+    required this.image,
+    required this.following,
+    required this.follower,
+  });
 }

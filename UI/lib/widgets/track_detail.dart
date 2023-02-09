@@ -1,28 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:ui/constants.dart';
+import 'package:ui/main.dart';
 import 'package:ui/models/item.dart';
+import 'package:ui/utils/dio_client.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+Future<String> getUserName() async {
+  final pref = await SharedPreferences.getInstance();
+  var userName = pref.getString('user_name')!;
+  return userName;
+}
 
 class DetailPage extends StatefulWidget {
-  const DetailPage({super.key, required this.item});
+  DetailPage({super.key, required this.item, this.fromLike = false});
   final Item item;
+  bool fromLike;
   @override
   _DetailPageState createState() => _DetailPageState();
 }
 
 class _DetailPageState extends State<DetailPage> {
   late String _image, _name, _albumName, _artistName;
+  late int _trackId;
   var isLike = false;
-  var url = 'https://www.naver.com';
-
+  var _url = 'https://www.naver.com';
+  final DioClient dioClient = DioClient();
   void getAlbum(Item item) {}
+
   @override
   void initState() {
     super.initState();
+    _trackId = widget.item.trackId;
     _image = widget.item.image;
-    _name = widget.item.name;
+    _name = widget.item.trackName;
     _albumName = widget.item.albumName;
     _artistName = widget.item.artistName;
+    _url = widget.item.url;
     getAlbum(widget.item);
+  }
+
+  void addLike(Item item) async {
+    final pref = await SharedPreferences.getInstance();
+    String userName = pref.getString('user_id')!;
+
+    await dioClient.interactionLike(
+        userId: userName, trackId: item.trackId, album_name: item.albumName);
+  }
+
+  void addDelete(Item item) async {
+    final pref = await SharedPreferences.getInstance();
+    String userName = pref.getString('user_id')!;
+
+    await dioClient.interactionDelete(userId: userName, trackId: item.trackId);
   }
 
   @override
@@ -46,7 +76,7 @@ class _DetailPageState extends State<DetailPage> {
                   Container(
                       height: 200,
                       width: 500,
-                      child: Image.asset(
+                      child: Image.network(
                         _image,
                         fit: BoxFit.cover,
                       )),
@@ -59,23 +89,37 @@ class _DetailPageState extends State<DetailPage> {
                       const Spacer(),
 
                       // 좋아요
-                      IconButton(
-                          onPressed: () {
-                            if (isLike) {
-                              isLike = false;
-                            } else {
-                              isLike = true;
-                            }
-                          },
-                          icon: isLike
-                              ? Icon(
-                                  Icons.favorite,
-                                  color: kWhite,
-                                )
-                              : Icon(
-                                  Icons.favorite_outline_rounded,
-                                  color: kWhite,
-                                )),
+                      widget.fromLike
+                          ? IconButton(
+                              onPressed: () {
+                                addDelete(widget.item);
+                                Navigator.popAndPushNamed(context, '/mypage');
+                                setState(() {});
+                              },
+                              icon: Icon(
+                                Icons.delete,
+                                color: kWhite,
+                              ))
+                          : IconButton(
+                              onPressed: () {
+                                if (isLike) {
+                                  addDelete(widget.item);
+                                  isLike = false;
+                                } else {
+                                  addLike(widget.item);
+                                  isLike = true;
+                                }
+                                setState(() {});
+                              },
+                              icon: isLike
+                                  ? Icon(
+                                      Icons.favorite,
+                                      color: kWhite,
+                                    )
+                                  : Icon(
+                                      Icons.favorite_outline_rounded,
+                                      color: kWhite,
+                                    )),
                       defaultSpacer
                     ],
                   ),
@@ -107,7 +151,20 @@ class _DetailPageState extends State<DetailPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text('URL', style: contentsTextStyle),
-                              Text('$url', style: contentsTextStyle),
+                              GestureDetector(
+                                child: Text('$_url', style: contentsTextStyle),
+                                onTap: () async {
+                                  final url = Uri.parse(
+                                    _url,
+                                  );
+                                  if (await canLaunchUrl(url)) {
+                                    launchUrl(url);
+                                  } else {
+                                    // ignore: avoid_print
+                                    print("Can't launch $url");
+                                  }
+                                },
+                              )
                             ],
                           )
                         ],

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ui/constants.dart';
 import 'package:ui/utils/dio_client.dart';
-import 'package:ui/widgets/footer.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -57,6 +56,7 @@ class _LoginPageState extends State<LoginPage> {
                         prefixIcon: const Icon(Icons.person)),
                   ),
                   TextField(
+                    obscureText: true,
                     textAlign: TextAlign.center,
                     controller: pwdTextController,
                     keyboardType: TextInputType.text,
@@ -96,14 +96,15 @@ class _LoginPageState extends State<LoginPage> {
                               fontWeight: FontWeight.bold,
                             )),
                         onPressed: () async {
-                          var code = await dioClient.loginUser(
-                              email: idTextController.text,
+                          var res = await dioClient.loginUser(
+                              name: idTextController.text,
                               pwd: pwdTextController.text);
-                          if (code == 200) {
-                            isLogin = true;
+                          if (res == 'Empty' || res == 'Error') {
+                            errorMsg = '아이디 혹은 비밀번호가 일치하지 않습니다';
+                          } else if (res == 'Success') {
+                            enterSession();
+                            setState(() {});
                             Navigator.pushReplacementNamed(context, '/main');
-                          } else {
-                            errorMsg = '아이디 혹은 비밀번호가 존재하지 않습니다';
                           }
                           setState(() {});
                         },
@@ -143,7 +144,9 @@ class _LoginPageState extends State<LoginPage> {
                               color: kWhite,
                               fontSize: 14.0,
                             )),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(context, '/signin');
+                        },
                       ),
                       defaultSpacer,
                     ],

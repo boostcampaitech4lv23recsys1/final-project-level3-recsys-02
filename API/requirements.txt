@@ -1,0 +1,4 @@
+pydantic
+pandas
+psycopg2-binary
+fastapi[all]

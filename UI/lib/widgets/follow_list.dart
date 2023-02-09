@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:ui/constants.dart';
 import 'package:ui/models/item.dart';
 import 'package:ui/models/user.dart';
+import 'package:ui/pages/user_page.dart';
+import 'package:ui/utils/dio_client.dart';
 import 'package:ui/widgets/custom_card.dart';
 
 class FollowListPage extends StatefulWidget {
   const FollowListPage(
-      {super.key, required this.itemList, required this.isFollowing});
-  final List<String> itemList;
+      {super.key, required this.itemIdList, required this.isFollowing});
+  final List<String> itemIdList;
   final bool isFollowing;
 
   @override
@@ -15,9 +17,39 @@ class FollowListPage extends StatefulWidget {
 }
 
 class _FollowListPageState extends State<FollowListPage> {
-  void getAlbum(Item item) {}
+  final DioClient dio = DioClient();
+
+  late List<OtherUser> itemList = [];
+
+  void getItemProfile() async {
+    for (int i = 0; i < widget.itemIdList.length; i++) {
+      Map value = await dio.profile(name: widget.itemIdList[i]);
+      print(value);
+      // get itemLNameList Profiles
+      var _realname = '';
+      if (value['realname'] == null) {
+        _realname = value['user_name'];
+      } else {
+        _realname = value['realname'];
+      }
+
+      itemList.add(OtherUser(
+        user_id: value['user_id'] as int,
+        realname: _realname,
+        image: value['image'] as String,
+        following:
+            value['following'].map((e) => e.toString()).toList().cast<String>(),
+        follower:
+            value['follower'].map((e) => e.toString()).toList().cast<String>(),
+      ));
+
+      setState(() {});
+    }
+  }
+
   @override
   void initState() {
+    getItemProfile();
     super.initState();
   }
 
@@ -53,10 +85,28 @@ class _FollowListPageState extends State<FollowListPage> {
                       height: 300,
                       child: ListView.builder(
                           scrollDirection: Axis.vertical,
-                          itemCount: widget.itemList.length,
+                          itemCount: itemList.length,
                           itemBuilder: (context, index) {
-                            return userCard(OtherUser(
-                                name: '이름', followerNum: 5, isFollowing: true));
+                            return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => UserPage(
+                                              isMyPage: false,
+                                              otherUser: itemList[index],
+                                            )),
+                                  );
+                                },
+                                child: userCard(
+                                  OtherUser(
+                                    user_id: itemList[index].user_id,
+                                    realname: itemList[index].realname,
+                                    image: itemList[index].image,
+                                    following: itemList[index].following,
+                                    follower: itemList[index].follower,
+                                  ),
+                                ));
                           }))
                 ]),
           ),
