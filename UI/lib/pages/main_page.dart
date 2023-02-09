@@ -291,6 +291,7 @@ class _MainPageState extends State<MainPage> {
         children: [
           Text("빠른선곡", style: titleTextStyle2),
           IconButton(
+              iconSize: 40,
               icon: const Icon(Icons.refresh_rounded),
               color: kWhite,
               onPressed: () {
