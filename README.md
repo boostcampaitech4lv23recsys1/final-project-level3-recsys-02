@@ -25,7 +25,7 @@
       <a href="https://github.com/HeeJeongOh"><img src="https://avatars.githubusercontent.com/HeeJeongOh"/></a>
     </td>
     <td align="center" width="150px">
-      <a href="https://github.com/yhw991228"><img src="https://avatars.githubusercontent.com/yhw991228"/></a>
+      <a href="https://github.com/yhw991228"><img src="https://avatars.githubusercontent.com/heecircle"/></a>
     </td>
   </tr>
   <tr height="80px">
@@ -42,7 +42,7 @@
       <a href="https://github.com/HeeJeongOh">오희정_T4129</a>
     </td>
     <td align="center" width="150px">
-      <a href="https://github.com/yhw991228">용희원_T4130</a>
+      <a href="https://github.com/heecircle">용희원_T4130</a>
     </td>
   </tr>
 </table>
